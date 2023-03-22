@@ -102,7 +102,33 @@
     @endif
 
     @if($user_detail_visibility)
-        <div class="card text-white mb-4">
+        <button wire:click="tampilkan_table" type="button" class="btn btn-sm btn-success bg-gradient mb-4">
+            <i class="bi bi-arrow-left-square me-1"></i>
+            Kembali
+        </button>
+        <div class="row">
+            <div class="col-5">
+                <div class="card">
+                    <div class="card-header">
+                        Akses Pengguna
+                    </div>
+                    <div class="card-body">
+                        ini akses pengguna
+                    </div>
+                </div>
+            </div>
+            <div class="col-7">
+                <div class="card">
+                    <div class="card-header">
+                        Riwayat Akses Dalam 1 Minggu
+                    </div>
+                    <div class="card-body">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{-- <div class="card text-white mb-4">
             <div class="card-header d-flex">
                 <div class="col">
                     Detail Pengguna
@@ -111,10 +137,7 @@
             <div class="card-body">
                 <div class="mb-4 d-flex">
                     <div class="col-auto p-0">
-                        <button wire:click="tampilkan_table" type="button" class="btn btn-sm btn-success bg-gradient">
-                            <i class="bi bi-arrow-left-square me-1"></i>
-                            Kembali
-                        </button>
+
                     </div>
                 </div>
                 <div class="row">
@@ -131,7 +154,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
     @endif
 
     {{-- add user form --}}
