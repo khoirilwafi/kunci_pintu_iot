@@ -138,6 +138,7 @@
                     </table>
                 </div>
                 <div class="d-flex mb-3">
+                    <button class="btn btn-sm btn-primary"><i class="bi bi-plus-circle me-1"></i>Tambah Akses</button>
                     <div class="col-8 col-md-3 ms-auto">
                         <input type="text" class="form-control form-control-sm bg-dark text-white" id="search"
                             placeholder="Cari Akses ..." wire:model="search" autocomplete="off">

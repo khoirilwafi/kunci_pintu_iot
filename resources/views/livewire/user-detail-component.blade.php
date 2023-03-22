@@ -1,3 +1,0 @@
-<div>
-    user-details
-</div>

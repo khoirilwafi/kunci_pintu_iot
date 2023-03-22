@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\Avatar;
 use Exception;
 use App\Models\User;
 use Ramsey\Uuid\Uuid;
@@ -9,6 +10,7 @@ use Livewire\Component;
 use Illuminate\Http\Request;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class OperatorComponent extends Component
 {
@@ -108,6 +110,11 @@ class OperatorComponent extends Component
     // delete action
     public function delete()
     {
+        $avatar = Avatar::where('user_id', $this->delete_id)->first();
+        if ($avatar) {
+            Storage::disk('local')->delete($avatar->file);
+        }
+
         try {
             // delete operator
             User::where('id', $this->delete_id)->delete();

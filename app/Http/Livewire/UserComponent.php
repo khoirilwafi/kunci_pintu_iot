@@ -2,13 +2,14 @@
 
 namespace App\Http\Livewire;
 
-use App\Models\Avatar;
-use App\Models\User;
 use Exception;
+use App\Models\User;
+use App\Models\Avatar;
 use Livewire\Component;
 use Illuminate\Http\Request;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class UserComponent extends Component
 {
@@ -112,13 +113,14 @@ class UserComponent extends Component
     // delete action
     public function delete()
     {
+        $avatar = Avatar::where('user_id', $this->delete_id)->first();
+        if ($avatar) {
+            Storage::disk('local')->delete($avatar->file);
+        }
+
         try {
             // delete operator
             User::where('id', $this->delete_id)->delete();
-            $avatar = Avatar::where('user_id', $this->delete_id)->first();
-            if ($avatar) {
-                $avatar->delete();
-            }
             session()->flash('delete_success', $this->name);
         } catch (Exception $e) {
             session()->flash('delete_failed', $this->name);
