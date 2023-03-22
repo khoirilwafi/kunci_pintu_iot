@@ -128,33 +128,6 @@
                 </div>
             </div>
         </div>
-        {{-- <div class="card text-white mb-4">
-            <div class="card-header d-flex">
-                <div class="col">
-                    Detail Pengguna
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="mb-4 d-flex">
-                    <div class="col-auto p-0">
-
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-5">
-                        <div class="mb-3 bg-primary text-center p-1 rounded">Kartu Akses</div>
-                        <div class="bg-dark rounded" style="height: 250px; width:100%;"></div>
-                    </div>
-                    <div class="col-7">
-                        <div class="mb-3 bg-primary text-center p-1 rounded">Riwayat Akses Minggu Ini</div>
-                        <div class="p-2 bg-dark bg-gradient rounded">
-                            Ruang Arsip Laporan Tugas Akhir <br>
-                            ID: jhsbf083kb4
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div> --}}
     @endif
 
     {{-- add user form --}}
