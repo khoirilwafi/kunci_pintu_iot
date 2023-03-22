@@ -64,6 +64,15 @@ Route::middleware(['auth', 'verified', 'operator'])->group(function () {
 
     // get all users
     Route::get('/users', [DashboardController::class, 'users']);
+
+    // get all doors
+    Route::get('/doors', [DashboardController::class, 'doors']);
+
+    // get all schedules
+    Route::get('/schedules', [DashboardController::class, 'scedules']);
+
+    // get all guest
+    Route::get('/guests', [DashboardController::class, 'guests']);
 });
 
 // account

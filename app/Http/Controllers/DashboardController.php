@@ -83,4 +83,13 @@ class DashboardController extends Controller
         // render view
         return view('dashboard.user', $this->data);
     }
+
+    public function doors(Request $request)
+    {
+        // set user profil
+        $this->setUserProfil($request);
+
+        // render view
+        return view('dashboard.door', $this->data);
+    }
 }

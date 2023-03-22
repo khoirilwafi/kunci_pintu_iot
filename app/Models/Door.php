@@ -6,7 +6,7 @@ use Ramsey\Uuid\Uuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Otp extends Model
+class Door extends Model
 {
     use HasFactory;
 
@@ -23,12 +23,14 @@ class Otp extends Model
         });
     }
 
-    protected $fillable = ['user_id', 'code_otp', 'valid_until'];
-
     protected $hidden = [];
 
-    public function user()
+    protected $fillable = ['name', 'status', 'is_lock', 'office_id', 'device_id', 'socket_id'];
+
+    protected $cast = [];
+
+    public function office()
     {
-        return $this->belongsTo(User::class);
+        return $this->hasOne(Office::class);
     }
 }
