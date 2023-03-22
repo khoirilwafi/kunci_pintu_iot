@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\Avatar;
 use App\Models\User;
 use Exception;
 use Livewire\Component;
@@ -23,6 +24,8 @@ class UserComponent extends Component
     public $table_visibility = true;
     public $user_detail_visibility = false;
 
+    public $avatar_name, $created_at;
+
     public function render()
     {
         // get all operator and paginate
@@ -40,8 +43,8 @@ class UserComponent extends Component
     // reset modal (field and error message)
     public function resetModal()
     {
-        $this->name = '';
-        $this->email = '';
+        $this->name   = '';
+        $this->email  = '';
         $this->gender = '';
 
         $this->resetErrorBag();
@@ -127,6 +130,20 @@ class UserComponent extends Component
 
     public function getUserDetail($id)
     {
+        $user = User::where('id', $id)->first();
+        $avatar = Avatar::where('user_id', $id)->first();
+
+        if ($avatar) {
+            $this->avatar_name = $avatar->name;
+        } else {
+            $this->avatar_name = '02943e5368adf6cc72f4a2e0a435090b.png';
+        }
+
+        $this->name       = $user->name;
+        $this->email      = $user->email;
+        $this->gender     = $user->gender;
+        $this->created_at = $user->created_at;
+
         $this->table_visibility = false;
         $this->user_detail_visibility = true;
     }
