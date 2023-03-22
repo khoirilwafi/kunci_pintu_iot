@@ -83,7 +83,7 @@
 								<td>{{ $office->user->name }}</td>
 								<td>{{ $office->user->email }}</td>
 								<td class="text-center">
-                                    <button wire:click="edit('{{ $office->id }}')" type="button"class="btn btn-sm btn-primary bg-gradient">
+                                    <button wire:click="edit('{{ $office->id }}')" type="button"class="btn btn-sm btn-primary bg-gradient me-1">
 										<i class="bi bi-pencil-square me-1"></i>
 										Edit
 									</button>

@@ -82,7 +82,7 @@
                                         @endif
                                     </td>
                                     <td class="text-center">
-                                        <button wire:click="getUserDetail('{{ $user->id }}')" type="button" class="btn btn-sm btn-primary bg-gradient">
+                                        <button wire:click="getUserDetail('{{ $user->id }}')" type="button" class="btn btn-sm btn-primary bg-gradient me-1">
                                             <i class="bi bi-eye me-1"></i>
                                             Lihat
                                         </button>
@@ -107,87 +107,59 @@
             <i class="bi bi-arrow-left-square me-1"></i>
             Kembali
         </button>
-        <div class="row">
-            <div class="col-5">
-                <div class="card">
-                    <div class="card-header">
-                        Akses Pengguna
-                    </div>
-                    <div class="card-body">
-                        <div class="p-2 mb-3 rounded border border-secondary d-flex">
-                            <img src="{{ url('my-account/avatar/'. $avatar_name) }}" alt="picture" height="60px" width="60px" class="ms-1">
-                            <table class="ms-2">
-                                <tr>
-                                    <td class="px-2">Email</td>
-                                    <td class="px-2">:</td>
-                                    <td class="px-2">{{ $email }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-2">Nama</td>
-                                    <td class="px-2">:</td>
-                                    <td class="px-2">{{ $name }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-2">Jenis Kelamin</td>
-                                    <td class="px-2">:</td>
-                                    <td class="px-2">{{ $gender }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-2">Bergabung</td>
-                                    <td class="px-2">:</td>
-                                    <td class="px-2">{{ $created_at }}</td>
-                                </tr>
-                            </table>
-                        </div>
-                        <hr class="sidebar-hr mb-3">
-                        <div class="border border-secondary rounded d-flex mb-2">
-                            <div class="p-2 d-flex flex-column border-end border-secondary"><i class="bi bi-key fs-4 my-auto"></i></div>
-                            <div class="p-2 w-100">
-                                <div class="d-flex">
-                                    <div>
-                                        <div class="fs-6 fw-bold">Ruang Dosen</div>
-                                        <div class="lh-1">
-                                            <small>Gedung Teknik Kimia</small>
-                                        </div>
-                                    </div>
-                                    <div class="ms-auto">05.00 AM - 18.00 PM</div>
-                                </div>
-                                <div class="d-flex">
-                                    <div class="text-warning mt-auto"><small>QR Remote</small></div>
-                                    <button class="btn btn-sm btn-primary ms-auto me-1"><i class="bi bi-pause-circle me-1"></i>Pause</button>
-                                    <button class="btn btn-sm btn-danger"><i class="bi bi-trash me-1"></i>Hapus</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="border border-secondary rounded d-flex mb-2">
-                            <div class="p-2 d-flex flex-column border-end border-secondary"><i class="bi bi-key fs-4 my-auto"></i></div>
-                            <div class="p-2 w-100">
-                                <div class="d-flex">
-                                    <div>
-                                        <div class="fs-6 fw-bold">Ruang Dosen</div>
-                                        <div class="lh-1">
-                                            <small>Gedung Teknik Kimia</small>
-                                        </div>
-                                    </div>
-                                    <div class="ms-auto">05.00 AM - 18.00 PM</div>
-                                </div>
-                                <div class="d-flex">
-                                    <div class="text-warning mt-auto"><small>QR Only</small></div>
-                                    <button class="btn btn-sm btn-primary ms-auto me-1"><i class="bi bi-pause-circle me-1"></i>Pause</button>
-                                    <button class="btn btn-sm btn-danger"><i class="bi bi-trash me-1"></i>Hapus</button>
-                                </div>
-                            </div>
-                        </div>
+        <div class="card">
+            <div class="card-header">
+                Akses Pengguna
+            </div>
+            <div class="card-body">
+                <div class="p-2 mb-5 rounded border border-secondary d-flex">
+                    <img src="{{ url('my-account/avatar/'. $avatar_name) }}" alt="picture" height="100px" width="100px" class="ms-1">
+                    <table class="ms-2">
+                        <tr>
+                            <td class="px-2">Email</td>
+                            <td class="px-2">:</td>
+                            <td class="px-2">{{ $email }}</td>
+                        </tr>
+                        <tr>
+                            <td class="px-2">Nama</td>
+                            <td class="px-2">:</td>
+                            <td class="px-2">{{ $name }}</td>
+                        </tr>
+                        <tr>
+                            <td class="px-2">Jenis Kelamin</td>
+                            <td class="px-2">:</td>
+                            <td class="px-2">{{ $gender }}</td>
+                        </tr>
+                        <tr>
+                            <td class="px-2">Bergabung</td>
+                            <td class="px-2">:</td>
+                            <td class="px-2">{{ $created_at }}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="d-flex mb-3">
+                    <div class="col-8 col-md-3 ms-auto">
+                        <input type="text" class="form-control form-control-sm bg-dark text-white" id="search"
+                            placeholder="Cari Akses ..." wire:model="search" autocomplete="off">
                     </div>
                 </div>
-            </div>
-            <div class="col-7">
-                <div class="card">
-                    <div class="card-header">
-                        Riwayat Akses Dalam 1 Minggu
-                    </div>
-                    <div class="card-body">
-
+                <div class="border border-secondary rounded d-flex mb-2">
+                    <div class="p-3 d-flex flex-column border-end border-secondary"><i class="bi bi-key fs-4 my-auto"></i></div>
+                    <div class="p-2 w-100">
+                        <div class="d-flex">
+                            <div>
+                                <div class="fs-6 fw-bold">Ruang Dosen</div>
+                                <div class="lh-1">
+                                    <small>Gedung Teknik Kimia</small>
+                                </div>
+                            </div>
+                            <div class="ms-auto"><i class="bi bi-clock me-2"></i>05.00 AM s/d 18.00 PM</div>
+                        </div>
+                        <div class="d-flex">
+                            <div class="text-warning mt-auto"><small>QR Remote</small></div>
+                            <button class="btn btn-sm btn-primary ms-auto me-2"><i class="bi bi-pause-circle me-1"></i>Blokir</button>
+                            <button class="btn btn-sm btn-danger"><i class="bi bi-trash me-1"></i>Hapus</button>
+                        </div>
                     </div>
                 </div>
             </div>
