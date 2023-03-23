@@ -30,7 +30,7 @@ class UserComponent extends Component
     public function render()
     {
         // get all operator and paginate
-        $data['users'] = User::where('name', 'like', '%' . $this->search . '%')->where('role', 'pengguna')->paginate(7);
+        $data['users'] = User::where('name', 'like', '%' . $this->search . '%')->where('role', 'pengguna')->where('added_by', request()->user()->id)->paginate(7);
 
         return view('livewire.user-component', $data);
     }
