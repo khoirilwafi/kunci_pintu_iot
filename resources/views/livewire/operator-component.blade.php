@@ -72,20 +72,18 @@
 								<td>{{ $operator->name }}</td>
 								<td>{{ $operator->email }}</td>
                                 <td>{{ $operator->gender }}</td>
-								<td>
+								<td class="text-center">
 									@if ($operator->email_verified_at != null)
-										<div class="bg-success bg-gradient rounded px-3 py-1 text-center">Email<i class="bi bi-check-circle ms-2"></i>
-										</div>
-									@else
-										<div class="bg-warning bg-gradient rounded px-3 py-1 text-center">Email<i class="bi bi-x-circle ms-2"></i>
-										</div>
-									@endif
+                                        <div class="text-warning">Belum Verifikasi</div>
+                                    @else
+                                        <div class="text-success">Aktif</div>
+                                    @endif
 								</td>
-								<td>
+								<td class="text-center">
 									@if ($operator->office != null)
-										<div class="bg-primary bg-gradient rounded px-3 py-1 text-center">{{ $operator->office->name }}</div>
+										<div class="text-info">{{ $operator->office->name }}</div>
 									@else
-										<div class="bg-warning bg-gradient rounded px-3 py-1 text-center">Belum Ada</div>
+										<div class="text-warning">Belum Ada</div>
 									@endif
 								</td>
 								<td class="text-center">

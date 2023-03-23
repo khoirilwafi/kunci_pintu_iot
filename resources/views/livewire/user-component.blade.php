@@ -72,13 +72,11 @@
                                     <td>{{ $user->name }}</td>
                                     <td>{{ $user->email }}</td>
                                     <td>{{ $user->gender }}</td>
-                                    <td>
+                                    <td class="text-center">
                                         @if ($user->email_verified_at != null)
-                                            <div class="bg-success bg-gradient rounded px-3 py-1 text-center">Email<i class="bi bi-check-circle ms-2"></i>
-                                            </div>
+                                            <div class="text-warning">Belum Verifikasi</div>
                                         @else
-                                            <div class="bg-warning bg-gradient rounded px-3 py-1 text-center">Email<i class="bi bi-x-circle ms-2"></i>
-                                            </div>
+                                            <div class="text-info">Aktif</div>
                                         @endif
                                     </td>
                                     <td class="text-center">
@@ -154,7 +152,7 @@
                                     <small>Gedung Teknik Kimia</small>
                                 </div>
                             </div>
-                            <div class="ms-auto"><i class="bi bi-clock me-2"></i>05.00 AM s/d 18.00 PM</div>
+                            <div class="ms-auto"><small><i class="bi bi-clock me-2"></i>05.00 AM s/d 18.00 PM</small></div>
                         </div>
                         <div class="d-flex">
                             <div class="text-warning mt-auto"><small>QR Remote</small></div>

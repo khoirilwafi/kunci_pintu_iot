@@ -80,6 +80,8 @@ class OperatorComponent extends Component
         $operator['role']     = 'operator';
         $operator['added_by'] = $request->user()->id;
 
+        // kirimkan email disini !!!!!
+
         // insert to databse
         $insert = User::create($operator);
 

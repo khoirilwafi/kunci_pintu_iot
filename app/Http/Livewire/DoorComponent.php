@@ -23,4 +23,29 @@ class DoorComponent extends Component
 
         return view('livewire.door-component', $data);
     }
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function resetModal()
+    {
+        $this->name = '';
+
+        $this->resetErrorBag();
+        $this->resetValidation();
+    }
+
+    public function openModal($modal_id)
+    {
+        $this->resetModal();
+        $this->dispatchBrowserEvent('modal_open', $modal_id);
+    }
+
+    public function closeModal($modal_id)
+    {
+        $this->resetModal();
+        $this->dispatchBrowserEvent('modal_close', $modal_id);
+    }
 }

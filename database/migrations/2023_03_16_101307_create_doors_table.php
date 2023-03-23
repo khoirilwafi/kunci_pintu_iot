@@ -16,9 +16,10 @@ return new class extends Migration
         Schema::create('doors', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('office_id');
-            $table->string('device_id')->unique();
+            $table->string('device_id')->unique()->nullable();
+            $table->string('socket_id')->unique()->nullable();
             $table->string('name')->unique();
-            $table->enum('status', ['online', 'offline']);
+            $table->boolean('is_lock')->default(1);
             $table->timestamps();
         });
 
