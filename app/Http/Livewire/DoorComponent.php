@@ -4,8 +4,10 @@ namespace App\Http\Livewire;
 
 use App\Models\Door;
 use App\Models\Office;
+use Exception;
 use Livewire\Component;
 use Livewire\WithPagination;
+use PhpParser\Node\Stmt\TryCatch;
 
 class DoorComponent extends Component
 {
@@ -14,6 +16,7 @@ class DoorComponent extends Component
     protected $paginationTheme = 'bootstrap';
 
     public $name, $device_id, $socket_id, $is_lock, $created_at;
+    public $edit_id, $name_edited, $device_id_edited;
     public $search;
 
     public $door_table_visibility  = true;
@@ -32,10 +35,17 @@ class DoorComponent extends Component
         $this->resetPage();
     }
 
-    public function resetModal()
+    protected function resetData()
     {
-        $this->name = '';
+        $this->name       = '';
+        $this->device_id  = '';
+        $this->socket_id  = '';
+        $this->is_lock    = '';
+        $this->created_at = '';
+    }
 
+    protected function resetModal()
+    {
         $this->resetErrorBag();
         $this->resetValidation();
     }
@@ -68,6 +78,7 @@ class DoorComponent extends Component
     {
         $door = Door::where('id', $id)->first();
 
+        $this->edit_id    = $door->id;
         $this->name       = $door->name;
         $this->device_id  = $door->device_id;
         $this->socket_id  = $door->socket_id;
@@ -77,9 +88,48 @@ class DoorComponent extends Component
         $this->show_detail();
     }
 
-    public function edit($id)
+    public function edit()
     {
-        $door = Door::where('id', $id)->first();
-        return $door;
+        $this->resetModal();
+
+        $this->name_edited       = $this->name;
+        $this->device_id_edited  = $this->device_id;
+
+        $this->dispatchBrowserEvent('modal_open', 'editDoor');
+    }
+
+    public function updateDoor()
+    {
+        if ($this->device_id_edited != $this->device_id) {
+            dd('berubah');
+        } else {
+            $door = Door::where('id', $this->edit_id)->first();
+            $door->name = $this->name_edited;
+
+            $status = $door->save();
+
+            if ($status) {
+                $this->name = $this->name_edited;
+                session()->flash('update_success', $this->name);
+            } else {
+                session()->flash('update_failed', $this->name);
+            }
+        }
+
+        $this->dispatchBrowserEvent('modal_close', 'editDoor');
+    }
+
+    public function delete()
+    {
+        try {
+            Door::where('id', $this->edit_id)->delete();
+            session()->flash('delete_success', $this->name);
+        } catch (Exception $e) {
+            session()->flash('delete_failed', $this->name);
+        }
+
+        $this->resetData();
+        $this->show_table();
+        $this->closeModal('deleteConfirm');
     }
 }

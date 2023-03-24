@@ -213,7 +213,7 @@
         </div>
     </div>
 
-    {{-- modal delete confirm --}}
+    {{-- delete confirm --}}
 	<div wire:ignore.self class="modal fade" id="deleteConfirm" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="deleteConfirmLabel" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">

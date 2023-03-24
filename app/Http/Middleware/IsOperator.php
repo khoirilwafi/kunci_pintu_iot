@@ -16,10 +16,10 @@ class IsOperator
      */
     public function handle(Request $request, Closure $next)
     {
-        if (auth()->user() && auth()->user()->role == 'operator') {
+        if (auth()->user() && auth()->user()->role === 'operator') {
             return $next($request);
         }
 
-        return $next($request);
+        abort(403);
     }
 }
