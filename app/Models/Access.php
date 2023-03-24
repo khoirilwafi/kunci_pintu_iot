@@ -6,13 +6,14 @@ use Ramsey\Uuid\Uuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Door extends Model
+class Access extends Model
 {
     use HasFactory;
 
-    public $incrementing = false;
-    protected $keyType = 'string';
+    public $incrementing  = false;
+    protected $keyType    = 'string';
     protected $primaryKey = 'id';
+    protected $table      = 'access';
 
     protected static function boot()
     {
@@ -25,16 +26,7 @@ class Door extends Model
 
     protected $hidden = [];
 
-    protected $fillable = ['name', 'status', 'is_lock', 'office_id', 'device_id', 'socket_id'];
+    protected $fillable = ['name', 'user_id', 'door_id', 'is_temporary', 'begin_at', 'end_at'];
 
     protected $cast = [];
-
-    public function office()
-    {
-        return $this->hasOne(Office::class);
-    }
-
-    public function access()
-    {
-    }
 }

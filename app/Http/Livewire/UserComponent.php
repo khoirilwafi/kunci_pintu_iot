@@ -18,7 +18,7 @@ class UserComponent extends Component
     protected $paginationTheme = 'bootstrap';
 
     // data model
-    public $name, $email, $gender;
+    public $name, $email, $gender, $phone;
     public $delete_id;
     public $search = '';
 
@@ -71,13 +71,15 @@ class UserComponent extends Component
     {
         $this->validate([
             'name'   => ['required', 'min:4', 'unique:users,name'],
-            'email'  => ['required', 'email:dns', 'unique:users,email'],
             'gender' => ['required'],
+            'email'  => ['required', 'email:dns', 'unique:users,email'],
+            'phone'  => ['required', 'numeric', 'unique:users,phone', 'digits_between:11,13'],
         ]);
 
         // add data to object
         $user['name']     = $this->name;
         $user['email']    = $this->email;
+        $user['phone']    = $this->phone;
         $user['gender']   = $this->gender;
         $user['password'] = Hash::make($this->email);
         $user['role']     = 'pengguna';
@@ -146,8 +148,9 @@ class UserComponent extends Component
         }
 
         $this->name       = $user->name;
-        $this->email      = $user->email;
         $this->gender     = $user->gender;
+        $this->email      = $user->email;
+        $this->phone      = $user->phone;
         $this->created_at = $user->created_at;
 
         $this->table_visibility = false;

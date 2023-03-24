@@ -17,7 +17,7 @@ class ProfileComponent extends Component
 {
     use WithFileUploads;
 
-    public $email, $name, $gender, $role;
+    public $email, $name, $gender, $role, $phone;
     public $password, $password_confirmation;
     public $avatar, $last_avatar_temp;
     public $iteration = 0;
@@ -101,7 +101,7 @@ class ProfileComponent extends Component
         $this->name   = $user->name;
         $this->email  = $user->email;
         $this->gender = $user->gender;
-        $this->role   = $user->role;
+        $this->phone  = $user->phone;
 
         $this->dispatchBrowserEvent('modal_open', 'editProfile');
     }
@@ -115,7 +115,7 @@ class ProfileComponent extends Component
             'name'   => ['required', 'min:4', Rule::unique('users')->ignore($id)],
             'email'  => ['required', 'email:dns', Rule::unique('users')->ignore($id)],
             'gender' => ['required'],
-            'role'   => ['required'],
+            'phone'  => ['required', 'numeric', Rule::unique('users')->ignore($id), 'digits_between:11,13'],
         ]);
 
         $user = User::find($id);
@@ -123,7 +123,7 @@ class ProfileComponent extends Component
         $user->email  = $this->email;
         $user->name   = $this->name;
         $user->gender = $this->gender;
-        $user->role   = $this->role;
+        $user->phone  = $this->phone;
 
         $result = $user->save();
 

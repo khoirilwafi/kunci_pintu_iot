@@ -53,28 +53,28 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['au
 Route::middleware(['auth', 'verified', 'moderator'])->group(function () {
 
     // get all office
-    Route::get('/offices', [DashboardController::class, 'offices']);
+    Route::get('/dashboard/offices', [DashboardController::class, 'offices']);
 
     // get all operator
-    Route::get('/operators', [DashboardController::class, 'operators']);
+    Route::get('/dashboard/operators', [DashboardController::class, 'operators']);
 });
 
 // route group for operator
 Route::middleware(['auth', 'verified', 'operator'])->group(function () {
 
     // get all users
-    Route::get('/users', [DashboardController::class, 'users']);
+    Route::get('/dashboard/users', [DashboardController::class, 'users']);
 
     // get all doors
-    Route::get('/doors', [DashboardController::class, 'doors']);
+    Route::get('/dashboard/doors', [DashboardController::class, 'doors']);
 
     // get all schedules
-    Route::get('/schedules', [DashboardController::class, 'scedules']);
+    Route::get('/dashboard/schedules', [DashboardController::class, 'scedules']);
 
     // get all guest
-    Route::get('/guests', [DashboardController::class, 'guests']);
+    Route::get('/dashboard/guests', [DashboardController::class, 'guests']);
 });
 
 // account
-Route::get('my-account', [DashboardController::class, 'my_account'])->middleware(['auth', 'verified']);
+Route::get('/dashboard/my-account', [DashboardController::class, 'my_account'])->middleware(['auth', 'verified']);
 Route::get('my-account/avatar/{file}', [UserController::class, 'getAvatar'])->middleware(['auth', 'verified']);

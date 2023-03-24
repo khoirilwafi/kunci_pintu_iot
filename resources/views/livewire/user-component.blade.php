@@ -59,8 +59,9 @@
                             <tr class="align-middle">
                                 <td>No</td>
                                 <td>Nama</td>
-                                <td>Email</td>
                                 <td>Jenis Kelamin</td>
+                                <td>Email</td>
+                                <td>Nomor HP</td>
                                 <td class="text-center">Status</td>
                                 <td class="text-center">Aksi</td>
                             </tr>
@@ -70,10 +71,11 @@
                                 <tr class="align-middle">
                                     <td>{{ $users->firstItem() + $index }}</td>
                                     <td>{{ $user->name }}</td>
-                                    <td>{{ $user->email }}</td>
                                     <td>{{ $user->gender }}</td>
+                                    <td>{{ $user->email }}</td>
+                                    <td>{{ $user->phone }}</td>
                                     <td class="text-center">
-                                        @if ($user->email_verified_at != null)
+                                        @if ($user->email_verified_at == null)
                                             <div class="text-warning">Belum Verifikasi</div>
                                         @else
                                             <div class="text-info">Aktif</div>
@@ -114,11 +116,6 @@
                     <img src="{{ url('my-account/avatar/'. $avatar_name) }}" alt="picture" height="100px" width="100px" class="ms-1">
                     <table class="ms-2">
                         <tr>
-                            <td class="px-2">Email</td>
-                            <td class="px-2">:</td>
-                            <td class="px-2">{{ $email }}</td>
-                        </tr>
-                        <tr>
                             <td class="px-2">Nama</td>
                             <td class="px-2">:</td>
                             <td class="px-2">{{ $name }}</td>
@@ -127,6 +124,16 @@
                             <td class="px-2">Jenis Kelamin</td>
                             <td class="px-2">:</td>
                             <td class="px-2">{{ $gender }}</td>
+                        </tr>
+                        <tr>
+                            <td class="px-2">Email</td>
+                            <td class="px-2">:</td>
+                            <td class="px-2">{{ $email }}</td>
+                        </tr>
+                        <tr>
+                            <td class="px-2">Nomor HP</td>
+                            <td class="px-2">:</td>
+                            <td class="px-2">{{ $phone }}</td>
                         </tr>
                         <tr>
                             <td class="px-2">Bergabung</td>
@@ -173,16 +180,6 @@
 					<div class="card-header">Tambah Pengguna Baru</div>
 					<div class="card-body">
 						<form wire:submit.prevent="storeUser" id="userForm">
-							<div class="mb-4">
-								<label for="email" class="form-label">Email</label>
-								<input type="email" class="form-control bg-dark text-white @error('email') is-invalid @enderror"
-									id="email" name="email" wire:model.defer="email" autocomplete="off">
-								@error('email')
-									<div class="invalid-feedback">
-										{{ $message }}
-									</div>
-								@enderror
-							</div>
                             <div class="mb-3">
 								<label for="name" class="form-label">Nama</label>
 								<input type="name" class="form-control bg-dark text-white @error('name') is-invalid @enderror" id="name"
@@ -206,6 +203,26 @@
                                     </div>
                                 @enderror
                             </div>
+                            <div class="mb-4">
+								<label for="email" class="form-label">Email</label>
+								<input type="email" class="form-control bg-dark text-white @error('email') is-invalid @enderror"
+									id="email" name="email" wire:model.defer="email" autocomplete="off">
+								@error('email')
+									<div class="invalid-feedback">
+										{{ $message }}
+									</div>
+								@enderror
+							</div>
+                            <div class="mb-4">
+								<label for="phone" class="form-label">Nomor HP</label>
+								<input type="number" class="form-control bg-dark text-white @error('phone') is-invalid @enderror"
+									id="phone" name="phone" wire:model.defer="phone" autocomplete="off">
+								@error('phone')
+									<div class="invalid-feedback">
+										{{ $message }}
+									</div>
+								@enderror
+							</div>
 							<div class="mb-4">
 								<strong>Pastikan email valid dan masih aktif.</strong>
 								<div style="text-align: justify">

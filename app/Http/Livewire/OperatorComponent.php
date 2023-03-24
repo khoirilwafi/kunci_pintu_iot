@@ -19,7 +19,7 @@ class OperatorComponent extends Component
     protected $paginationTheme = 'bootstrap';
 
     // data model
-    public $name, $email, $gender;
+    public $name, $email, $gender, $phone;
     public $delete_id;
     public $search = '';
 
@@ -41,9 +41,10 @@ class OperatorComponent extends Component
     // reset modal (field and error message)
     public function resetModal()
     {
-        $this->name = '';
-        $this->email = '';
+        $this->name   = '';
         $this->gender = '';
+        $this->email  = '';
+        $this->phone  = '';
 
         $this->resetErrorBag();
         $this->resetValidation();
@@ -68,15 +69,17 @@ class OperatorComponent extends Component
     {
         $this->validate([
             'name'   => ['required', 'min:4', 'unique:users,name'],
-            'email'  => ['required', 'email:dns', 'unique:users,email'],
             'gender' => ['required'],
+            'email'  => ['required', 'email:dns', 'unique:users,email'],
+            'phone'  => ['required', 'numeric', 'unique:users,phone', 'digits_between:11,13'],
         ]);
 
         // add data to object
         $operator['name']     = $this->name;
-        $operator['email']    = $this->email;
         $operator['gender']   = $this->gender;
-        $operator['password'] = Hash::make($this->email);
+        $operator['email']    = $this->email;
+        $operator['phone']    = $this->phone;
+        $operator['password'] = Hash::make('password');
         $operator['role']     = 'operator';
         $operator['added_by'] = $request->user()->id;
 

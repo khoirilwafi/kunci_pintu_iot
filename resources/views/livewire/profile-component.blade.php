@@ -36,16 +36,20 @@
                 <div class="col-7">
                     <div class="mb-4">
                         <div class="mb-3">
-                            <label class="form-label mb-1">Email</label>
-                            <input class="form-control bg-dark text-white" value="{{ $user->email }}" disabled>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label mb-1">Username</label>
+                            <label class="form-label mb-1">Nama</label>
                             <input class="form-control bg-dark text-white" value="{{ $user->name }}" disabled>
                         </div>
                         <div class="mb-3">
                             <label class="form-label mb-1">Jenis Kelamin</label>
                             <input class="form-control bg-dark text-white" value="{{ $user->gender }}" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label mb-1">Email</label>
+                            <input class="form-control bg-dark text-white" value="{{ $user->email }}" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label mb-1">Nomor HP</label>
+                            <input class="form-control bg-dark text-white" value="{{ ucfirst($user->phone) }}" disabled>
                         </div>
                         <div class="mb-3">
                             <label class="form-label mb-1">Role Akun</label>
@@ -136,16 +140,7 @@
 					<div class="card-body">
 						<form wire:submit.prevent="storeProfile" id="profileForm" class="mb-4">
                             <div class="mb-3">
-                                <label class="form-label mb-1">Email</label>
-                                <input class="form-control bg-dark text-white @error('email') is-invalid @enderror" wire:model.defer="email">
-                                @error('email')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label mb-1">Username</label>
+                                <label class="form-label mb-1">Nama</label>
                                 <input class="form-control bg-dark text-white @error('name') is-invalid @enderror" wire:model.defer="name">
                                 @error('name')
                                     <div class="invalid-feedback">
@@ -166,9 +161,18 @@
                                 @enderror
                             </div>
                             <div class="mb-3">
-                                <label class="form-label mb-1">Role Akun</label>
-                                <input class="form-control bg-dark text-white @error('role') is-invalid @enderror" wire:model.defer="role" disabled>
-                                @error('role')
+                                <label class="form-label mb-1">Email</label>
+                                <input class="form-control bg-dark text-white @error('email') is-invalid @enderror" wire:model.defer="email">
+                                @error('email')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label mb-1">Nomor HP</label>
+                                <input class="form-control bg-dark text-white @error('phone') is-invalid @enderror" wire:model.defer="phone">
+                                @error('phone')
                                     <div class="invalid-feedback">
                                         {{ $message }}
                                     </div>

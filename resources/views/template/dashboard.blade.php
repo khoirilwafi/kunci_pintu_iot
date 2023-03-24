@@ -12,6 +12,7 @@
 	<link rel="stylesheet" href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
 
+    @stack('custom_links')
     @livewireStyles()
 
 </head>
@@ -29,59 +30,59 @@
 			</div>
 			<ul class="nav flex-column mb-5 p-3">
                 @can('moderator')
-                    <li class="sidebar-menu {{ request()->is('offices') ? 'high-light' : '' }}">
-                        <a href="{{ url('offices') }}" class="nav-link">
+                    <li class="sidebar-menu {{ request()->is('dashboard/offices') ? 'high-light' : '' }}">
+                        <a href="{{ url('/dashboard/offices') }}" class="nav-link">
                             <i class="bi bi-building me-2"></i>Daftar Gedung
                         </a>
                     </li>
                     <hr class="sidebar-hr">
-                    <li class="sidebar-menu {{ request()->is('operators') ? 'high-light' : '' }}">
-                        <a href="{{ url('operators') }}" class="nav-link">
+                    <li class="sidebar-menu {{ request()->is('dashboard/operators') ? 'high-light' : '' }}">
+                        <a href="{{ url('/dashboard/operators') }}" class="nav-link">
                             <i class="bi bi-person-badge me-2"></i>Daftar Operator
                         </a>
                     </li>
                     <hr class="sidebar-hr">
                 @endcan
                 @can('operator')
-                    <li class="sidebar-menu {{ request()->is('doors') ? 'high-light' : '' }}">
-                        <a href="{{ url('/doors') }}" class="nav-link">
+                    <li class="sidebar-menu {{ request()->is('dashboard/doors') ? 'high-light' : '' }}">
+                        <a href="{{ url('/dashboard/doors') }}" class="nav-link">
                             <i class="bi bi-door-open me-2"></i>Daftar Pintu
                         </a>
                     </li>
                     <hr class="sidebar-hr">
-                    <li class="sidebar-menu {{ request()->is('users') ? 'high-light' : '' }}">
-                        <a href="{{ url('/users') }}" class="nav-link">
+                    <li class="sidebar-menu {{ request()->is('dashboard/users') ? 'high-light' : '' }}">
+                        <a href="{{ url('/dashboard/users') }}" class="nav-link">
                             <i class="bi bi-person-lock me-2"></i>Daftar Pengguna
                         </a>
                     </li>
                     <hr class="sidebar-hr">
-                    <li class="sidebar-menu {{ request()->is('schedules') ? 'high-light' : '' }}">
-                        <a href="{{ url('/schedules') }}" class="nav-link">
+                    <li class="sidebar-menu {{ request()->is('dashboard/schedules') ? 'high-light' : '' }}">
+                        <a href="{{ url('/dashboard/schedules') }}" class="nav-link">
                             <i class="bi bi-clock-history me-2"></i>Penjadwalan
                         </a>
                     </li>
-                    <hr class="sidebar-hr">
-                    <li class="sidebar-menu {{ request()->is('guests') ? 'high-light' : '' }}">
-                        <a href="{{ url('/guests') }}" class="nav-link">
+                    {{-- <hr class="sidebar-hr">
+                    <li class="sidebar-menu {{ request()->is('dashboard/guests') ? 'high-light' : '' }}">
+                        <a href="{{ url('/dashboard/guests') }}" class="nav-link">
                             <i class="bi bi-clipboard-check me-2"></i>Undangan
                         </a>
-                    </li>
+                    </li> --}}
                     <hr class="sidebar-hr">
-                    <li class="sidebar-menu {{ request()->is('inboxs') ? 'high-light' : '' }}">
-                        <a href="{{ url('/inboxs') }}" class="nav-link">
+                    <li class="sidebar-menu {{ request()->is('dashboard/inboxs') ? 'high-light' : '' }}">
+                        <a href="{{ url('/dashboard/inboxs') }}" class="nav-link">
                             <i class="bi bi-envelope me-2"></i>Pesan Masuk
                         </a>
                     </li>
                     <hr class="sidebar-hr">
-                    <li class="sidebar-menu {{ request()->is('histories') ? 'high-light' : '' }}">
-                        <a href="{{ url('/histories') }}" class="nav-link">
+                    <li class="sidebar-menu {{ request()->is('dashboard/histories') ? 'high-light' : '' }}">
+                        <a href="{{ url('/dashboard/histories') }}" class="nav-link">
                             <i class="bi bi-card-checklist me-2"></i>Riwayat Akses
                         </a>
                     </li>
                     <hr class="sidebar-hr">
                 @endcan
-				<li class="sidebar-menu {{ request()->is('my-account') ? 'high-light' : '' }}">
-					<a href="{{ url('my-account') }}" class="nav-link">
+				<li class="sidebar-menu {{ request()->is('dashboard/my-account') ? 'high-light' : '' }}">
+					<a href="{{ url('/dashboard/my-account') }}" class="nav-link">
 						<i class="bi bi-person-gear me-2"></i>Pengaturan Akun
 					</a>
 				</li>

@@ -25,6 +25,7 @@ class UserSeeder extends Seeder
             'id'                => Uuid::uuid4(),
             'name'              => 'Muhammad Khoiril Wafi',
             'email'             => 'wafienginer@gmail.com',
+            'phone'             => '083116291606',
             'gender'            => 'Laki-laki',
             'email_verified_at' => Carbon::now(),
             'password'          => Hash::make('password'),
