@@ -56,37 +56,37 @@
 				@else
 					<thead>
 						<tr class="align-middle">
-							<td>No</td>
-							<td>Nama</td>
-							<td>Jenis Kelamin</td>
-							<td>Email</td>
-							<td>Nomor HP</td>
-							<td class="text-center">Status</td>
-							<td class="text-center">Gedung</td>
-							<td class="text-center">Aksi</td>
+							<th class="text-center">No</th>
+							<th>Nama</th>
+							<th>Jenis Kelamin</th>
+							<th>Email</th>
+							<th>Nomor HP</th>
+							<th>Gedung</th>
+							<th class="text-center">Status</th>
+							<th class="text-center">Aksi</th>
 						</tr>
 					</thead>
 					<tbody>
 						@foreach ($operators as $index => $operator)
 							<tr class="align-middle">
-								<td>{{ $operators->firstItem() + $index }}</td>
+								<td class="text-center">{{ $operators->firstItem() + $index }}</td>
 								<td>{{ $operator->name }}</td>
                                 <td>{{ $operator->gender }}</td>
 								<td>{{ $operator->email }}</td>
 								<td>{{ $operator->phone }}</td>
-								<td class="text-center">
-									@if ($operator->email_verified_at != null)
-                                        <div class="text-warning">Belum Verifikasi</div>
-                                    @else
-                                        <div class="text-success">Aktif</div>
-                                    @endif
-								</td>
-								<td class="text-center">
+								<td>
 									@if ($operator->office != null)
 										<div class="text-info">{{ $operator->office->name }}</div>
 									@else
 										<div class="text-warning">Belum Ada</div>
 									@endif
+								</td>
+                                <td class="text-center">
+									@if ($operator->email_verified_at != null)
+                                        <div class="text-warning">Belum Verifikasi</div>
+                                    @else
+                                        <div class="text-success">Aktif</div>
+                                    @endif
 								</td>
 								<td class="text-center">
 									<button wire:click="deleteOperatorConfirm('{{ $operator->id }}')" type="button" class="btn btn-sm btn-danger bg-gradient">

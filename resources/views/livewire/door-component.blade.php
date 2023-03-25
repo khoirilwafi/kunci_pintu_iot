@@ -68,20 +68,26 @@
                     @else
                         <thead>
                             <tr class="align-middle">
-                                <td>No</td>
-                                <td>Nama</td>
-                                <td class="text-center">Perangkat Kunci</td>
-                                <td class="text-center">Status Koneksi</td>
-                                <td class="text-center">Status Penguncian</td>
-                                <td class="text-center">Aksi</td>
+                                <th class="text-center">No</th>
+                                <th>Nama</th>
+                                <th class="text-center">Perangkat Kunci</th>
+                                <th class="text-center">Status Koneksi</th>
+                                <th class="text-center">Status Penguncian</th>
+                                <th class="text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($doors as $index => $door)
                                 <tr class="align-middle">
-                                    <td>{{ $doors->firstItem() + $index }}</td>
+                                    <td class="text-center">{{ $doors->firstItem() + $index }}</td>
                                     <td style="cursor: pointer;" wire:click="getDoorDetail('{{ $door->id }}')">{{ $door->name }}</td>
-                                    <td class="text-center">{{ $door->device_id }}</td>
+                                    <td class="text-center">
+                                        @if ($door->device_id == null)
+                                            <div class="text-warning">Belum Ada</div>
+                                        @else
+                                            <div class="text-info">{{ $door->device_id }}</div>
+                                        @endif
+                                    </td>
                                     <td class="text-center">
                                         @if ($door->socket_id == null)
                                             <div class="text-danger">Offline</div>
@@ -111,6 +117,7 @@
                         </tbody>
                     @endif
                 </table>
+                {{ $doors->links() }}
             </div>
         </div>
     @endif
@@ -126,9 +133,9 @@
                 Akses Pengguna
             </div>
             <div class="card-body">
-                <div class="p-2 mb-5 rounded border border-secondary d-flex">
+                <div class="p-2 mb-4 rounded border border-secondary d-flex">
                     <div class="p-2 bg-white rounded" style="cursor: pointer" wire:click="openModal('qrCode')">
-                        {!! QrCode::size(130)->generate($device_id) !!}
+                        {!! QrCode::size(130)->generate($door_url) !!}
                     </div>
                     <table class="ms-2">
                         <tr>
@@ -139,7 +146,13 @@
                         <tr>
                             <td class="px-2">Perangkat Kunci</td>
                             <td class="px-2">:</td>
-                            <td class="px-2">{{ $device_id }}</td>
+                            <td class="px-2">
+                                @if ($device_id == null)
+                                    <div class="text-warning">Belum Ada</div>
+                                @else
+                                    <div class="text-info">{{ $device_id }}</div>
+                                @endif
+                            </td>
                         </tr>
                         <tr>
                             <td class="px-2">Status Koneksi</td>
@@ -168,7 +181,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="px-2">Dipasang</td>
+                            <td class="px-2">Dibuat</td>
                             <td class="px-2">:</td>
                             <td class="px-2">{{ $created_at }}</td>
                         </tr>
@@ -181,62 +194,31 @@
                     </div>
                 </div>
                 <div class="d-flex mb-3">
-                    <button class="btn btn-sm btn-primary"><i class="bi bi-plus-circle me-1"></i>Tambah Pengguna</button>
-                    <div class="col-8 col-md-3 ms-auto">
-                        <input type="text" class="form-control form-control-sm bg-dark text-white" id="search" placeholder="Cari Pengguna ..." wire:model="search" autocomplete="off">
-                    </div>
+                    <button class="btn btn-sm btn-primary" wire:click="openModal('addAccess')"><i class="bi bi-plus-circle me-1"></i>Tambah Akses</button>
+                    {{-- <div class="col-8 col-md-3 ms-auto">
+                        <input type="text" class="form-control form-control-sm bg-dark text-white" id="search" placeholder="Cari Akses ..." wire:model="search" autocomplete="off">
+                    </div> --}}
                 </div>
             </div>
         </div>
     @endif
 
     {{-- add door form --}}
-	<div wire:ignore.self class="modal fade" id="addDoor" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="addDoorLabel" aria-hidden="true">
+	<div wire:ignore.self class="modal fade" id="addDoor" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1">
 		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
 				<div class="card text-white rounded">
 					<div class="card-header">Tambah Kunci Pintu Baru</div>
 					<div class="card-body">
-						<form wire:submit.prevent="storeUser" id="userForm">
-							<div class="mb-4">
-								<label for="email" class="form-label">Email</label>
-								<input type="email" class="form-control bg-dark text-white @error('email') is-invalid @enderror"
-									id="email" name="email" wire:model.defer="email" autocomplete="off">
-								@error('email')
-									<div class="invalid-feedback">
-										{{ $message }}
-									</div>
-								@enderror
-							</div>
+						<form wire:submit.prevent="storeDoor" id="doorForm">
                             <div class="mb-3">
-								<label for="name" class="form-label">Nama</label>
-								<input type="name" class="form-control bg-dark text-white @error('name') is-invalid @enderror" id="name"
-									name="name" wire:model.defer="name" autocomplete="off">
+								<label class="form-label">Nama</label>
+								<input type="text" class="form-control bg-dark text-white @error('name') is-invalid @enderror" name="name" wire:model.defer="name" autocomplete="off">
 								@error('name')
 									<div class="invalid-feedback">
 										{{ $message }}
 									</div>
 								@enderror
-							</div>
-                            <div class="mb-4">
-                                <label for="gender" class="form-label">Jenis Kelamin</label>
-                                <select class="form-select bg-dark text-white @error('gender') is-invalid @enderror" id="gender" name="gender" wire:model.defer="gender" autocomplete="off">
-                                    <option hidden class="text-white">-- pilih salah satu --</option>
-                                    <option value="Laki-laki">Laki-laki</option>
-                                    <option value="Perempuan">Perempuan</option>
-                                </select>
-                                @error('gender')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-							<div class="mb-4">
-								<strong>Pastikan email valid dan masih aktif.</strong>
-								<div style="text-align: justify">
-									pengguna akan menerima pesan melalui email yang berisi username, alamat email dan password (default) yang
-									digunakan untuk login dan verifikasi.
-								</div>
 							</div>
 						</form>
 						<div class="d-flex">
@@ -258,6 +240,45 @@
 		</div>
 	</div>
 
+    {{-- add access form --}}
+	<div wire:ignore.self class="modal fade" id="addAccess" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="card text-white rounded">
+					<div class="card-header">Tambah Akses Baru</div>
+					<div class="card-body">
+						<form wire:submit.prevent="storeAccess" id="accessForm">
+                            <div class="mb-4">
+                                <label class="form-label">Pengguna</label>
+                                <select class="form-select bg-dark text-white @error('user_id') is-invalid @enderror" name="" wire:model.defer="" autocomplete="off">
+                                    <option hidden class="text-white">-- pilih salah satu --</option>
+                                </select>
+                                @error('')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+						</form>
+						<div class="d-flex">
+							<button class="btn btn-sm btn-secondary ms-auto" wire:click="closeModal('addAccess')" wire:loading.attr='disabled' wire:target='storeDoor'>
+								<i class="bi bi-x-circle me-1"></i>
+								Batal
+							</button>
+							<button type="submit" form="accessForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
+								<div wire:loading wire:target='storeAccess'>
+                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                </div>
+								<i class="bi bi-plus-circle me-1" wire:loading.class='d-none' wire:target='storeAccess'></i>
+								Tambahkan
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
     {{-- edit door form --}}
     <div wire:ignore.self class="modal fade" id="editDoor" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -270,15 +291,6 @@
                                 <label class="form-label">Nama</label>
                                 <input type="name" class="form-control bg-dark text-white @error('name_edited') is-invalid @enderror" name="name_edited" wire:model.defer="name_edited" autocomplete="off">
                                 @error('name_edited')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Device ID</label>
-                                <input type="text" class="form-control bg-dark text-white @error('device_id_edited') is-invalid @enderror" name="device_id_edited" wire:model.defer="device_id_edited" autocomplete="off">
-                                @error('device_id_edited')
                                     <div class="invalid-feedback">
                                         {{ $message }}
                                     </div>

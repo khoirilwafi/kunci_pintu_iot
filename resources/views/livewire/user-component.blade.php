@@ -57,21 +57,21 @@
                     @else
                         <thead>
                             <tr class="align-middle">
-                                <td>No</td>
-                                <td>Nama</td>
-                                <td>Jenis Kelamin</td>
-                                <td>Email</td>
-                                <td>Nomor HP</td>
-                                <td class="text-center">Status</td>
-                                <td class="text-center">Aksi</td>
+                                <th class="text-center">No</th>
+                                <th>Nama</th>
+                                <th class="text-center">Jenis Kelamin</th>
+                                <th>Email</th>
+                                <th>Nomor HP</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($users as $index => $user)
                                 <tr class="align-middle">
-                                    <td>{{ $users->firstItem() + $index }}</td>
+                                    <td class="text-center">{{ $users->firstItem() + $index }}</td>
                                     <td>{{ $user->name }}</td>
-                                    <td>{{ $user->gender }}</td>
+                                    <td class="text-center">{{ $user->gender }}</td>
                                     <td>{{ $user->email }}</td>
                                     <td>{{ $user->phone }}</td>
                                     <td class="text-center">

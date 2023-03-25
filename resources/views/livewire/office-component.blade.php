@@ -68,17 +68,17 @@
 				@else
 					<thead>
 						<tr class="align-middle">
-							<td>No</td>
-							<td>Nama</td>
-							<td>Operator</td>
-							<td>Email</td>
-							<td class="text-center">Aksi</td>
+							<th class="text-center">No</th>
+							<th>Nama</th>
+							<th>Operator</th>
+							<th>Email</th>
+							<th class="text-center">Aksi</th>
 						</tr>
 					</thead>
 					<tbody>
 						@foreach ($offices as $index => $office)
 							<tr class="align-middle">
-								<td>{{ $offices->firstItem() + $index }}</td>
+								<td class="text-center">{{ $offices->firstItem() + $index }}</td>
 								<td>{{ $office->name }}</td>
 								<td>{{ $office->user->name }}</td>
 								<td>{{ $office->user->email }}</td>
@@ -121,11 +121,11 @@
                             <div class="mb-4">
                                 <label for="user_id" class="form-label">Operator</label>
                                 <select class="form-select bg-dark text-white @error('user_id') is-invalid @enderror" id="user_id" name="user_id" wire:model.defer="user_id" autocomplete="off">
-                                    @if ($user_id != '')
+                                    {{-- @if ($user_id != '')
                                         <option hidden selected class="text-white" value="{{ $user_id }}">{{ $operator_name }}</option>
                                     @else
 
-                                    @endif
+                                    @endif --}}
                                     <option hidden class="text-white">-- pilih salah satu --</option>
                                     @foreach ($available_operators as $operator)
                                         <option value="{{ $operator->id }}">{{ $operator->name }}</option>
@@ -179,8 +179,6 @@
                                 <select class="form-select bg-dark text-white @error('user_id') is-invalid @enderror" id="user_id" name="user_id" wire:model.defer="user_id" autocomplete="off">
                                     @if ($user_id != '')
                                         <option hidden selected class="text-white" value="{{ $user_id }}">{{ $operator_name }}</option>
-                                    @else
-
                                     @endif
                                     <option hidden class="text-white">-- pilih salah satu --</option>
                                     @foreach ($available_operators as $operator)

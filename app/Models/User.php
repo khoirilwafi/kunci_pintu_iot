@@ -43,12 +43,4 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(Avatar::class);
     }
-
-    // public function sendPasswordResetNotification($token)
-    // {
-    //     $url = 'https://' . request()->getHttpHost() . '/reset-password?token=' . $token;
-
-    //     $this->notify(new resetPassword($url));
-    //     // return (new resetPassword())->toMail(request()->user());
-    // }
 }

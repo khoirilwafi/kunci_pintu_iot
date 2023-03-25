@@ -47,6 +47,7 @@ class UserComponent extends Component
         $this->name   = '';
         $this->email  = '';
         $this->gender = '';
+        $this->phone  = '';
 
         $this->resetErrorBag();
         $this->resetValidation();

@@ -29,4 +29,14 @@ class Access extends Model
     protected $fillable = ['name', 'user_id', 'door_id', 'is_temporary', 'begin_at', 'end_at'];
 
     protected $cast = [];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function door()
+    {
+        return $this->belongsTo(Door::class);
+    }
 }
