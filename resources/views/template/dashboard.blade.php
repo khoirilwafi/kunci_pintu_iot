@@ -67,12 +67,12 @@
                             <i class="bi bi-clipboard-check me-2"></i>Undangan
                         </a>
                     </li> --}}
-                    <hr class="sidebar-hr">
+                    {{-- <hr class="sidebar-hr">
                     <li class="sidebar-menu {{ request()->is('dashboard/inboxs') ? 'high-light' : '' }}">
                         <a href="{{ url('/dashboard/inboxs') }}" class="nav-link">
                             <i class="bi bi-envelope me-2"></i>Pesan Masuk
                         </a>
-                    </li>
+                    </li> --}}
                     <hr class="sidebar-hr">
                     <li class="sidebar-menu {{ request()->is('dashboard/histories') ? 'high-light' : '' }}">
                         <a href="{{ url('/dashboard/histories') }}" class="nav-link">

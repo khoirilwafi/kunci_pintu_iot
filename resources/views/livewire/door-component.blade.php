@@ -133,7 +133,7 @@
                 Akses Pengguna
             </div>
             <div class="card-body">
-                <div class="p-2 mb-4 rounded border border-secondary d-flex">
+                <div class="p-2 mb-5 rounded border border-secondary d-flex">
                     <div class="p-2 bg-white rounded" style="cursor: pointer" wire:click="openModal('qrCode')">
                         {!! QrCode::size(130)->generate($door_url) !!}
                     </div>
@@ -195,9 +195,64 @@
                 </div>
                 <div class="d-flex mb-3">
                     <button class="btn btn-sm btn-primary" wire:click="openModal('addAccess')"><i class="bi bi-plus-circle me-1"></i>Tambah Akses</button>
-                    {{-- <div class="col-8 col-md-3 ms-auto">
-                        <input type="text" class="form-control form-control-sm bg-dark text-white" id="search" placeholder="Cari Akses ..." wire:model="search" autocomplete="off">
-                    </div> --}}
+                    <div class="col-8 col-md-3 ms-auto">
+                        <input type="text" class="form-control form-control-sm bg-dark text-white" id="search" placeholder="Cari Akses ..." wire:model="searchAccess" autocomplete="off">
+                    </div>
+                </div>
+                <div>
+                    @if (sizeof($access) != 0)
+                        <table class="table text-white mb-4">
+                            <thead>
+                                <tr class="align-middle">
+                                    <th class="text-center">No</th>
+                                    <th>Nama</th>
+                                    <th>Email</th>
+                                    <th class="text-center">Durasi Harian</th>
+                                    <th class="text-center">Batas Tanggal</th>
+                                    <th class="text-center">Remote</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($access as $index => $list)
+                                    <tr class="align-middle">
+                                        <td class="text-center">{{ $access->firstItem() + $index }}</td>
+                                        <td>{{ $list->user->name }}</td>
+                                        <td>{{ $list->user->email }}</td>
+                                        <td class="text-center">{{ $list->time_begin. ' sd '. $list->time_end }}</td>
+                                        @if ($list->is_temporary == 1)
+                                            <td class="text-center">{{ $list->date_begin. ' sd '. $list->date_end }}</td>
+                                        @else
+                                            <td class="text-center text-info">Tidak Terbatas</td>
+                                        @endif
+                                        @if ($list->is_remote == 1)
+                                            <td class="text-center text-warning">Ya</td>
+                                        @else
+                                            <td class="text-center text-info">Tidak</td>
+                                        @endif
+                                        @if ($list->is_running == 1)
+                                            <td class="text-center text-info">Aktif</td>
+                                        @else
+                                            <td class="text-center text-warning">Pending</td>
+                                        @endif
+                                        <td class="text-center">
+                                            <button wire:click="changeAccess('{{ $list->id }}')" wire:loading.attr="disabled" class="btn btn-sm text-white {{ ($list->is_running) == 1 ? 'btn-warning' : 'btn-info' }} me-1">
+                                                <i class="bi {{ ($list->is_running) == 1 ? 'bi-pause-circle' : 'bi-play-circle' }} me-1" wire:loading.class="d-none" wire:target="changeAccess('{{ $list->id }}')"></i>
+                                                <div wire:loading wire:target="changeAccess('{{ $list->id }}')">
+                                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                </div>
+                                                {{ ($list->is_running) == 1 ? 'Blokir' : 'Aktifkan' }}
+                                            </button>
+                                            <button class="btn btn-sm btn-danger" wire:click="confirmDeleteAccess('{{ $list->id }}')"><i class="bi bi-trash me-1"></i>Hapus</button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @else
+                        <div class="text-center mb-4">-- tidak ada data --</div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -248,20 +303,69 @@
 					<div class="card-header">Tambah Akses Baru</div>
 					<div class="card-body">
 						<form wire:submit.prevent="storeAccess" id="accessForm">
-                            <div class="mb-4">
+                            <div class="mb-3">
                                 <label class="form-label">Pengguna</label>
-                                <select class="form-select bg-dark text-white @error('user_id') is-invalid @enderror" name="" wire:model.defer="" autocomplete="off">
+                                <select class="form-select bg-dark text-white @error('access_user_id') is-invalid @enderror" wire:model.defer="access_user_id" autocomplete="off" required>
                                     <option hidden class="text-white">-- pilih salah satu --</option>
+                                    @foreach ($users as $user)
+                                        <option class="text-white" value="{{ $user->id }}">{{ $user->name }}</option>
+                                    @endforeach
                                 </select>
-                                @error('')
+                                @error('access_user_id')
                                     <div class="invalid-feedback">
                                         {{ $message }}
                                     </div>
                                 @enderror
                             </div>
+                            <div class="mb-3">
+                                <label class="form-label">Durasi Harian</label>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="input-group mb-1">
+                                            <span class="input-group-text bg-dark text-white">Mulai</span>
+                                            <input type="time" class="form-control bg-dark text-white @error('access_time_begin') is-invalid @enderror" wire:model.defer="access_time_begin" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="input-group mb-1">
+                                            <span class="input-group-text bg-dark text-white">Sampai</span>
+                                            <input type="time" class="form-control bg-dark text-white @error('access_time_end') is-invalid @enderror" wire:model.defer="access_time_end" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="access_is_remote">
+                                <label class="form-check-label">
+                                    Akses Remote
+                                </label>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:click="showDate" wire:model.defer="access_is_temporary">
+                                <label class="form-check-label">
+                                    Akses Sementara
+                                </label>
+                            </div>
+                            {{-- @if(!$date_visibility) d-none @endif --}}
+                            <div class="mb-4 @if(!$date_visibility) d-none @endif">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="input-group mb-1">
+                                            <span class="input-group-text bg-dark text-white">Mulai</span>
+                                            <input type="date" class="form-control bg-dark text-white @error('access_date_begin') is-invalid @enderror" wire:model.defer="access_date_begin">
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="input-group mb-1">
+                                            <span class="input-group-text bg-dark text-white">Sampai</span>
+                                            <input type="date" class="form-control bg-dark text-white @error('access_date_end') is-invalid @enderror" wire:model.defer="access_date_end">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 						</form>
 						<div class="d-flex">
-							<button class="btn btn-sm btn-secondary ms-auto" wire:click="closeModal('addAccess')" wire:loading.attr='disabled' wire:target='storeDoor'>
+							<button class="btn btn-sm btn-secondary ms-auto" wire:click="closeModal('addAccess')" wire:loading.attr='disabled' wire:target='storeAccess'>
 								<i class="bi bi-x-circle me-1"></i>
 								Batal
 							</button>
@@ -333,6 +437,34 @@
 							<button wire:click="delete" wire:loading.attr="disabled" wire:target="closeModal('deleteConfirm')" class="btn btn-sm btn-danger ms-3">
 								<i class="bi bi-trash me-1" wire:loading.class="d-none" wire:target="delete"></i>
 								<div wire:loading wire:target="delete">
+									<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+								</div>
+								Hapus
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+    {{-- delete access confirm --}}
+	<div wire:ignore.self class="modal fade" id="deleteAccessConfirm" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="card text-white rounded">
+					<div class="card-header">Konfirmasi Hapus Akses</div>
+					<div class="card-body">
+						Apakah anda yakin untuk mengapus akses <strong>{{ $access_user_name }}</strong> di pintu <strong>{{ $access_door_name }}</strong> secara permanen ?
+						<div class="d-flex mt-3">
+							<button class="btn btn-sm btn-primary ms-auto" wire:click="closeModal('deleteAccessConfirm')" wire:loading.attr="disabled"
+								wire:target="deleteAccess">
+								<i class="bi bi-x-circle me-1"></i>
+								Batal
+							</button>
+							<button wire:click="deleteAccess" wire:loading.attr="disabled" wire:target="closeModal('deleteAccessConfirm')" class="btn btn-sm btn-danger ms-3">
+								<i class="bi bi-trash me-1" wire:loading.class="d-none" wire:target="deleteAccess"></i>
+								<div wire:loading wire:target="deleteAccess">
 									<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
 								</div>
 								Hapus

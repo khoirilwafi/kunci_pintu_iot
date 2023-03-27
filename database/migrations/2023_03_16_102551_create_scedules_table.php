@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('name')->unique();
             $table->uuid('user_id');
             $table->uuid('door_id');
-            $table->dateTime('begin_at');
-            $table->dateTime('end_at');
+            $table->time('time_begin');
+            $table->time('time_end');
             $table->boolean('is_repeating');
             $table->boolean('day_0');
             $table->boolean('day_1');

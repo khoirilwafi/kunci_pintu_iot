@@ -190,7 +190,7 @@
 									</div>
 								@enderror
 							</div>
-                            <div class="mb-4">
+                            <div class="mb-3">
                                 <label for="gender" class="form-label">Jenis Kelamin</label>
                                 <select class="form-select bg-dark text-white @error('gender') is-invalid @enderror" id="gender" name="gender" wire:model.defer="gender" autocomplete="off">
                                     <option hidden class="text-white">-- pilih salah satu --</option>
@@ -203,7 +203,7 @@
                                     </div>
                                 @enderror
                             </div>
-                            <div class="mb-4">
+                            <div class="mb-3">
 								<label for="email" class="form-label">Email</label>
 								<input type="email" class="form-control bg-dark text-white @error('email') is-invalid @enderror"
 									id="email" name="email" wire:model.defer="email" autocomplete="off">

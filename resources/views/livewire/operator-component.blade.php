@@ -82,7 +82,7 @@
 									@endif
 								</td>
                                 <td class="text-center">
-									@if ($operator->email_verified_at != null)
+									@if ($operator->email_verified_at == null)
                                         <div class="text-warning">Belum Verifikasi</div>
                                     @else
                                         <div class="text-success">Aktif</div>

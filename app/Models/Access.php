@@ -26,7 +26,7 @@ class Access extends Model
 
     protected $hidden = [];
 
-    protected $fillable = ['name', 'user_id', 'door_id', 'is_temporary', 'begin_at', 'end_at'];
+    protected $fillable = ['name', 'user_id', 'door_id', 'is_temporary', 'time_begin', 'time_end', 'date_begin', 'date_end', 'is_remote', 'is_running'];
 
     protected $cast = [];
 

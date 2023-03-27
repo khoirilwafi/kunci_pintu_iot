@@ -1,38 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-	<meta charset="UTF-8" />
-	<meta name="viewport"
-		content="width=device-width, initial-scale=1.0" />
-	<title>QR Code Generator</title>
-
-	<style>
-		h1, h3 {
-		color: green;
-		}
-		body, header {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		}
-	</style>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
 </head>
-
 <body>
 
-    <h1>GeeksforGeeks</h1>
-    <h3>QR code generator using qrcode.js</h3>
-    <h3>To visit geeksforgeeks.org scan below code</h3>
-    <div style="padding: 20px; background-color: blue; border:1px solid red;">
-        <div id="qrcode"></div>
-    </div>
+<form action="" method="post">
+	<input type="time" name="time" id="time">
+	<input type="date" name="" id="">
+	<input type="date" name="" id="" data-date-format="dd/mm/yyyy">
+</form>
 
-	<script>
-		var qrcode = new QRCode("qrcode", "https://www.geeksforgeeks.org");
-	</script>
 </body>
-
 </html>
