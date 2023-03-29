@@ -143,30 +143,54 @@
                     </table>
                 </div>
                 <div class="d-flex mb-3">
-                    <button class="btn btn-sm btn-primary"><i class="bi bi-plus-circle me-1"></i>Tambah Akses</button>
                     <div class="col-8 col-md-3 ms-auto">
                         <input type="text" class="form-control form-control-sm bg-dark text-white" id="search"
-                            placeholder="Cari Akses ..." wire:model="search" autocomplete="off">
+                            placeholder="Cari Pintu ..." wire:model="searchAccess" autocomplete="off">
                     </div>
                 </div>
-                <div class="border border-secondary rounded d-flex mb-2">
-                    <div class="p-3 d-flex flex-column border-end border-secondary"><i class="bi bi-key fs-4 my-auto"></i></div>
-                    <div class="p-2 w-100">
-                        <div class="d-flex">
-                            <div>
-                                <div class="fs-6 fw-bold">Ruang Dosen</div>
-                                <div class="lh-1">
-                                    <small>Gedung Teknik Kimia</small>
-                                </div>
-                            </div>
-                            <div class="ms-auto"><small><i class="bi bi-clock me-2"></i>05.00 AM s/d 18.00 PM</small></div>
-                        </div>
-                        <div class="d-flex">
-                            <div class="text-warning mt-auto"><small>QR Remote</small></div>
-                            <button class="btn btn-sm btn-primary ms-auto me-2"><i class="bi bi-pause-circle me-1"></i>Blokir</button>
-                            <button class="btn btn-sm btn-danger"><i class="bi bi-trash me-1"></i>Hapus</button>
-                        </div>
-                    </div>
+                <div class="p-2 rounded border border-secondary">
+                    @if (sizeof($access) != 0)
+                        <table class="table text-white">
+                            <thead>
+                                <tr class="align-middle">
+                                    <th class="text-center">No</th>
+                                    <th>Pintu</th>
+                                    <th>Gedung</th>
+                                    <th class="text-center">Durasi Harian</th>
+                                    <th class="text-center">Batas Tanggal</th>
+                                    <th class="text-center">Remote</th>
+                                    <th class="text-center">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($access as $index => $list)
+                                    <tr class="align-middle">
+                                        <td class="text-center">{{ $access->firstItem() + $index }}</td>
+                                        <td>{{ $list->door->name }}</td>
+                                        <td>{{ $list->door->office->name }}</td>
+                                        <td class="text-center">{{ $list->time_begin. ' sd '. $list->time_end }}</td>
+                                        @if ($list->is_temporary == 1)
+                                            <td class="text-center">{{ $list->date_begin. ' sd '. $list->date_end }}</td>
+                                        @else
+                                            <td class="text-center text-info">Tidak Terbatas</td>
+                                        @endif
+                                        @if ($list->is_remote == 1)
+                                            <td class="text-center text-warning">Ya</td>
+                                        @else
+                                            <td class="text-center text-info">Tidak</td>
+                                        @endif
+                                        @if ($list->is_running == 1)
+                                            <td class="text-center text-info">Aktif</td>
+                                        @else
+                                            <td class="text-center text-warning">Pending</td>
+                                        @endif
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @else
+                        <div class="text-center mb-3 mt-3">-- tidak ada data --</div>
+                    @endif
                 </div>
             </div>
         </div>

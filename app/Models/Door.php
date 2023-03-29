@@ -31,6 +31,6 @@ class Door extends Model
 
     public function office()
     {
-        return $this->hasOne(Office::class);
+        return $this->belongsTo(Office::class);
     }
 }

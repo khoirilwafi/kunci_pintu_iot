@@ -199,14 +199,13 @@
                         <input type="text" class="form-control form-control-sm bg-dark text-white" id="search" placeholder="Cari Akses ..." wire:model="searchAccess" autocomplete="off">
                     </div>
                 </div>
-                <div>
+                <div class="p-2 rounded border border-secondary">
                     @if (sizeof($access) != 0)
-                        <table class="table text-white mb-4">
+                        <table class="table text-white">
                             <thead>
                                 <tr class="align-middle">
                                     <th class="text-center">No</th>
                                     <th>Nama</th>
-                                    <th>Email</th>
                                     <th class="text-center">Durasi Harian</th>
                                     <th class="text-center">Batas Tanggal</th>
                                     <th class="text-center">Remote</th>
@@ -219,7 +218,6 @@
                                     <tr class="align-middle">
                                         <td class="text-center">{{ $access->firstItem() + $index }}</td>
                                         <td>{{ $list->user->name }}</td>
-                                        <td>{{ $list->user->email }}</td>
                                         <td class="text-center">{{ $list->time_begin. ' sd '. $list->time_end }}</td>
                                         @if ($list->is_temporary == 1)
                                             <td class="text-center">{{ $list->date_begin. ' sd '. $list->date_end }}</td>
@@ -251,7 +249,7 @@
                             </tbody>
                         </table>
                     @else
-                        <div class="text-center mb-4">-- tidak ada data --</div>
+                        <div class="text-center mb-3 mt-3">-- tidak ada data --</div>
                     @endif
                 </div>
             </div>

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->uuid('office_id');
             $table->string('device_id')->unique()->nullable();
             $table->string('socket_id')->unique()->nullable();
-            $table->string('name')->unique();
+            $table->string('name');
             $table->boolean('is_lock')->default(1);
             $table->timestamps();
         });

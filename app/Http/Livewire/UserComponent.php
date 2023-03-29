@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\Access;
 use Exception;
 use App\Models\User;
 use App\Models\Avatar;
@@ -18,25 +19,36 @@ class UserComponent extends Component
     protected $paginationTheme = 'bootstrap';
 
     // data model
-    public $name, $email, $gender, $phone;
+    public $user_id, $name, $email, $gender, $phone;
     public $delete_id;
-    public $search = '';
+    public $search, $searchAccess;
 
     public $table_visibility = true;
     public $user_detail_visibility = false;
 
     public $avatar_name, $created_at;
 
+
     public function render()
     {
-        // get all operator and paginate
-        $data['users'] = User::where('name', 'like', '%' . $this->search . '%')->where('role', 'pengguna')->where('added_by', request()->user()->id)->paginate(7);
+        // get all user and paginate
+        $data['users']  = User::where('name', 'like', '%' . $this->search . '%')->where('role', 'pengguna')->where('added_by', request()->user()->id)->paginate(7);
+
+        // get all user access
+        $data['access'] = Access::with('door.office')->whereHas('door', function ($query) {
+            $query->where('name', 'like', '%' . $this->searchAccess . '%');
+        })->where('user_id', $this->user_id)->paginate(5);
 
         return view('livewire.user-component', $data);
     }
 
     // reset paginate
     public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingSearchAccess()
     {
         $this->resetPage();
     }
@@ -148,6 +160,9 @@ class UserComponent extends Component
             $this->avatar_name = '02943e5368adf6cc72f4a2e0a435090b.png';
         }
 
+        $this->searchAccess = '';
+
+        $this->user_id    = $id;
         $this->name       = $user->name;
         $this->gender     = $user->gender;
         $this->email      = $user->email;
@@ -160,6 +175,8 @@ class UserComponent extends Component
 
     public function tampilkan_table()
     {
+        $this->search = '';
+
         $this->table_visibility = true;
         $this->user_detail_visibility = false;
     }

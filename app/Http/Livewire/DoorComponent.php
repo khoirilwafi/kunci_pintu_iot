@@ -2,13 +2,14 @@
 
 namespace App\Http\Livewire;
 
-use App\Models\Access;
-use App\Models\Door;
-use App\Models\Office;
-use App\Models\User;
 use Exception;
+use App\Models\Door;
+use App\Models\User;
+use App\Models\Access;
+use App\Models\Office;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Illuminate\Validation\Rule;
 
 class DoorComponent extends Component
 {
@@ -137,7 +138,7 @@ class DoorComponent extends Component
     public function storeDoor()
     {
         $this->validate([
-            'name' => ['required', 'string', 'min:4', 'max:50'],
+            'name' => ['required', 'string', 'min:4', 'max:50', 'unique:doors,name'],
         ]);
 
         $door['name'] = $this->name;
@@ -181,7 +182,7 @@ class DoorComponent extends Component
     public function updateDoor()
     {
         $this->validate([
-            'name_edited' => ['required', 'string', 'min:4', 'max:50'],
+            'name_edited' => ['required', 'string', 'min:4', 'max:50', Rule::unique('users', 'name')->ignore($this->edit_id)],
         ]);
 
         $door = Door::where('id', $this->edit_id)->first();
