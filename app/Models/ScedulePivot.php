@@ -5,15 +5,15 @@ namespace App\Models;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Door extends Model
+class ScedulePivot extends Model
 {
     use HasFactory;
 
-    public $incrementing = false;
-    protected $keyType = 'string';
+    public $incrementing  = false;
+    protected $keyType    = 'string';
     protected $primaryKey = 'id';
+    protected $table      = 'scedule_pivots';
 
     protected static function boot()
     {
@@ -26,17 +26,17 @@ class Door extends Model
 
     protected $hidden = [];
 
-    protected $fillable = ['name', 'status', 'is_lock', 'office_id', 'device_id', 'socket_id'];
+    protected $fillable = ['door_id', 'scedule_id'];
 
     protected $cast = [];
 
-    public function office()
-    {
-        return $this->belongsTo(Office::class);
-    }
-
     public function scedule()
     {
-        return $this->hasMany(Scedule::class);
+        return $this->belongsTo(Scedule::class);
+    }
+
+    public function door()
+    {
+        return $this->belongsTo(Door::class);
     }
 }

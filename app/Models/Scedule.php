@@ -34,8 +34,8 @@ class Scedule extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function door()
+    public function scedule()
     {
-        return $this->belongsTo(Door::class);
+        return $this->hasMany(Scedule::class);
     }
 }

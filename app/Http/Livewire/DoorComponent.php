@@ -218,6 +218,8 @@ class DoorComponent extends Component
 
     public function showDate()
     {
+        $this->reset(['access_date_begin', 'access_date_end']);
+
         if ($this->date_visibility) {
             $this->date_visibility = false;
         } else {
@@ -229,17 +231,17 @@ class DoorComponent extends Component
     {
         $this->validate([
             'access_user_id'    => ['required'],
-            'access_time_begin' => ['required'],
-            'access_time_end'   => ['required'],
-            'access_date_begin' => ['required_if:access_is_temporary,1'],
-            'access_date_end'   => ['required_if:access_is_temporary,1'],
+            'access_time_begin' => ['required', 'date_format:H:i'],
+            'access_time_end'   => ['required', 'date_format:H:i'],
+            'access_date_begin' => ['required_if:access_is_temporary,1', 'date'],
+            'access_date_end'   => ['required_if:access_is_temporary,1', 'date', 'after:access_date_begin'],
         ]);
 
         $access = array(
             'user_id'      => $this->access_user_id,
             'door_id'      => $this->edit_id,
-            'time_begin'   => $this->access_time_begin . ':00',
-            'time_end'     => $this->access_time_end . ':59',
+            'time_begin'   => $this->access_time_begin,
+            'time_end'     => $this->access_time_end,
             'date_begin'   => $this->access_date_begin ?  $this->access_date_begin : null,
             'date_end'     => $this->access_date_end ?  $this->access_date_end : null,
             'is_temporary' => $this->access_is_temporary ? 1 : 0,

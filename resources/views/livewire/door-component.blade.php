@@ -248,6 +248,7 @@
                                 @endforeach
                             </tbody>
                         </table>
+                        {{ $access->links(); }}
                     @else
                         <div class="text-center mb-3 mt-3">-- tidak ada data --</div>
                     @endif
@@ -322,12 +323,22 @@
                                         <div class="input-group mb-1">
                                             <span class="input-group-text bg-dark text-white">Mulai</span>
                                             <input type="time" class="form-control bg-dark text-white @error('access_time_begin') is-invalid @enderror" wire:model.defer="access_time_begin" required>
+                                            @error('access_time_begin')
+                                                <div class="invalid-feedback">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="input-group mb-1">
                                             <span class="input-group-text bg-dark text-white">Sampai</span>
                                             <input type="time" class="form-control bg-dark text-white @error('access_time_end') is-invalid @enderror" wire:model.defer="access_time_end" required>
+                                            @error('access_time_end')
+                                                <div class="invalid-feedback">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
                                         </div>
                                     </div>
                                 </div>
@@ -344,7 +355,6 @@
                                     Akses Sementara
                                 </label>
                             </div>
-                            {{-- @if(!$date_visibility) d-none @endif --}}
                             <div class="mb-4 @if(!$date_visibility) d-none @endif">
                                 <div class="row">
                                     <div class="col-6">
