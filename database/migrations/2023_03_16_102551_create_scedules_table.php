@@ -14,26 +14,25 @@ return new class extends Migration
     public function up()
     {
         Schema::create('scedules', function (Blueprint $table) {
-            $table->uuid('id');
-            $table->string('name')->unique();
+            $table->uuid('id')->primary();
+            $table->string('name');
             $table->uuid('user_id');
-            $table->uuid('door_id');
+            $table->date('date_running');
             $table->time('time_begin');
             $table->time('time_end');
-            $table->boolean('is_repeating');
-            $table->boolean('day_0');
-            $table->boolean('day_1');
-            $table->boolean('day_2');
-            $table->boolean('day_3');
-            $table->boolean('day_4');
-            $table->boolean('day_5');
-            $table->boolean('day_6');
+            $table->boolean('is_repeating')->nullable();
+            $table->boolean('day_0')->nullable();
+            $table->boolean('day_1')->nullable();
+            $table->boolean('day_2')->nullable();
+            $table->boolean('day_3')->nullable();
+            $table->boolean('day_4')->nullable();
+            $table->boolean('day_5')->nullable();
+            $table->boolean('day_6')->nullable();
             $table->timestamps();
         });
 
         Schema::table('scedules', function (Blueprint $table) {
-            $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('restrict');
-            $table->foreign('door_id')->references('id')->on('doors')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 

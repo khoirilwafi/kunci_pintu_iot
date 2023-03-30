@@ -22,6 +22,8 @@ return new class extends Migration
             $table->boolean('is_temporary')->nullable();
             $table->date('date_begin')->default(null)->nullable();
             $table->date('date_end')->default(null)->nullable();
+            $table->boolean('is_remote')->nullable();
+            $table->boolean('is_running')->nullable();
             $table->timestamps();
         });
 

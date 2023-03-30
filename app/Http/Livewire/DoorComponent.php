@@ -83,6 +83,8 @@ class DoorComponent extends Component
         $this->access_time_end     = '';
         $this->access_is_remote    = '';
         $this->access_status       = '';
+
+        $this->date_visibility = false;
     }
 
     protected function resetModal()
@@ -242,6 +244,7 @@ class DoorComponent extends Component
             'date_end'     => $this->access_date_end ?  $this->access_date_end : null,
             'is_temporary' => $this->access_is_temporary ? 1 : 0,
             'is_remote'    => $this->access_is_remote ? 1 : 0,
+            'is_running'   => 1,
         );
 
         $status = Access::create($access);
