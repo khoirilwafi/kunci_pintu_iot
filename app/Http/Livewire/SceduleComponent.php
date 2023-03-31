@@ -28,11 +28,13 @@ class SceduleComponent extends Component
     public $scedule_detail_visibility = false;
     public $insert_day = false;
 
+    public $search, $searchDoor = 'x';
+
 
     public function render()
     {
         // get all scedule
-        $data['scedules'] = Scedule::where('user_id', request()->user()->id)->paginate(7);
+        $data['scedules'] = Scedule::where('user_id', request()->user()->id)->where('name', 'like', '%' . $this->search . '%')->paginate(7);
 
         // get operator office
         $office = Office::where('user_id', request()->user()->id)->first();
@@ -45,6 +47,16 @@ class SceduleComponent extends Component
         $data['door_links'] = ScedulePivot::with('door')->where('scedule_id', $this->scedule_id)->paginate(5);
 
         return view('livewire.scedule-component', $data);
+    }
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingSearchDoor()
+    {
+        $this->resetPage();
     }
 
     protected function resetModal()
@@ -60,12 +72,16 @@ class SceduleComponent extends Component
 
     public function showTable()
     {
+        $this->searchDoor = '';
+
         $this->scedule_table_visibility = true;
         $this->scedule_detail_visibility = false;
     }
 
     public function showDetail()
     {
+        $this->search = '';
+
         $this->scedule_table_visibility = false;
         $this->scedule_detail_visibility = true;
     }
@@ -145,10 +161,17 @@ class SceduleComponent extends Component
 
     public function deleteConfirm($id)
     {
-        $scedule = Scedule::where('id', $id)->first();
+        if ($this->scedule_table_visibility == true) {
+            $scedule = Scedule::where('id', $id)->first();
 
-        $this->delete_name = $scedule->name;
-        $this->delete_id   = $scedule->id;
+            $this->delete_name = $scedule->name;
+            $this->delete_id   = $scedule->id;
+        } else {
+            $doors = ScedulePivot::with('door')->where('id', $id)->first();
+
+            $this->delete_name = $doors->door->name;
+            $this->delete_id   = $doors->id;
+        }
 
         $this->openModal('deleteConfirm');
     }
@@ -156,11 +179,19 @@ class SceduleComponent extends Component
     public function delete()
     {
         try {
-            Scedule::where('id', $this->delete_id)->delete();
+
+            if ($this->scedule_table_visibility == true) {
+                Scedule::where('id', $this->delete_id)->delete();
+            } else {
+                ScedulePivot::where('id', $this->delete_id)->delete();
+            }
+
             session()->flash('delete_success', $this->delete_name);
         } catch (Exception $e) {
             session()->flash('delete_failed', $this->delete_name);
         }
+
+        $this->closeModal('deleteConfirm');
     }
 
     public function getSceduleDetail($id)
@@ -265,5 +296,7 @@ class SceduleComponent extends Component
         } else {
             session()->flash('insert_failed', $door->name);
         }
+
+        $this->closeModal('addDoor');
     }
 }

@@ -164,9 +164,9 @@
                 </div>
                 <div class="d-flex mb-3">
                     <button class="btn btn-sm btn-primary" wire:click="openModal('addDoor')"><i class="bi bi-plus-circle me-1"></i>Tambah Pintu</button>
-                    <div class="col-8 col-md-3 ms-auto">
-                        <input type="text" class="form-control form-control-sm bg-dark text-white" id="search" placeholder="Cari Akses ..." wire:model="searchAccess" autocomplete="off">
-                    </div>
+                    {{-- <div class="col-8 col-md-3 ms-auto">
+                        <input type="text" class="form-control form-control-sm bg-dark text-white" id="searchDoor" placeholder="Cari Pintu ..." wire:model="searchDoor" autocomplete="off">
+                    </div> --}}
                 </div>
                 <div class="p-2 rounded border border-secondary">
                     @if (sizeof($door_links) != 0)
@@ -216,7 +216,7 @@
                                                 <i class="bi bi-door-open me-1"></i>
                                                 Buka
                                             </button>
-                                            <button wire:click="" type="button" class="btn btn-sm btn-danger bg-gradient">
+                                            <button wire:click="deleteConfirm('{{ $list->id }}')" type="button" class="btn btn-sm btn-danger bg-gradient">
                                                 <i class="bi bi-trash me-1"></i>
                                                 Hapus
                                             </button>
