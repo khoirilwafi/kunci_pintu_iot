@@ -2,6 +2,9 @@
 
 use Illuminate\Support\Facades\Broadcast;
 
+use App\Websockets\DoorSocketHandler;
+use BeyondCode\LaravelWebSockets\Facades\WebSocketsRouter;
+
 /*
 |--------------------------------------------------------------------------
 | Broadcast Channels
@@ -16,3 +19,5 @@ use Illuminate\Support\Facades\Broadcast;
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
+
+WebSocketsRouter::webSocket('/door-connect', DoorSocketHandler::class);
