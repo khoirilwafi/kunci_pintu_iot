@@ -35,6 +35,20 @@ class DoorSocketHandler implements MessageComponentInterface
         return $this;
     }
 
+    protected function validateCredential(ConnectionInterface $conn)
+    {
+        $device_id = QueryParameters::create($conn->httpRequest)->get('deviceId');
+        $token = QueryParameters::create($conn->httpRequest)->get('token');
+
+        if ($device_id == null || $token == null) {
+            $conn->close();
+        }
+
+
+
+        return $this;
+    }
+
     protected function generateSocketId(ConnectionInterface $conn)
     {
         $socket_id = sprintf('%d.%d', random_int(1, 1000000000), random_int(1, 1000000000));
