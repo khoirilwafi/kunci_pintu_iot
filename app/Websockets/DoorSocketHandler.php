@@ -2,6 +2,8 @@
 
 namespace App\Websockets;
 
+use App\Models\Door;
+use App\Websockets\Exceptions\InvalidCredentials;
 use Exception;
 use Ratchet\ConnectionInterface;
 use BeyondCode\LaravelWebSockets\Apps\App;
@@ -11,14 +13,13 @@ use BeyondCode\LaravelWebSockets\QueryParameters;
 use BeyondCode\LaravelWebSockets\Dashboard\DashboardLogger;
 use BeyondCode\LaravelWebSockets\Facades\StatisticsLogger;
 use BeyondCode\LaravelWebSockets\WebSockets\Exceptions\UnknownAppKey;
-use BeyondCode\LaravelWebSockets\WebSockets\Exceptions\ConnectionsOverCapacity;
-
+use Illuminate\Http\Request;
 
 class DoorSocketHandler implements MessageComponentInterface
 {
     protected function validateAppKey(ConnectionInterface $conn)
     {
-        $app_key = QueryParameters::create($conn->httpRequest)->get('appKey');
+        $app_key = QueryParameters::create($conn->httpRequest)->get('app');
         $app = App::findByKey($app_key);
 
         if ($app == null) {
@@ -37,14 +38,20 @@ class DoorSocketHandler implements MessageComponentInterface
 
     protected function validateCredential(ConnectionInterface $conn)
     {
-        $device_id = QueryParameters::create($conn->httpRequest)->get('deviceId');
-        $token = QueryParameters::create($conn->httpRequest)->get('token');
+        $header = $conn->httpRequest->getHeaders();
 
-        if ($device_id == null || $token == null) {
+        $device_id = $header['Device-Id'][0];
+        $token = $header['Token'][0];
+
+        $device = Door::where('device_id', $device_id)->where('token', $token)->first();
+
+        if ($device == null) {
             $conn->close();
+            throw new InvalidCredentials($device_id, $token);
         }
 
-
+        $device->socket_id = $conn->socketId;
+        $device->save();
 
         return $this;
     }
@@ -72,22 +79,25 @@ class DoorSocketHandler implements MessageComponentInterface
         return $this;
     }
 
-
     public function onOpen(ConnectionInterface $conn)
     {
-        $this->validateAppKey($conn)->generateSocketId($conn)->establishConnection($conn);
-    }
-
-    public function onClose(ConnectionInterface $conn)
-    {
-    }
-
-    public function onError(ConnectionInterface $conn, Exception $e)
-    {
+        $this->validateAppKey($conn)->generateSocketId($conn)->validateCredential($conn)->establishConnection($conn);
     }
 
     public function onMessage(ConnectionInterface $conn, MessageInterface $msg)
     {
         $conn->send($msg->getPayload());
+    }
+
+    public function onClose(ConnectionInterface $conn)
+    {
+        $device = Door::where('socket_id', $conn->socketId)->first();
+        $device->socket_id = null;
+        $device->save();
+    }
+
+    public function onError(ConnectionInterface $conn, Exception $e)
+    {
+        $conn->close();
     }
 }

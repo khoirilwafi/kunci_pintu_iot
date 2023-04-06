@@ -85,7 +85,7 @@
                                         @if ($door->device_id == null)
                                             <div class="text-warning">Belum Ada</div>
                                         @else
-                                            <div class="text-info">{{ $door->device_id }}</div>
+                                            <div class="text-info">{{ strtoupper($door->device_id) }}</div>
                                         @endif
                                     </td>
                                     <td class="text-center">
@@ -150,7 +150,7 @@
                                 @if ($device_id == null)
                                     <div class="text-warning">Belum Ada</div>
                                 @else
-                                    <div class="text-info">{{ $device_id }}</div>
+                                    <div class="text-info">{{ strtoupper($device_id) }}</div>
                                 @endif
                             </td>
                         </tr>
