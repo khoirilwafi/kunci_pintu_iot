@@ -238,131 +238,133 @@
 	<div wire:ignore.self class="modal fade" id="addScedule" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1">
 		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
-				<div class="card text-white rounded">
-					<div class="card-header">Tambah Jadwal Baru</div>
-					<div class="card-body">
-						<form wire:submit.prevent="storeScedule" id="sceduleForm">
-                            <div class="mb-3">
-								<label class="form-label">Nama</label>
-								<input type="name" class="form-control bg-dark text-white @error('insert_name') is-invalid @enderror" wire:model.defer="insert_name" autocomplete="off" required>
-								@error('insert_name')
-									<div class="invalid-feedback">
-										{{ $message }}
-									</div>
-								@enderror
-							</div>
-                            <div class="mb-3">
-                                <label class="form-label">Tanggal</label>
-                                <input type="date" class="form-control bg-dark text-white @error('insert_date') is-invalid @enderror" wire:model.defer="insert_date" autocomplete="off" required>
-								@error('insert_date')
-									<div class="invalid-feedback">
-										{{ $message }}
-									</div>
-								@enderror
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Durasi Harian</label>
-                                <div class="row">
-                                    <div class="col-6">
-                                        <div class="input-group mb-1">
-                                            <span class="input-group-text bg-dark text-white">Mulai</span>
-                                            <input type="time" class="form-control bg-dark text-white @error('insert_time_begin') is-invalid @enderror" wire:model.defer="insert_time_begin" required>
-                                            @error('insert_time_begin')
-                                                <div class="invalid-feedback">
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        </div>
+                <div class="modal-header">
+                    Tambah Jadwal Baru
+                </div>
+                <div class="modal-body">
+                    <form wire:submit.prevent="storeScedule" id="sceduleForm">
+                        <div class="mb-3">
+                            <label class="form-label">Nama</label>
+                            <input type="name" class="form-control bg-dark text-white @error('insert_name') is-invalid @enderror" wire:model.defer="insert_name" autocomplete="off" required>
+                            @error('insert_name')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tanggal</label>
+                            <input type="date" class="form-control bg-dark text-white @error('insert_date') is-invalid @enderror" wire:model.defer="insert_date" autocomplete="off" required>
+                            @error('insert_date')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Durasi Harian</label>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="input-group mb-1">
+                                        <span class="input-group-text bg-dark text-white">Mulai</span>
+                                        <input type="time" class="form-control bg-dark text-white @error('insert_time_begin') is-invalid @enderror" wire:model.defer="insert_time_begin" required>
+                                        @error('insert_time_begin')
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
-                                    <div class="col-6">
-                                        <div class="input-group mb-1">
-                                            <span class="input-group-text bg-dark text-white">Sampai</span>
-                                            <input type="time" class="form-control bg-dark text-white @error('insert_time_end') is-invalid @enderror" wire:model.defer="insert_time_end" required>
-                                            @error('insert_time_end')
-                                                <div class="invalid-feedback">
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="input-group mb-1">
+                                        <span class="input-group-text bg-dark text-white">Sampai</span>
+                                        <input type="time" class="form-control bg-dark text-white @error('insert_time_end') is-invalid @enderror" wire:model.defer="insert_time_end" required>
+                                        @error('insert_time_end')
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-check mb-4">
-                                <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="insert_is_repeat" wire:click="addDay">
-                                <label class="form-check-label">
-                                    Jadwal Berulang
-                                </label>
+                        </div>
+                        <div class="form-check mb-4">
+                            <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="insert_is_repeat" wire:click="addDay">
+                            <label class="form-check-label">
+                                Jadwal Berulang
+                            </label>
+                        </div>
+                        @if ($insert_day)
+                            <div class="row mb-4">
+                                <div class="col-3">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="insert_day_0">
+                                        <label class="form-check-label">
+                                            Senin
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="insert_day_4">
+                                        <label class="form-check-label">
+                                            Jumat
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="insert_day_1">
+                                        <label class="form-check-label">
+                                            Selasa
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="insert_day_5">
+                                        <label class="form-check-label">
+                                            Sabtu
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="insert_day_2">
+                                        <label class="form-check-label">
+                                            Rabu
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="insert_day_6">
+                                        <label class="form-check-label">
+                                            Minggu
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="insert_day_3">
+                                        <label class="form-check-label">
+                                            Kamis
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
-                            @if ($insert_day)
-                                <div class="row mb-4">
-                                    <div class="col-3">
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="insert_day_0">
-                                            <label class="form-check-label">
-                                                Senin
-                                            </label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="insert_day_4">
-                                            <label class="form-check-label">
-                                                Jumat
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-3">
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="insert_day_1">
-                                            <label class="form-check-label">
-                                                Selasa
-                                            </label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="insert_day_5">
-                                            <label class="form-check-label">
-                                                Sabtu
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-3">
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="insert_day_2">
-                                            <label class="form-check-label">
-                                                Rabu
-                                            </label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="insert_day_6">
-                                            <label class="form-check-label">
-                                                Minggu
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-3">
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="insert_day_3">
-                                            <label class="form-check-label">
-                                                Kamis
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-						</form>
-						<div class="d-flex">
-							<button class="btn btn-sm btn-secondary ms-auto" wire:click="closeModal('addScedule')" wire:loading.attr='disabled' wire:target='storeScedule'>
-								<i class="bi bi-x-circle me-1"></i>
-								Batal
-							</button>
-							<button type="submit" form="sceduleForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
-								<div wire:loading wire:target='storeScedule'>
-                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                </div>
-								<i class="bi bi-plus-circle me-1" wire:loading.class='d-none' wire:target='storeScedule'></i>
-								Tambahkan
-							</button>
-						</div>
-					</div>
-				</div>
+                        @endif
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <div class="d-flex">
+                        <button class="btn btn-sm btn-secondary ms-auto" wire:click="closeModal('addScedule')" wire:loading.attr='disabled' wire:target='storeScedule'>
+                            <i class="bi bi-x-circle me-1"></i>
+                            Batal
+                        </button>
+                        <button type="submit" form="sceduleForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
+                            <div wire:loading wire:target='storeScedule'>
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            </div>
+                            <i class="bi bi-plus-circle me-1" wire:loading.class='d-none' wire:target='storeScedule'></i>
+                            Tambahkan
+                        </button>
+                    </div>
+                </div>
 			</div>
 		</div>
 	</div>
@@ -371,131 +373,133 @@
 	<div wire:ignore.self class="modal fade" id="editScedule" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1">
 		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
-				<div class="card text-white rounded">
-					<div class="card-header">Edit Jadwal Baru</div>
-					<div class="card-body">
-						<form wire:submit.prevent="updateScedule" id="sceduleEditForm">
-                            <div class="mb-3">
-								<label class="form-label">Nama</label>
-								<input type="name" class="form-control bg-dark text-white @error('edit_name') is-invalid @enderror" wire:model.defer="edit_name" autocomplete="off" required>
-								@error('edit_name')
-									<div class="invalid-feedback">
-										{{ $message }}
-									</div>
-								@enderror
-							</div>
-                            <div class="mb-3">
-                                <label class="form-label">Tanggal</label>
-                                <input type="date" class="form-control bg-dark text-white @error('edit_date') is-invalid @enderror" wire:model.defer="edit_date" autocomplete="off" required>
-								@error('edit_date')
-									<div class="invalid-feedback">
-										{{ $message }}
-									</div>
-								@enderror
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Durasi Harian</label>
-                                <div class="row">
-                                    <div class="col-6">
-                                        <div class="input-group mb-1">
-                                            <span class="input-group-text bg-dark text-white">Mulai</span>
-                                            <input type="time" class="form-control bg-dark text-white @error('edit_time_begin') is-invalid @enderror" wire:model.defer="edit_time_begin" required>
-                                            @error('edit_time_begin')
-                                                <div class="invalid-feedback">
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        </div>
+                <div class="modal-header">
+                    Edit Jadwal
+                </div>
+                <div class="modal-body">
+                    <form wire:submit.prevent="updateScedule" id="sceduleEditForm">
+                        <div class="mb-3">
+                            <label class="form-label">Nama</label>
+                            <input type="name" class="form-control bg-dark text-white @error('edit_name') is-invalid @enderror" wire:model.defer="edit_name" autocomplete="off" required>
+                            @error('edit_name')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tanggal</label>
+                            <input type="date" class="form-control bg-dark text-white @error('edit_date') is-invalid @enderror" wire:model.defer="edit_date" autocomplete="off" required>
+                            @error('edit_date')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Durasi Harian</label>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="input-group mb-1">
+                                        <span class="input-group-text bg-dark text-white">Mulai</span>
+                                        <input type="time" class="form-control bg-dark text-white @error('edit_time_begin') is-invalid @enderror" wire:model.defer="edit_time_begin" required>
+                                        @error('edit_time_begin')
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
-                                    <div class="col-6">
-                                        <div class="input-group mb-1">
-                                            <span class="input-group-text bg-dark text-white">Sampai</span>
-                                            <input type="time" class="form-control bg-dark text-white @error('edit_time_end') is-invalid @enderror" wire:model.defer="edit_time_end" required>
-                                            @error('edit_time_end')
-                                                <div class="invalid-feedback">
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="input-group mb-1">
+                                        <span class="input-group-text bg-dark text-white">Sampai</span>
+                                        <input type="time" class="form-control bg-dark text-white @error('edit_time_end') is-invalid @enderror" wire:model.defer="edit_time_end" required>
+                                        @error('edit_time_end')
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-check mb-4">
-                                <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="edit_is_repeat" wire:click="editDay">
-                                <label class="form-check-label">
-                                    Jadwal Berulang
-                                </label>
+                        </div>
+                        <div class="form-check mb-4">
+                            <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="edit_is_repeat" wire:click="editDay">
+                            <label class="form-check-label">
+                                Jadwal Berulang
+                            </label>
+                        </div>
+                        @if ($insert_day)
+                            <div class="row mb-4">
+                                <div class="col-3">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="edit_day_0">
+                                        <label class="form-check-label">
+                                            Senin
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="edit_day_4">
+                                        <label class="form-check-label">
+                                            Jumat
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="edit_day_1">
+                                        <label class="form-check-label">
+                                            Selasa
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="edit_day_5">
+                                        <label class="form-check-label">
+                                            Sabtu
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="edit_day_2">
+                                        <label class="form-check-label">
+                                            Rabu
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="edit_day_6">
+                                        <label class="form-check-label">
+                                            Minggu
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="edit_day_3">
+                                        <label class="form-check-label">
+                                            Kamis
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
-                            @if ($insert_day)
-                                <div class="row mb-4">
-                                    <div class="col-3">
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="edit_day_0">
-                                            <label class="form-check-label">
-                                                Senin
-                                            </label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="edit_day_4">
-                                            <label class="form-check-label">
-                                                Jumat
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-3">
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="edit_day_1">
-                                            <label class="form-check-label">
-                                                Selasa
-                                            </label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="edit_day_5">
-                                            <label class="form-check-label">
-                                                Sabtu
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-3">
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="edit_day_2">
-                                            <label class="form-check-label">
-                                                Rabu
-                                            </label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="edit_day_6">
-                                            <label class="form-check-label">
-                                                Minggu
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-3">
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="edit_day_3">
-                                            <label class="form-check-label">
-                                                Kamis
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-						</form>
-						<div class="d-flex">
-							<button class="btn btn-sm btn-secondary ms-auto" wire:click="closeModal('editScedule')" wire:loading.attr='disabled' wire:target='updateScedule'>
-								<i class="bi bi-x-circle me-1"></i>
-								Batal
-							</button>
-							<button type="submit" form="sceduleEditForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
-								<div wire:loading wire:target='updateScedule'>
-                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                </div>
-								<i class="bi bi-plus-circle me-1" wire:loading.class='d-none' wire:target='updateScedule'></i>
-								Tambahkan
-							</button>
-						</div>
-					</div>
-				</div>
+                        @endif
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <div class="d-flex">
+                        <button class="btn btn-sm btn-secondary ms-auto" wire:click="closeModal('editScedule')" wire:loading.attr='disabled' wire:target='updateScedule'>
+                            <i class="bi bi-x-circle me-1"></i>
+                            Batal
+                        </button>
+                        <button type="submit" form="sceduleEditForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
+                            <div wire:loading wire:target='updateScedule'>
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            </div>
+                            <i class="bi bi-plus-circle me-1" wire:loading.class='d-none' wire:target='updateScedule'></i>
+                            Tambahkan
+                        </button>
+                    </div>
+                </div>
 			</div>
 		</div>
 	</div>
@@ -504,40 +508,42 @@
 	<div wire:ignore.self class="modal fade" id="addDoor" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1">
 		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
-				<div class="card text-white rounded">
-					<div class="card-header">Tambah Pintu</div>
-					<div class="card-body">
-						<form wire:submit.prevent="storeDoor" id="doorForm">
-                            <div class="mb-3">
-                                <label class="form-label">Pintu</label>
-                                <select class="form-select bg-dark text-white @error('') is-invalid @enderror" wire:model.defer="scedule_door_id" autocomplete="off" required>
-                                    <option hidden class="text-white">-- pilih salah satu --</option>
-                                    @foreach ($doors as $door)
-                                        <option class="text-white" value="{{ $door->id }}">{{ $door->name }}</option>
-                                    @endforeach
-                                </select>
-                                @error('scedule_door_id')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-						</form>
-						<div class="d-flex">
-							<button class="btn btn-sm btn-secondary ms-auto" wire:click="closeModal('addDoor')" wire:loading.attr='disabled' wire:target='storeDoor'>
-								<i class="bi bi-x-circle me-1"></i>
-								Batal
-							</button>
-							<button type="submit" form="doorForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
-								<div wire:loading wire:target='storeDoor'>
-                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                <div class="modal-header">
+                    Tambah Pintu
+                </div>
+                <div class="modal-body">
+                    <form wire:submit.prevent="storeDoor" id="doorForm">
+                        <div class="mb-3">
+                            <label class="form-label">Pintu</label>
+                            <select class="form-select bg-dark text-white @error('') is-invalid @enderror" wire:model.defer="scedule_door_id" autocomplete="off" required>
+                                <option hidden class="text-white">-- pilih salah satu --</option>
+                                @foreach ($doors as $door)
+                                    <option class="text-white" value="{{ $door->id }}">{{ $door->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('scedule_door_id')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
                                 </div>
-								<i class="bi bi-plus-circle me-1" wire:loading.class='d-none' wire:target='storeDoor'></i>
-								Tambahkan
-							</button>
-						</div>
-					</div>
-				</div>
+                            @enderror
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <div class="d-flex">
+                        <button class="btn btn-sm btn-secondary ms-auto" wire:click="closeModal('addDoor')" wire:loading.attr='disabled' wire:target='storeDoor'>
+                            <i class="bi bi-x-circle me-1"></i>
+                            Batal
+                        </button>
+                        <button type="submit" form="doorForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
+                            <div wire:loading wire:target='storeDoor'>
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            </div>
+                            <i class="bi bi-plus-circle me-1" wire:loading.class='d-none' wire:target='storeDoor'></i>
+                            Tambahkan
+                        </button>
+                    </div>
+                </div>
 			</div>
 		</div>
 	</div>
@@ -546,26 +552,28 @@
 	<div wire:ignore.self class="modal fade" id="deleteConfirm" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1">
 		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
-				<div class="card text-white rounded">
-					<div class="card-header">Konfirmasi Hapus Data</div>
-					<div class="card-body">
-						Apakah anda yakin untuk mengapus <strong>{{ $delete_name }}</strong> secara permanen ?
-						<div class="d-flex mt-3">
-							<button class="btn btn-sm btn-primary ms-auto" wire:click="closeModal('deleteConfirm')" wire:loading.attr="disabled"
-								wire:target="delete">
-								<i class="bi bi-x-circle me-1"></i>
-								Batal
-							</button>
-							<button wire:click="delete" wire:loading.attr="disabled" wire:target="closeModal('deleteConfirm')" class="btn btn-sm btn-danger ms-3">
-								<i class="bi bi-trash me-1" wire:loading.class="d-none" wire:target="delete"></i>
-								<div wire:loading wire:target="delete">
-									<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-								</div>
-								Hapus
-							</button>
-						</div>
-					</div>
-				</div>
+                <div class="modal-header">
+                    Konfirmasi Hapus Data
+                </div>
+                <div class="modal-body">
+                    Apakah anda yakin untuk mengapus <strong>{{ $delete_name }}</strong> secara permanen ?
+                </div>
+                <div class="modal-footer">
+                    <div class="d-flex">
+                        <button class="btn btn-sm btn-primary ms-auto" wire:click="closeModal('deleteConfirm')" wire:loading.attr="disabled"
+                            wire:target="delete">
+                            <i class="bi bi-x-circle me-1"></i>
+                            Batal
+                        </button>
+                        <button wire:click="delete" wire:loading.attr="disabled" wire:target="closeModal('deleteConfirm')" class="btn btn-sm btn-danger ms-3">
+                            <i class="bi bi-trash me-1" wire:loading.class="d-none" wire:target="delete"></i>
+                            <div wire:loading wire:target="delete">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            </div>
+                            Hapus
+                        </button>
+                    </div>
+                </div>
 			</div>
 		</div>
 	</div>

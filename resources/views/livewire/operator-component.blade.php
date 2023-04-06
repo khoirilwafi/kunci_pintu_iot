@@ -107,76 +107,78 @@
 	<div wire:ignore.self class="modal fade" id="addOperator" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="addOperatorLabel" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
-				<div class="card text-white rounded">
-					<div class="card-header">Tambah Operator Baru</div>
-					<div class="card-body">
-						<form wire:submit.prevent="storeOperator" id="operatorForm">
-                            <div class="mb-3">
-								<label for="name" class="form-label">Nama</label>
-								<input type="name" class="form-control bg-dark text-white @error('name') is-invalid @enderror" id="name"
-									name="name" wire:model.defer="name" autocomplete="off">
-								@error('name')
-									<div class="invalid-feedback">
-										{{ $message }}
-									</div>
-								@enderror
-							</div>
-                            <div class="mb-4">
-                                <label for="gender" class="form-label">Jenis Kelamin</label>
-                                <select class="form-select bg-dark text-white @error('gender') is-invalid @enderror" id="gender" name="gender" wire:model.defer="gender" autocomplete="off">
-                                    <option hidden class="text-white">-- pilih salah satu --</option>
-                                    <option value="Laki-laki">Laki-laki</option>
-                                    <option value="Perempuan">Perempuan</option>
-                                </select>
-                                @error('gender')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-                            <div class="mb-4">
-								<label for="email" class="form-label">Email</label>
-								<input type="email" class="form-control bg-dark text-white @error('email') is-invalid @enderror"
-									id="email" name="email" wire:model.defer="email" autocomplete="off">
-								@error('email')
-									<div class="invalid-feedback">
-										{{ $message }}
-									</div>
-								@enderror
-							</div>
-                            <div class="mb-4">
-								<label for="phone" class="form-label">Nomor HP</label>
-								<input type="number" class="form-control bg-dark text-white @error('phone') is-invalid @enderror"
-									id="phone" name="phone" wire:model.defer="phone" autocomplete="off">
-								@error('phone')
-									<div class="invalid-feedback">
-										{{ $message }}
-									</div>
-								@enderror
-							</div>
-							<div class="mb-4">
-								<strong>Pastikan email valid dan masih aktif.</strong>
-								<div style="text-align: justify">
-									operator akan menerima pesan melalui email yang berisi username, alamat email dan password (default) yang
-									digunakan untuk login dan verifikasi.
-								</div>
-							</div>
-						</form>
-						<div class="d-flex">
-							<button class="btn btn-sm btn-secondary ms-auto" wire:click="closeModal('addOperator')" wire:loading.attr='disabled' wire:target='storeOperator'>
-								<i class="bi bi-x-circle me-1"></i>
-								Batal
-							</button>
-							<button type="submit" form="operatorForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
-								<div wire:loading wire:target='storeOperator'>
-                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                <div class="modal-header">
+                    Tambah Operator Baru
+                </div>
+                <div class="modal-body">
+                    <form wire:submit.prevent="storeOperator" id="operatorForm">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nama</label>
+                            <input type="name" class="form-control bg-dark text-white @error('name') is-invalid @enderror" id="name"
+                                name="name" wire:model.defer="name" autocomplete="off">
+                            @error('name')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
                                 </div>
-								<i class="bi bi-plus-circle me-1" wire:loading.class='d-none' wire:target='storeOperator'></i>
-								Tambahkan
-							</button>
-						</div>
-					</div>
-				</div>
+                            @enderror
+                        </div>
+                        <div class="mb-4">
+                            <label for="gender" class="form-label">Jenis Kelamin</label>
+                            <select class="form-select bg-dark text-white @error('gender') is-invalid @enderror" id="gender" name="gender" wire:model.defer="gender" autocomplete="off">
+                                <option hidden class="text-white">-- pilih salah satu --</option>
+                                <option value="Laki-laki">Laki-laki</option>
+                                <option value="Perempuan">Perempuan</option>
+                            </select>
+                            @error('gender')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="mb-4">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control bg-dark text-white @error('email') is-invalid @enderror"
+                                id="email" name="email" wire:model.defer="email" autocomplete="off">
+                            @error('email')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="mb-4">
+                            <label for="phone" class="form-label">Nomor HP</label>
+                            <input type="number" class="form-control bg-dark text-white @error('phone') is-invalid @enderror"
+                                id="phone" name="phone" wire:model.defer="phone" autocomplete="off">
+                            @error('phone')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="mb-4">
+                            <strong>Pastikan email valid dan masih aktif.</strong>
+                            <div style="text-align: justify">
+                                operator akan menerima pesan melalui email yang berisi username, alamat email dan password (default) yang
+                                digunakan untuk login dan verifikasi.
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <div class="d-flex">
+                        <button class="btn btn-sm btn-secondary ms-auto" wire:click="closeModal('addOperator')" wire:loading.attr='disabled' wire:target='storeOperator'>
+                            <i class="bi bi-x-circle me-1"></i>
+                            Batal
+                        </button>
+                        <button type="submit" form="operatorForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
+                            <div wire:loading wire:target='storeOperator'>
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            </div>
+                            <i class="bi bi-plus-circle me-1" wire:loading.class='d-none' wire:target='storeOperator'></i>
+                            Tambahkan
+                        </button>
+                    </div>
+                </div>
 			</div>
 		</div>
 	</div>
@@ -185,26 +187,28 @@
 	<div wire:ignore.self class="modal fade" id="deleteConfirm" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="deleteConfirmLabel" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
-				<div class="card text-white rounded">
-					<div class="card-header">Konfirmasi Hapus Data</div>
-					<div class="card-body">
-						Apakah anda yakin untuk mengapus <strong>{{ $name }}</strong> secara permanen ?
-						<div class="d-flex mt-3">
-							<button class="btn btn-sm btn-primary ms-auto" wire:click="closeModal('deleteConfirm')" wire:loading.attr="disabled"
-								wire:target="delete">
-								<i class="bi bi-x-circle me-1"></i>
-								Batal
-							</button>
-							<button wire:click="delete" wire:loading.attr="disabled" wire:target="closeModal('deleteConfirm')" class="btn btn-sm btn-danger ms-3">
-								<i class="bi bi-trash me-1" wire:loading.class="d-none" wire:target="delete"></i>
-								<div wire:loading wire:target="delete">
-									<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-								</div>
-								Hapus
-							</button>
-						</div>
-					</div>
-				</div>
+                <div class="modal-header">
+                    Konfirmasi Hapus Data
+                </div>
+                <div class="modal-body">
+                    Apakah anda yakin untuk mengapus <strong>{{ $name }}</strong> secara permanen ?
+                </div>
+                <div class="modal-footer">
+                    <div class="d-flex">
+                        <button class="btn btn-sm btn-primary ms-auto" wire:click="closeModal('deleteConfirm')" wire:loading.attr="disabled"
+                            wire:target="delete">
+                            <i class="bi bi-x-circle me-1"></i>
+                            Batal
+                        </button>
+                        <button wire:click="delete" wire:loading.attr="disabled" wire:target="closeModal('deleteConfirm')" class="btn btn-sm btn-danger ms-3">
+                            <i class="bi bi-trash me-1" wire:loading.class="d-none" wire:target="delete"></i>
+                            <div wire:loading wire:target="delete">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            </div>
+                            Hapus
+                        </button>
+                    </div>
+                </div>
 			</div>
 		</div>
 	</div>

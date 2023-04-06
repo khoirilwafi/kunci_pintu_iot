@@ -43,8 +43,12 @@
     @if ($door_table_visibility)
         <div class="card text-white mb-4">
             <div class="card-header d-flex">
-                <div class="col">
+                <div class="text-white">
                     Daftar Pintu
+                </div>
+                <div class="ms-auto d-flex align-items-center">
+                    LIVE
+                    <div id="indicator" class="ms-2 border border-warning" style="width: 15px; height:15px; border-radius: 50%"></div>
                 </div>
             </div>
             <div class="card-body">
@@ -82,10 +86,10 @@
                                     <td class="text-center">{{ $doors->firstItem() + $index }}</td>
                                     <td style="cursor: pointer;" wire:click="getDoorDetail('{{ $door->id }}')">{{ $door->name }}</td>
                                     <td class="text-center">
-                                        @if ($door->device_id == null)
+                                        @if ($door->device_id === null)
                                             <div class="text-warning">Belum Ada</div>
                                         @else
-                                            <div class="text-info">{{ strtoupper($door->device_id) }}</div>
+                                            <div class="text-info" style="font-family: monospace">{{ strtoupper($door->device_id) }}</div>
                                         @endif
                                     </td>
                                     <td class="text-center">
@@ -99,7 +103,7 @@
                                         @if ($door->socket_id == null)
                                             <div class="text-warning">Tidak Diketahui</div>
                                         @else
-                                            @if ($door->is_lock == true)
+                                            @if ($door->is_lock == 1)
                                                 <div class="text-info">Terkunci</div>
                                             @else
                                                 <div class="text-danger">Tidak Terkunci</div>
@@ -129,8 +133,14 @@
             Kembali
         </button>
         <div class="card">
-            <div class="card-header">
-                Akses Pengguna
+            <div class="card-header d-flex">
+                <div class="text-white">
+                    Detail Pintu - Akses Pengguna
+                </div>
+                <div class="ms-auto d-flex align-items-center">
+                    LIVE
+                    <div id="indicator" class="ms-2 border border-warning" style="width: 15px; height:15px; border-radius: 50%"></div>
+                </div>
             </div>
             <div class="card-body">
                 <div class="p-2 mb-5 rounded border border-secondary d-flex">
@@ -150,7 +160,7 @@
                                 @if ($device_id == null)
                                     <div class="text-warning">Belum Ada</div>
                                 @else
-                                    <div class="text-info">{{ strtoupper($device_id) }}</div>
+                                    <div class="text-info" style="font-family: monospace">{{ strtoupper($device_id) }}</div>
                                 @endif
                             </td>
                         </tr>
@@ -188,7 +198,9 @@
                     </table>
                     <div class="flex-grow-1 d-flex">
                         <div class="ms-auto">
-                            <button class="btn btn-sm btn-outline-primary me-2" wire:click="edit()"><div class="fs-6 text-white"><i class="bi bi-pencil-square"></i></div></button>
+                            <button class="btn btn-sm btn-outline-info me-1" wire:click=""><div class="fs-6 text-white"><i class="bi bi-printer"></i></div></button>
+                            <button class="btn btn-sm btn-outline-primary me-1" wire:click="edit()"><div class="fs-6 text-white"><i class="bi bi-pencil-square"></i></div></button>
+                            <button class="btn btn-sm btn-outline-warning me-1" wire:click=""><div class="fs-6 text-white"><i class="bi bi-shield-x"></i></button>
                             <button class="btn btn-sm btn-outline-danger" wire:click="openModal('deleteConfirm')"><div class="fs-6 text-white"><i class="bi bi-trash"></i></div></button>
                         </div>
                     </div>
@@ -261,35 +273,37 @@
 	<div wire:ignore.self class="modal fade" id="addDoor" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1">
 		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
-				<div class="card text-white rounded">
-					<div class="card-header">Tambah Kunci Pintu Baru</div>
-					<div class="card-body">
-						<form wire:submit.prevent="storeDoor" id="doorForm">
-                            <div class="mb-3">
-								<label class="form-label">Nama</label>
-								<input type="text" class="form-control bg-dark text-white @error('name') is-invalid @enderror" name="name" wire:model.defer="name" autocomplete="off">
-								@error('name')
-									<div class="invalid-feedback">
-										{{ $message }}
-									</div>
-								@enderror
-							</div>
-						</form>
-						<div class="d-flex">
-							<button class="btn btn-sm btn-secondary ms-auto" wire:click="closeModal('addDoor')" wire:loading.attr='disabled' wire:target='storeDoor'>
-								<i class="bi bi-x-circle me-1"></i>
-								Batal
-							</button>
-							<button type="submit" form="doorForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
-								<div wire:loading wire:target='storeDoor'>
-                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                <div class="modal-header">
+                    Tambah Kunci Pintu Baru
+                </div>
+                <div class="modal-body">
+                    <form wire:submit.prevent="storeDoor" id="doorForm">
+                        <div class="mb-3">
+                            <label class="form-label">Nama</label>
+                            <input type="text" class="form-control bg-dark text-white @error('name') is-invalid @enderror" name="name" wire:model.defer="name" autocomplete="off">
+                            @error('name')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
                                 </div>
-								<i class="bi bi-plus-circle me-1" wire:loading.class='d-none' wire:target='storeDoor'></i>
-								Tambahkan
-							</button>
-						</div>
-					</div>
-				</div>
+                            @enderror
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <div class="d-flex">
+                        <button class="btn btn-sm btn-secondary ms-auto" wire:click="closeModal('addDoor')" wire:loading.attr='disabled' wire:target='storeDoor'>
+                            <i class="bi bi-x-circle me-1"></i>
+                            Batal
+                        </button>
+                        <button type="submit" form="doorForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
+                            <div wire:loading wire:target='storeDoor'>
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            </div>
+                            <i class="bi bi-plus-circle me-1" wire:loading.class='d-none' wire:target='storeDoor'></i>
+                            Tambahkan
+                        </button>
+                    </div>
+                </div>
 			</div>
 		</div>
 	</div>
@@ -298,95 +312,97 @@
 	<div wire:ignore.self class="modal fade" id="addAccess" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1">
 		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
-				<div class="card text-white rounded">
-					<div class="card-header">Tambah Akses Baru</div>
-					<div class="card-body">
-						<form wire:submit.prevent="storeAccess" id="accessForm">
-                            <div class="mb-3">
-                                <label class="form-label">Pengguna</label>
-                                <select class="form-select bg-dark text-white @error('access_user_id') is-invalid @enderror" wire:model.defer="access_user_id" autocomplete="off" required>
-                                    <option hidden class="text-white">-- pilih salah satu --</option>
-                                    @foreach ($users as $user)
-                                        <option class="text-white" value="{{ $user->id }}">{{ $user->name }}</option>
-                                    @endforeach
-                                </select>
-                                @error('access_user_id')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
+                <div class="modal-header">
+                    Tambah Akses Baru
+                </div>
+                <div class="modal-body">
+                    <form wire:submit.prevent="storeAccess" id="accessForm">
+                        <div class="mb-3">
+                            <label class="form-label">Pengguna</label>
+                            <select class="form-select bg-dark text-white @error('access_user_id') is-invalid @enderror" wire:model.defer="access_user_id" autocomplete="off" required>
+                                <option hidden class="text-white">-- pilih salah satu --</option>
+                                @foreach ($users as $user)
+                                    <option class="text-white" value="{{ $user->id }}">{{ $user->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('access_user_id')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Durasi Harian</label>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="input-group mb-1">
+                                        <span class="input-group-text bg-dark text-white">Mulai</span>
+                                        <input type="time" class="form-control bg-dark text-white @error('access_time_begin') is-invalid @enderror" wire:model.defer="access_time_begin" required>
+                                        @error('access_time_begin')
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
-                                @enderror
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Durasi Harian</label>
-                                <div class="row">
-                                    <div class="col-6">
-                                        <div class="input-group mb-1">
-                                            <span class="input-group-text bg-dark text-white">Mulai</span>
-                                            <input type="time" class="form-control bg-dark text-white @error('access_time_begin') is-invalid @enderror" wire:model.defer="access_time_begin" required>
-                                            @error('access_time_begin')
-                                                <div class="invalid-feedback">
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="input-group mb-1">
-                                            <span class="input-group-text bg-dark text-white">Sampai</span>
-                                            <input type="time" class="form-control bg-dark text-white @error('access_time_end') is-invalid @enderror" wire:model.defer="access_time_end" required>
-                                            @error('access_time_end')
-                                                <div class="invalid-feedback">
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="input-group mb-1">
+                                        <span class="input-group-text bg-dark text-white">Sampai</span>
+                                        <input type="time" class="form-control bg-dark text-white @error('access_time_end') is-invalid @enderror" wire:model.defer="access_time_end" required>
+                                        @error('access_time_end')
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="access_is_remote">
-                                <label class="form-check-label">
-                                    Akses Remote
-                                </label>
-                            </div>
-                            <div class="form-check mb-3">
-                                <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:click="showDate" wire:model.defer="access_is_temporary">
-                                <label class="form-check-label">
-                                    Akses Sementara
-                                </label>
-                            </div>
-                            <div class="mb-4 @if(!$date_visibility) d-none @endif">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <div class="input-group mb-1">
-                                            <span class="input-group-text bg-dark text-white">Mulai</span>
-                                            <input type="date" class="form-control bg-dark text-white @error('access_date_begin') is-invalid @enderror" wire:model.defer="access_date_begin">
-                                        </div>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="access_is_remote">
+                            <label class="form-check-label">
+                                Akses Remote
+                            </label>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:click="showDate" wire:model.defer="access_is_temporary">
+                            <label class="form-check-label">
+                                Akses Sementara
+                            </label>
+                        </div>
+                        <div class="mb-4 @if(!$date_visibility) d-none @endif">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="input-group mb-1">
+                                        <span class="input-group-text bg-dark text-white">Mulai</span>
+                                        <input type="date" class="form-control bg-dark text-white @error('access_date_begin') is-invalid @enderror" wire:model.defer="access_date_begin">
                                     </div>
-                                    <div class="col-6">
-                                        <div class="input-group mb-1">
-                                            <span class="input-group-text bg-dark text-white">Sampai</span>
-                                            <input type="date" class="form-control bg-dark text-white @error('access_date_end') is-invalid @enderror" wire:model.defer="access_date_end">
-                                        </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="input-group mb-1">
+                                        <span class="input-group-text bg-dark text-white">Sampai</span>
+                                        <input type="date" class="form-control bg-dark text-white @error('access_date_end') is-invalid @enderror" wire:model.defer="access_date_end">
                                     </div>
                                 </div>
                             </div>
-						</form>
-						<div class="d-flex">
-							<button class="btn btn-sm btn-secondary ms-auto" wire:click="closeModal('addAccess')" wire:loading.attr='disabled' wire:target='storeAccess'>
-								<i class="bi bi-x-circle me-1"></i>
-								Batal
-							</button>
-							<button type="submit" form="accessForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
-								<div wire:loading wire:target='storeAccess'>
-                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                </div>
-								<i class="bi bi-plus-circle me-1" wire:loading.class='d-none' wire:target='storeAccess'></i>
-								Tambahkan
-							</button>
-						</div>
-					</div>
-				</div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <div class="d-flex">
+                        <button class="btn btn-sm btn-secondary ms-auto" wire:click="closeModal('addAccess')" wire:loading.attr='disabled' wire:target='storeAccess'>
+                            <i class="bi bi-x-circle me-1"></i>
+                            Batal
+                        </button>
+                        <button type="submit" form="accessForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
+                            <div wire:loading wire:target='storeAccess'>
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            </div>
+                            <i class="bi bi-plus-circle me-1" wire:loading.class='d-none' wire:target='storeAccess'></i>
+                            Tambahkan
+                        </button>
+                    </div>
+                </div>
 			</div>
 		</div>
 	</div>
@@ -395,33 +411,35 @@
     <div wire:ignore.self class="modal fade" id="editDoor" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
-                <div class="card text-white rounded">
-                    <div class="card-header">Edit Kunci Pintu</div>
-                    <div class="card-body">
-                        <form wire:submit.prevent="updateDoor" id="doorEditForm">
-                            <div class="mb-3">
-                                <label class="form-label">Nama</label>
-                                <input type="name" class="form-control bg-dark text-white @error('name_edited') is-invalid @enderror" name="name_edited" wire:model.defer="name_edited" autocomplete="off">
-                                @error('name_edited')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-                        </form>
-                        <div class="d-flex">
-                            <button class="btn btn-sm btn-secondary ms-auto" wire:click="closeModal('editDoor')" wire:loading.attr='disabled' wire:target='updateDoor'>
-                                <i class="bi bi-x-circle me-1"></i>
-                                Batal
-                            </button>
-                            <button type="submit" form="doorEditForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
-                                <div wire:loading wire:target='updateDoor'>
-                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                <div class="modal-header">
+                    Edit Perangkat Kunci Pintu
+                </div>
+                <div class="modal-body">
+                    <form wire:submit.prevent="updateDoor" id="doorEditForm">
+                        <div class="mb-3">
+                            <label class="form-label">Nama</label>
+                            <input type="name" class="form-control bg-dark text-white @error('name_edited') is-invalid @enderror" name="name_edited" wire:model.defer="name_edited" autocomplete="off">
+                            @error('name_edited')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
                                 </div>
-                                <i class="bi bi-pencil-square me-1" wire:loading.class='d-none' wire:target='updateDoor'></i>
-                                Update
-                            </button>
+                            @enderror
                         </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <div class="d-flex">
+                        <button class="btn btn-sm btn-secondary ms-auto" wire:click="closeModal('editDoor')" wire:loading.attr='disabled' wire:target='updateDoor'>
+                            <i class="bi bi-x-circle me-1"></i>
+                            Batal
+                        </button>
+                        <button type="submit" form="doorEditForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
+                            <div wire:loading wire:target='updateDoor'>
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            </div>
+                            <i class="bi bi-pencil-square me-1" wire:loading.class='d-none' wire:target='updateDoor'></i>
+                            Update
+                        </button>
                     </div>
                 </div>
             </div>
@@ -432,26 +450,28 @@
 	<div wire:ignore.self class="modal fade" id="deleteConfirm" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1">
 		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
-				<div class="card text-white rounded">
-					<div class="card-header">Konfirmasi Hapus Data</div>
-					<div class="card-body">
-						Apakah anda yakin untuk mengapus <strong>{{ $name }}</strong> secara permanen ?
-						<div class="d-flex mt-3">
-							<button class="btn btn-sm btn-primary ms-auto" wire:click="closeModal('deleteConfirm')" wire:loading.attr="disabled"
-								wire:target="delete">
-								<i class="bi bi-x-circle me-1"></i>
-								Batal
-							</button>
-							<button wire:click="delete" wire:loading.attr="disabled" wire:target="closeModal('deleteConfirm')" class="btn btn-sm btn-danger ms-3">
-								<i class="bi bi-trash me-1" wire:loading.class="d-none" wire:target="delete"></i>
-								<div wire:loading wire:target="delete">
-									<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-								</div>
-								Hapus
-							</button>
-						</div>
-					</div>
-				</div>
+                <div class="modal-header">
+                    Konfirmasi Hapus Data
+                </div>
+                <div class="modal-body">
+                    Apakah anda yakin untuk mengapus <strong>{{ $name }}</strong> secara permanen ?
+                </div>
+                <div class="modal-footer">
+                    <div class="d-flex">
+                        <button class="btn btn-sm btn-primary ms-auto" wire:click="closeModal('deleteConfirm')" wire:loading.attr="disabled"
+                            wire:target="delete">
+                            <i class="bi bi-x-circle me-1"></i>
+                            Batal
+                        </button>
+                        <button wire:click="delete" wire:loading.attr="disabled" wire:target="closeModal('deleteConfirm')" class="btn btn-sm btn-danger ms-3">
+                            <i class="bi bi-trash me-1" wire:loading.class="d-none" wire:target="delete"></i>
+                            <div wire:loading wire:target="delete">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            </div>
+                            Hapus
+                        </button>
+                    </div>
+                </div>
 			</div>
 		</div>
 	</div>
@@ -460,26 +480,28 @@
 	<div wire:ignore.self class="modal fade" id="deleteAccessConfirm" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1">
 		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
-				<div class="card text-white rounded">
-					<div class="card-header">Konfirmasi Hapus Akses</div>
-					<div class="card-body">
-						Apakah anda yakin untuk mengapus akses <strong>{{ $access_user_name }}</strong> di pintu <strong>{{ $access_door_name }}</strong> secara permanen ?
-						<div class="d-flex mt-3">
-							<button class="btn btn-sm btn-primary ms-auto" wire:click="closeModal('deleteAccessConfirm')" wire:loading.attr="disabled"
-								wire:target="deleteAccess">
-								<i class="bi bi-x-circle me-1"></i>
-								Batal
-							</button>
-							<button wire:click="deleteAccess" wire:loading.attr="disabled" wire:target="closeModal('deleteAccessConfirm')" class="btn btn-sm btn-danger ms-3">
-								<i class="bi bi-trash me-1" wire:loading.class="d-none" wire:target="deleteAccess"></i>
-								<div wire:loading wire:target="deleteAccess">
-									<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-								</div>
-								Hapus
-							</button>
-						</div>
-					</div>
-				</div>
+                <div class="modal-header">
+                    Konfirmasi Hapus Akses
+                </div>
+                <div class="modal-body">
+                    Apakah anda yakin untuk mengapus akses <strong>{{ $access_user_name }}</strong> di pintu <strong>{{ $access_door_name }}</strong> secara permanen ?
+                </div>
+                <div class="modal-footer">
+                    <div class="d-flex mt-3">
+                        <button class="btn btn-sm btn-primary ms-auto" wire:click="closeModal('deleteAccessConfirm')" wire:loading.attr="disabled"
+                            wire:target="deleteAccess">
+                            <i class="bi bi-x-circle me-1"></i>
+                            Batal
+                        </button>
+                        <button wire:click="deleteAccess" wire:loading.attr="disabled" wire:target="closeModal('deleteAccessConfirm')" class="btn btn-sm btn-danger ms-3">
+                            <i class="bi bi-trash me-1" wire:loading.class="d-none" wire:target="deleteAccess"></i>
+                            <div wire:loading wire:target="deleteAccess">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            </div>
+                            Hapus
+                        </button>
+                    </div>
+                </div>
 			</div>
 		</div>
 	</div>
@@ -502,3 +524,20 @@
 		</div>
 	</div>
 </div>
+
+@push('custom_script')
+    <script>
+        var index = 0;
+        function blink(){
+            let indicator = document.getElementById('indicator');
+            if(index == 0){
+                indicator.style.backgroundColor = '#90EE90';
+                index = 1;
+            } else {
+                indicator.style.backgroundColor = '';
+                index = 0;
+            }
+        }
+        setInterval(blink, 800);
+    </script>
+@endpush

@@ -89,44 +89,46 @@
     <div wire:ignore.self class="modal fade" id="editAvatar" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="editAvatarLabel" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
-				<div class="card text-white rounded">
-					<div class="card-header">Upload Foto Profil</div>
-					<div class="card-body">
-						<form wire:submit.prevent="storeAvatar" id="avatarForm">
-                            <div class="mb-3 mt-2">
-                                <input class="form-control bg-dark text-white @error('avatar') is-invalid @enderror" type="file" id="avatar{{ $iteration }}" wire:model="avatar" name="avatar">
-                                @error('avatar')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
+                <div class="modal-header">
+                    Upload Foto Profil
+                </div>
+                <div class="modal-body">
+                    <form wire:submit.prevent="storeAvatar" id="avatarForm">
+                        <div class="mb-3 mt-2">
+                            <input class="form-control bg-dark text-white @error('avatar') is-invalid @enderror" type="file" id="avatar{{ $iteration }}" wire:model="avatar" name="avatar">
+                            @error('avatar')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
 
-                                <div class="text-warning" wire:loading wire:target='avatar'>
-                                    <small>Sedang Loading, Tunggu Sebentar ...</small>
-                                </div>
+                            <div class="text-warning" wire:loading wire:target='avatar'>
+                                <small>Sedang Loading, Tunggu Sebentar ...</small>
                             </div>
-							<div class="mb-4">
-								<ul>
-                                    <li>Format jpg, jpeg, png</li>
-                                    <li>Ukuran maksimal 1 MB</li>
-                                </ul>
-							</div>
-						</form>
-						<div class="d-flex">
-							<button class="btn btn-sm btn-secondary ms-auto" wire:click="closeModal('editAvatar')" wire:loading.attr='disabled' wire:target='storeAvatar'>
-								<i class="bi bi-x-circle me-1"></i>
-								Batal
-							</button>
-							<button type="submit" form="avatarForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
-								<div wire:loading wire:target='storeAvatar'>
-                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                </div>
-								<i class="bi bi-upload me-1" wire:loading.class='d-none' wire:target='storeAvatar'></i>
-								Upload
-							</button>
-						</div>
-					</div>
-				</div>
+                        </div>
+                        <div class="mb-4">
+                            <ul>
+                                <li>Format jpg, jpeg, png</li>
+                                <li>Ukuran maksimal 1 MB</li>
+                            </ul>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <div class="d-flex">
+                        <button class="btn btn-sm btn-secondary ms-auto" wire:click="closeModal('editAvatar')" wire:loading.attr='disabled' wire:target='storeAvatar'>
+                            <i class="bi bi-x-circle me-1"></i>
+                            Batal
+                        </button>
+                        <button type="submit" form="avatarForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
+                            <div wire:loading wire:target='storeAvatar'>
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            </div>
+                            <i class="bi bi-upload me-1" wire:loading.class='d-none' wire:target='storeAvatar'></i>
+                            Upload
+                        </button>
+                    </div>
+                </div>
 			</div>
 		</div>
 	</div>
@@ -135,71 +137,73 @@
     <div wire:ignore.self class="modal fade" id="editProfile" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="editProfileLabel" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
-				<div class="card text-white rounded">
-					<div class="card-header">Edit Profil</div>
-					<div class="card-body">
-						<form wire:submit.prevent="storeProfile" id="profileForm" class="mb-4">
-                            <div class="mb-3">
-                                <label class="form-label mb-1">Nama</label>
-                                <input class="form-control bg-dark text-white @error('name') is-invalid @enderror" wire:model.defer="name">
-                                @error('name')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label mb-1 @error('gender') is-invalid @enderror">Jenis Kelamin</label>
-                                <select class="form-select bg-dark text-white @error('gender') is-invalid @enderror" id="gender" name="gender" wire:model.defer="gender">
-                                    <option value="Laki-laki" {{ (auth()->user()->gender == 'Laki-laki') ? 'selected' : ''}}>Laki-laki</option>
-                                    <option value="Perempuan" {{ (auth()->user()->gender == 'Perempuan') ? 'selected' : ''}}>Perempuan</option>
-                                </select>
-                                @error('gender')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label mb-1">Email</label>
-                                <input class="form-control bg-dark text-white @error('email') is-invalid @enderror" wire:model.defer="email">
-                                @error('email')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label mb-1">Nomor HP</label>
-                                <input class="form-control bg-dark text-white @error('phone') is-invalid @enderror" wire:model.defer="phone">
-                                @error('phone')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-						</form>
-                        <div class="mb-4">
-                            <strong>Pastikan data sudah benar</strong>
-                            <div style="text-align: justify">
-                                pastikan semua data sudah benar, terutama jika mengubah alamat email anda, pastikan email yang dimasukkan valid dan aktif.
-                            </div>
-                        </div>
-						<div class="d-flex">
-							<button class="btn btn-sm btn-secondary ms-auto" wire:click="closeModal('editProfile')" wire:loading.attr='disabled' wire:target='storeProfile'>
-								<i class="bi bi-x-circle me-1"></i>
-								Batal
-							</button>
-							<button type="submit" form="profileForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
-								<div wire:loading wire:target='storeProfile'>
-                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                <div class="modal-header">
+                    Edit Profil
+                </div>
+                <div class="modal-body">
+                    <form wire:submit.prevent="storeProfile" id="profileForm" class="mb-4">
+                        <div class="mb-3">
+                            <label class="form-label mb-1">Nama</label>
+                            <input class="form-control bg-dark text-white @error('name') is-invalid @enderror" wire:model.defer="name">
+                            @error('name')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
                                 </div>
-								<i class="bi bi-arrow-down-square-fill me-1" wire:loading.class='d-none' wire:target='storeProfile'></i>
-								Simpan
-							</button>
-						</div>
-					</div>
-				</div>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label mb-1 @error('gender') is-invalid @enderror">Jenis Kelamin</label>
+                            <select class="form-select bg-dark text-white @error('gender') is-invalid @enderror" id="gender" name="gender" wire:model.defer="gender">
+                                <option value="Laki-laki" {{ (auth()->user()->gender == 'Laki-laki') ? 'selected' : ''}}>Laki-laki</option>
+                                <option value="Perempuan" {{ (auth()->user()->gender == 'Perempuan') ? 'selected' : ''}}>Perempuan</option>
+                            </select>
+                            @error('gender')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label mb-1">Email</label>
+                            <input class="form-control bg-dark text-white @error('email') is-invalid @enderror" wire:model.defer="email">
+                            @error('email')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label mb-1">Nomor HP</label>
+                            <input class="form-control bg-dark text-white @error('phone') is-invalid @enderror" wire:model.defer="phone">
+                            @error('phone')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                    </form>
+                    <div class="mb-3">
+                        <strong>Pastikan data sudah benar</strong>
+                        <div style="text-align: justify">
+                            pastikan semua data sudah benar, terutama jika mengubah alamat email anda, pastikan email yang dimasukkan valid dan aktif.
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="d-flex">
+                        <button class="btn btn-sm btn-secondary ms-auto" wire:click="closeModal('editProfile')" wire:loading.attr='disabled' wire:target='storeProfile'>
+                            <i class="bi bi-x-circle me-1"></i>
+                            Batal
+                        </button>
+                        <button type="submit" form="profileForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
+                            <div wire:loading wire:target='storeProfile'>
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            </div>
+                            <i class="bi bi-arrow-down-square-fill me-1" wire:loading.class='d-none' wire:target='storeProfile'></i>
+                            Simpan
+                        </button>
+                    </div>
+                </div>
 			</div>
 		</div>
 	</div>
@@ -208,39 +212,41 @@
     <div wire:ignore.self class="modal fade" id="confirmPassword" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="confirmPasswordLabel" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
-				<div class="card text-white rounded">
-					<div class="card-header">Konfirmasi Password</div>
-					<div class="card-body">
-                        <div class="mb-4">
-                            <div style="text-align: justify">
-                                Silahkan masukkan password anda saat ini.
-                            </div>
+                <div class="modal-header">
+                    Konfirmasi Password
+                </div>
+                <div class="modal-body">
+                    <div class="mb-4">
+                        <div style="text-align: justify">
+                            Silahkan masukkan password anda saat ini.
                         </div>
-						<form wire:submit.prevent="confirm" id="passwordForm" class="mb-4">
-                            <div class="mb-3">
-                                <input type="password" class="form-control bg-dark text-white @error('password') is-invalid @enderror" wire:model.defer="password" required>
-                                @error('password')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-						</form>
-						<div class="d-flex">
-							<button class="btn btn-sm btn-secondary ms-auto" wire:click="closeModal('confirmPassword')" wire:loading.attr='disabled' wire:target='confirm'>
-								<i class="bi bi-x-circle me-1"></i>
-								Batal
-							</button>
-							<button type="submit" form="passwordForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
-								<div wire:loading wire:target='confirm'>
-                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    </div>
+                    <form wire:submit.prevent="confirm" id="passwordForm" class="mb-4">
+                        <div class="mb-3">
+                            <input type="password" class="form-control bg-dark text-white @error('password') is-invalid @enderror" wire:model.defer="password" required>
+                            @error('password')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
                                 </div>
-								<i class="bi bi-send-fill me-1" wire:loading.class='d-none' wire:target='confirm'></i>
-								Kirim
-							</button>
-						</div>
-					</div>
-				</div>
+                            @enderror
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <div class="d-flex">
+                        <button class="btn btn-sm btn-secondary ms-auto" wire:click="closeModal('confirmPassword')" wire:loading.attr='disabled' wire:target='confirm'>
+                            <i class="bi bi-x-circle me-1"></i>
+                            Batal
+                        </button>
+                        <button type="submit" form="passwordForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
+                            <div wire:loading wire:target='confirm'>
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            </div>
+                            <i class="bi bi-send-fill me-1" wire:loading.class='d-none' wire:target='confirm'></i>
+                            Kirim
+                        </button>
+                    </div>
+                </div>
 			</div>
 		</div>
 	</div>
@@ -249,44 +255,46 @@
     <div wire:ignore.self class="modal fade" id="changePassword" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="changePasswordLabel" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
-				<div class="card text-white rounded">
-					<div class="card-header">Ganti Password</div>
-					<div class="card-body">
-						<form wire:submit.prevent="storePassword" id="changePasswordForm" class="mb-4">
-                            <div class="mb-3">
-                                <label class="form-label">Password Baru</label>
-                                <input type="password" class="form-control bg-dark text-white @error('password') is-invalid @enderror" wire:model.defer="password" required>
-                                @error('password')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Konfirmasi Password Baru</label>
-                                <input type="password" class="form-control bg-dark text-white @error('password_confirmation') is-invalid @enderror" wire:model.defer="password_confirmation" required>
-                                @error('password_confirmation')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-						</form>
-						<div class="d-flex">
-							<button class="btn btn-sm btn-secondary ms-auto" wire:click="closeModal('changePassword')" wire:loading.attr='disabled' wire:target='storePassword'>
-								<i class="bi bi-x-circle me-1"></i>
-								Batal
-							</button>
-							<button type="submit" form="changePasswordForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
-								<div wire:loading wire:target='storePassword'>
-                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                <div class="modal-header">
+                    Ganti Password
+                </div>
+                <div class="modal-body">
+                    <form wire:submit.prevent="storePassword" id="changePasswordForm" class="mb-4">
+                        <div class="mb-3">
+                            <label class="form-label">Password Baru</label>
+                            <input type="password" class="form-control bg-dark text-white @error('password') is-invalid @enderror" wire:model.defer="password" required>
+                            @error('password')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
                                 </div>
-								<i class="bi bi-arrow-down-square-fill me-1" wire:loading.class='d-none' wire:target='storePassword'></i>
-								Simpan
-							</button>
-						</div>
-					</div>
-				</div>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Konfirmasi Password Baru</label>
+                            <input type="password" class="form-control bg-dark text-white @error('password_confirmation') is-invalid @enderror" wire:model.defer="password_confirmation" required>
+                            @error('password_confirmation')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <div class="d-flex">
+                        <button class="btn btn-sm btn-secondary ms-auto" wire:click="closeModal('changePassword')" wire:loading.attr='disabled' wire:target='storePassword'>
+                            <i class="bi bi-x-circle me-1"></i>
+                            Batal
+                        </button>
+                        <button type="submit" form="changePasswordForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
+                            <div wire:loading wire:target='storePassword'>
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            </div>
+                            <i class="bi bi-arrow-down-square-fill me-1" wire:loading.class='d-none' wire:target='storePassword'></i>
+                            Simpan
+                        </button>
+                    </div>
+                </div>
 			</div>
 		</div>
 	</div>

@@ -118,13 +118,26 @@
 				</div>
 
 			</div>
-			<div class="p-3 p-md-4 text-white">
 
-                {{-- main content --}}
-				@yield('content')
-			</div>
+            {{-- main content --}}
+            <div class="text-white content-wrapper">
+
+                {{-- loading screen --}}
+                <div class="" id="loading-screen">
+                </div>
+
+                {{-- content --}}
+                <div class="p-3 p-md-4">
+                    @yield('content')
+                </div>
+
+            </div>
+
+
 		</div>
 
+
+        {{-- sidebar overlay --}}
 		<div id="overlay">
         </div>
 
