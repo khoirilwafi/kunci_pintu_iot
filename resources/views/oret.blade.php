@@ -8,11 +8,7 @@
 </head>
 <body>
 
-<form action="" method="post">
-	<input type="time" name="time" id="time">
-	<input type="date" name="" id="">
-	<input type="date" name="" id="" data-date-format="dd/mm/yyyy">
-</form>
+    <script src="{{ asset('/js/app.js') }}"></script>
 
 </body>
 </html>

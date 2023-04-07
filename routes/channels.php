@@ -20,4 +20,12 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
 
+Broadcast::channel('public.testing', function () {
+    return true;
+});
+
+Broadcast::channel('private.dashboard.{id}', function ($user, $id) {
+    return $user->id === $id && $user->role === 'operator';
+});
+
 WebSocketsRouter::webSocket('/door-connect', DoorSocketHandler::class);
