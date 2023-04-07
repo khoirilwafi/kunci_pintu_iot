@@ -67,19 +67,19 @@
                         </div>
                     @else
                         <thead>
-                            <tr class="align-middle">
-                                <th class="text-center">No</th>
+                            <tr class="align-middle bg-secondary">
+                                <th class="text-center" style="width: 60px">No</th>
                                 <th>Nama</th>
-                                <th class="text-center">Tanggal</th>
-                                <th class="text-center">Mulai</th>
-                                <th class="text-center">Berakhir</th>
-                                <th class="text-center">Berulang</th>
-                                <th class="text-center">Aksi</th>
+                                <th class="text-center" style="width: 100px">Tanggal</th>
+                                <th class="text-center" style="width: 100px">Mulai</th>
+                                <th class="text-center" style="width: 100px">Berakhir</th>
+                                <th class="text-center" style="width: 100px">Berulang</th>
+                                <th class="text-center" style="width: 200px">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($scedules as $index => $scedule)
-                                <tr class="align-middle">
+                                <tr class="align-middle" style="height: 60px">
                                     <td class="text-center">{{ $scedules->firstItem() + $index }}</td>
                                     <td>{{ $scedule->name }}</td>
                                     <td class="text-center">{{ $scedule->date_running }}</td>
@@ -164,72 +164,80 @@
                 </div>
                 <div class="d-flex mb-3">
                     <button class="btn btn-sm btn-primary" wire:click="openModal('addDoor')"><i class="bi bi-plus-circle me-1"></i>Tambah Pintu</button>
-                    {{-- <div class="col-8 col-md-3 ms-auto">
-                        <input type="text" class="form-control form-control-sm bg-dark text-white" id="searchDoor" placeholder="Cari Pintu ..." wire:model="searchDoor" autocomplete="off">
-                    </div> --}}
                 </div>
-                <div class="p-2 rounded border border-secondary">
-                    @if (sizeof($door_links) != 0)
-                        <table class="table text-white">
-                            <thead>
-                                <tr class="align-middle">
-                                    <th class="text-center">No</th>
-                                    <th>Nama</th>
-                                    <th class="text-center">Device ID</th>
-                                    <th class="text-center">Status</th>
-                                    <th class="text-center">Penguncian</th>
-                                    <th class="text-center">Aksi</th>
+                @if (sizeof($door_links) != 0)
+                    <table class="table text-white">
+                        <thead>
+                            <tr class="align-middle bg-secondary">
+                                <th class="text-center" style="width: 60px">No</th>
+                                <th>Nama</th>
+                                <th class="text-center" style="width: 210px">Device ID</th>
+                                <th class="text-center" style="width: 90px">Status</th>
+                                <th class="text-center" style="width: 150px">Penguncian</th>
+                                <th class="text-center" style="width: 100px">Override</th>
+                                <th class="text-center" style="width: 100px">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($door_links as $index => $list)
+                                <tr class="align-middle" style="height: 60px">
+                                    <td class="text-center">{{ $door_links->firstItem() + $index }}</td>
+                                    <td>{{ $list->door->name }}</td>
+                                    <td class="text-center" style="font-family: monospace">
+                                        @if ($list->door->device_id == null)
+                                            <div class="text-warning">Belum Ada</div>
+                                        @else
+                                            <div class="text-info">{{ strtoupper($list->door->device_id) }}</div>
+                                        @endif
+                                    </td>
+                                    <td class="text-center">
+                                        @if ($list->door->socket_id == null)
+                                            <div class="text-danger">Offline</div>
+                                        @else
+                                            <div class="text-info">Online</div>
+                                        @endif
+                                    </td>
+                                    <td class="text-center">
+                                        @if ($list->door->socket_id == null)
+                                            <div class="text-warning">Tidak Diketahui</div>
+                                        @else
+                                            @if ($list->door->is_lock == true)
+                                                <div class="text-info">Terkunci</div>
+                                            @else
+                                                <div class="text-danger">Tidak Terkunci</div>
+                                            @endif
+                                        @endif
+                                    </td>
+                                    <td class="text-center">
+                                        @if ($list->door->socket_id != null)
+                                            <button wire:click="changeLocking('{{ $list->door->id }}')" wire:loading.attr="disabled" class="btn btn-sm {{ $list->door->is_lock == 1 ? 'btn-primary' : 'btn-info' }} bg-gradient me-1">
+                                                <div wire:loading wire:target="changeLocking('{{ $list->door->id }}')">
+                                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                </div>
+                                                <i class="bi {{ $list->door->is_lock == 1 ? 'bi-unlock' : 'bi-lock' }} me-1" wire:loading.class="d-none" wire:target="changeLocking('{{ $list->door->id }}')"></i>
+                                                {{ $list->door->is_lock == 1 ? 'Buka' : 'Kunci' }}
+                                            </button>
+                                        @else
+                                            <div style="font-family: monospace">-</div>
+                                        @endif
+                                    </td>
+                                    <td class="text-center">
+
+                                        <button wire:click="deleteConfirm('{{ $list->id }}')" type="button" class="btn btn-sm btn-danger bg-gradient">
+                                            <i class="bi bi-trash me-1"></i>
+                                            Hapus
+                                        </button>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($door_links as $index => $list)
-                                    <tr class="align-middle">
-                                        <td class="text-center">{{ $door_links->firstItem() + $index }}</td>
-                                        <td>{{ $list->door->name }}</td>
-                                        <td class="text-center">
-                                            @if ($list->door->device_id == null)
-                                                <div class="text-warning">Belum Ada</div>
-                                            @else
-                                                <div class="text-info">{{ $list->door->device_id }}</div>
-                                            @endif
-                                        </td>
-                                        <td class="text-center">
-                                            @if ($list->door->socket_id == null)
-                                                <div class="text-danger">Offline</div>
-                                            @else
-                                                <div class="text-info">Online</div>
-                                            @endif
-                                        </td>
-                                        <td class="text-center">
-                                            @if ($list->door->socket_id == null)
-                                                <div class="text-warning">Tidak Diketahui</div>
-                                            @else
-                                                @if ($list->door->is_lock == true)
-                                                    <div class="text-info">Terkunci</div>
-                                                @else
-                                                    <div class="text-danger">Tidak Terkunci</div>
-                                                @endif
-                                            @endif
-                                        </td>
-                                        <td class="text-center">
-                                            <button wire:click="" type="button" class="btn btn-sm btn-primary bg-gradient me-1" @if ($list->door->socket_id == null) disabled @endif>
-                                                <i class="bi bi-door-open me-1"></i>
-                                                Buka
-                                            </button>
-                                            <button wire:click="deleteConfirm('{{ $list->id }}')" type="button" class="btn btn-sm btn-danger bg-gradient">
-                                                <i class="bi bi-trash me-1"></i>
-                                                Hapus
-                                            </button>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                        {{ $door_links->links(); }}
-                    @else
+                            @endforeach
+                        </tbody>
+                    </table>
+                    {{ $door_links->links(); }}
+                @else
+                    <div class="p-2 rounded border border-secondary">
                         <div class="text-center mb-3 mt-3">-- tidak ada data --</div>
-                    @endif
-                </div>
+                    </div>
+                @endif
             </div>
         </div>
     @endif

@@ -6,25 +6,26 @@ use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class DashboardDoorEvent implements ShouldBroadcast
+class DashboardDoorEvent implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    protected $message, $user_id;
+    protected $id, $socket_id, $is_lock;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($msg, $id)
+    public function __construct($id, $socket_id, $is_lock)
     {
-        $this->message = $msg;
-        $this->user_id = $id;
+        $this->id = $id;
+        $this->socket_id = $socket_id;
+        $this->is_lock = $is_lock;
     }
 
     /**
@@ -34,7 +35,7 @@ class DashboardDoorEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('private.dashboard.', $this->user_id);
+        return new PrivateChannel('private.dashboard.' . auth()->user()->id);
     }
 
     public function broadcastAs()
@@ -44,6 +45,10 @@ class DashboardDoorEvent implements ShouldBroadcast
 
     public function broadcastWith()
     {
-        return 'hello';
+        return array(
+            'id' => $this->id,
+            'socket_id'  => $this->socket_id,
+            'is_lock' => $this->is_lock,
+        );
     }
 }

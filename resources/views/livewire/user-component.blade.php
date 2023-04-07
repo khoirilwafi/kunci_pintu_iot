@@ -56,24 +56,24 @@
                         </div>
                     @else
                         <thead>
-                            <tr class="align-middle">
-                                <th class="text-center">No</th>
+                            <tr class="align-middle bg-secondary">
+                                <th class="text-center" style="width: 60px">No</th>
                                 <th>Nama</th>
-                                <th class="text-center">Jenis Kelamin</th>
-                                <th>Email</th>
-                                <th>Nomor HP</th>
-                                <th class="text-center">Status</th>
-                                <th class="text-center">Aksi</th>
+                                <th style="width: 110px">Email</th>
+                                <th class="text-center" style="width: 130px">Jenis Kelamin</th>
+                                <th class="text-center" style="width: 110px">Nomor HP</th>
+                                <th class="text-center" style="width: 150px">Status</th>
+                                <th class="text-center" style="width: 200px">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($users as $index => $user)
-                                <tr class="align-middle">
+                                <tr class="align-middle" style="height: 60px">
                                     <td class="text-center">{{ $users->firstItem() + $index }}</td>
                                     <td>{{ $user->name }}</td>
-                                    <td class="text-center">{{ $user->gender }}</td>
                                     <td>{{ $user->email }}</td>
-                                    <td>{{ $user->phone }}</td>
+                                    <td class="text-center">{{ $user->gender }}</td>
+                                    <td class="text-center">{{ $user->phone }}</td>
                                     <td class="text-center">
                                         @if ($user->email_verified_at == null)
                                             <div class="text-warning">Belum Verifikasi</div>
@@ -148,50 +148,50 @@
                             placeholder="Cari Pintu ..." wire:model="searchAccess" autocomplete="off">
                     </div>
                 </div>
-                <div class="p-2 rounded border border-secondary">
-                    @if (sizeof($access) != 0)
-                        <table class="table text-white">
-                            <thead>
-                                <tr class="align-middle">
-                                    <th class="text-center">No</th>
-                                    <th>Pintu</th>
-                                    <th>Gedung</th>
-                                    <th class="text-center">Durasi Harian</th>
-                                    <th class="text-center">Batas Tanggal</th>
-                                    <th class="text-center">Remote</th>
-                                    <th class="text-center">Status</th>
+                @if (sizeof($access) != 0)
+                    <table class="table text-white">
+                        <thead>
+                            <tr class="align-middle bg-secondary">
+                                <th class="text-center" style="width: 60px">No</th>
+                                <th>Pintu</th>
+                                <th>Gedung</th>
+                                <th class="text-center" style="width: 170px">Durasi Harian</th>
+                                <th class="text-center" style="width: 210px">Batas Tanggal</th>
+                                <th class="text-center" style="width: 100px">Remote</th>
+                                <th class="text-center" style="width: 100px">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($access as $index => $list)
+                                <tr class="align-middle" style="height: 60px">
+                                    <td class="text-center">{{ $access->firstItem() + $index }}</td>
+                                    <td>{{ $list->door->name }}</td>
+                                    <td>{{ $list->door->office->name }}</td>
+                                    <td class="text-center">{{ $list->time_begin. ' sd '. $list->time_end }}</td>
+                                    @if ($list->is_temporary == 1)
+                                        <td class="text-center">{{ $list->date_begin. ' sd '. $list->date_end }}</td>
+                                    @else
+                                        <td class="text-center text-info">Tidak Terbatas</td>
+                                    @endif
+                                    @if ($list->is_remote == 1)
+                                        <td class="text-center text-warning">Ya</td>
+                                    @else
+                                        <td class="text-center text-info">Tidak</td>
+                                    @endif
+                                    @if ($list->is_running == 1)
+                                        <td class="text-center text-info">Aktif</td>
+                                    @else
+                                        <td class="text-center text-warning">Pending</td>
+                                    @endif
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($access as $index => $list)
-                                    <tr class="align-middle">
-                                        <td class="text-center">{{ $access->firstItem() + $index }}</td>
-                                        <td>{{ $list->door->name }}</td>
-                                        <td>{{ $list->door->office->name }}</td>
-                                        <td class="text-center">{{ $list->time_begin. ' sd '. $list->time_end }}</td>
-                                        @if ($list->is_temporary == 1)
-                                            <td class="text-center">{{ $list->date_begin. ' sd '. $list->date_end }}</td>
-                                        @else
-                                            <td class="text-center text-info">Tidak Terbatas</td>
-                                        @endif
-                                        @if ($list->is_remote == 1)
-                                            <td class="text-center text-warning">Ya</td>
-                                        @else
-                                            <td class="text-center text-info">Tidak</td>
-                                        @endif
-                                        @if ($list->is_running == 1)
-                                            <td class="text-center text-info">Aktif</td>
-                                        @else
-                                            <td class="text-center text-warning">Pending</td>
-                                        @endif
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    @else
+                            @endforeach
+                        </tbody>
+                    </table>
+                @else
+                    <div class="p-2 rounded border border-secondary">
                         <div class="text-center mb-3 mt-3">-- tidak ada data --</div>
-                    @endif
-                </div>
+                    </div>
+                @endif
             </div>
         </div>
     @endif

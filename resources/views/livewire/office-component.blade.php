@@ -67,17 +67,17 @@
 					</div>
 				@else
 					<thead>
-						<tr class="align-middle">
-							<th class="text-center">No</th>
+						<tr class="align-middle bg-secondary">
+							<th class="text-center" style="width: 60px">No</th>
 							<th>Nama</th>
 							<th>Operator</th>
-							<th>Email</th>
-							<th class="text-center">Aksi</th>
+							<th style="width: 180px">Email</th>
+							<th class="text-center" style="width: 220px">Aksi</th>
 						</tr>
 					</thead>
 					<tbody>
 						@foreach ($offices as $index => $office)
-							<tr class="align-middle">
+							<tr class="align-middle" style="height: 60px">
 								<td class="text-center">{{ $offices->firstItem() + $index }}</td>
 								<td>{{ $office->name }}</td>
 								<td>{{ $office->user->name }}</td>

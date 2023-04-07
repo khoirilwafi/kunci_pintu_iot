@@ -31,12 +31,16 @@ class DoorComponent extends Component
     public $door_detail_visibility = false;
     public $date_visibility = false;
 
+    public $connection_status = 'Menghubungkan ...';
+
+    protected $listeners = ['doorEvent', 'socketEvent'];
+
 
     public function render()
     {
         // get door at office
         $office        = Office::where('user_id', request()->user()->id)->first();
-        $data['doors'] = Door::where('name', 'like', '%' . $this->search . '%')->where('office_id', $office->id)->paginate(7);
+        $data['doors'] = Door::where('name', 'like', '%' . $this->search . '%')->where('office_id', $office->id)->orderBy('name', 'asc')->get();
 
         // get user available
         $sub_query     = Access::select('user_id')->where('door_id', $this->edit_id)->get();
@@ -51,6 +55,25 @@ class DoorComponent extends Component
         $this->office_id   = $office->id;
 
         return view('livewire.door-component', $data);
+    }
+
+    public function doorEvent($data)
+    {
+        $door = Door::where('device_id', $data['id'])->first();
+
+        $door->socket_id = $data['socket_id'];
+        $door->is_lock = $data['is_lock'];
+
+        $door->save();
+
+        if ($this->door_detail_visibility == true) {
+            $this->getDoorDetail($door->id);
+        }
+    }
+
+    public function socketEvent($data)
+    {
+        $this->connection_status = $data;
     }
 
     public function updatingSearch()
@@ -193,12 +216,12 @@ class DoorComponent extends Component
         $status = $door->save();
 
         if ($status) {
-            $this->name = $this->name_edited;
             session()->flash('update_success', $this->name);
         } else {
             session()->flash('update_failed', $this->name);
         }
 
+        $this->getDoorDetail($this->edit_id);
         $this->closeModal('editDoor');
     }
 
@@ -298,5 +321,36 @@ class DoorComponent extends Component
             $access->save();
         } catch (Exception $e) {
         }
+    }
+
+    public function changeLocking($id)
+    {
+        $door = Door::where('id', $id)->first();
+
+        if ($door->is_lock == 0) {
+            $door->is_lock = 1;
+        } else {
+            $door->is_lock = 0;
+        }
+
+        $door->save();
+    }
+
+    public function unlink()
+    {
+        $door = Door::where('id', $this->edit_id)->first();
+        $door->device_id = null;
+        $door->socket_id = null;
+
+        $status = $door->save();
+
+        if ($status) {
+            session()->flash('update_success', $this->name);
+        } else {
+            session()->flash('update_failed', $this->name);
+        }
+
+        $this->getDoorDetail($this->edit_id);
+        $this->closeModal('unlinkDoor');
     }
 }

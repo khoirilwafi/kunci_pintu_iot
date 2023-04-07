@@ -47,8 +47,8 @@
                     Daftar Pintu
                 </div>
                 <div class="ms-auto d-flex align-items-center">
-                    LIVE
-                    <div id="indicator" class="ms-2 border border-warning" style="width: 15px; height:15px; border-radius: 50%"></div>
+                    <div id="connection_status">{{ $connection_status }}</div>
+                    <div id="connection_indicator" class="ms-2 border border-warning" style="width: 15px; height:15px; border-radius: 50%;""></div>
                 </div>
             </div>
             <div class="card-body">
@@ -71,19 +71,20 @@
                         </div>
                     @else
                         <thead>
-                            <tr class="align-middle">
-                                <th class="text-center">No</th>
+                            <tr class="align-middle bg-secondary">
+                                <th class="text-center" style="width: 50px">No</th>
                                 <th>Nama</th>
-                                <th class="text-center">Perangkat Kunci</th>
-                                <th class="text-center">Status Koneksi</th>
-                                <th class="text-center">Status Penguncian</th>
-                                <th class="text-center">Aksi</th>
+                                <th class="text-center" style="width: 230px">Perangkat Kunci</th>
+                                <th class="text-center" style="width: 100px">Koneksi</th>
+                                <th class="text-center" style="width: 160px">Penguncian</th>
+                                <th class="text-center" style="width: 100px">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($doors as $index => $door)
-                                <tr class="align-middle">
-                                    <td class="text-center">{{ $doors->firstItem() + $index }}</td>
+                                <tr class="align-middle" style="height:60px">
+                                    {{-- <td class="text-center">{{ $doors->firstItem() + $index }}</td> --}}
+                                    <td class="text-center">{{ $index + 1 }}</td>
                                     <td style="cursor: pointer;" wire:click="getDoorDetail('{{ $door->id }}')">{{ $door->name }}</td>
                                     <td class="text-center">
                                         @if ($door->device_id === null)
@@ -92,14 +93,14 @@
                                             <div class="text-info" style="font-family: monospace">{{ strtoupper($door->device_id) }}</div>
                                         @endif
                                     </td>
-                                    <td class="text-center">
+                                    <td class="text-center" id="door_connection_{{ $door->id }}">
                                         @if ($door->socket_id == null)
                                             <div class="text-danger">Offline</div>
                                         @else
                                             <div class="text-info">Online</div>
                                         @endif
                                     </td>
-                                    <td class="text-center">
+                                    <td class="text-center" id="door_locking_{{ $door->id }}">
                                         @if ($door->socket_id == null)
                                             <div class="text-warning">Tidak Diketahui</div>
                                         @else
@@ -111,17 +112,24 @@
                                         @endif
                                     </td>
                                     <td class="text-center">
-                                        <button wire:click="" type="button" class="btn btn-sm btn-primary bg-gradient" @if ($door->socket_id == null) disabled @endif>
-                                            <i class="bi bi-door-open me-1"></i>
-                                            Buka
-                                        </button>
+                                        @if ($door->socket_id == null)
+                                            <div style="font-family: monospace">-</div>
+                                        @else
+                                            <button wire:click="changeLocking('{{ $door->id }}')" wire:loading.attr="disabled" class="btn btn-sm {{ $door->is_lock == 1 ? 'btn-primary' : 'btn-info' }} bg-gradient">
+                                                <div wire:loading wire:target="changeLocking('{{ $door->id }}')">
+                                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                </div>
+                                                <i class="bi {{ $door->is_lock == 1 ? 'bi-unlock' : 'bi-lock' }} me-1" wire:loading.class="d-none" wire:target="changeLocking('{{ $door->id }}')"></i>
+                                                {{ $door->is_lock == 1 ? 'Buka' : 'Kunci' }}
+                                            </button>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach
                         </tbody>
                     @endif
                 </table>
-                {{ $doors->links() }}
+                {{-- {{ $doors->links() }} --}}
             </div>
         </div>
     @endif
@@ -138,8 +146,8 @@
                     Detail Pintu - Akses Pengguna
                 </div>
                 <div class="ms-auto d-flex align-items-center">
-                    LIVE
-                    <div id="indicator" class="ms-2 border border-warning" style="width: 15px; height:15px; border-radius: 50%"></div>
+                    <div id="connection_status">{{ $connection_status }}</div>
+                    <div id="connection_indicator" class="ms-2 border border-warning" style="width: 15px; height:15px; border-radius: 50%;""></div>
                 </div>
             </div>
             <div class="card-body">
@@ -198,9 +206,11 @@
                     </table>
                     <div class="flex-grow-1 d-flex">
                         <div class="ms-auto">
-                            <button class="btn btn-sm btn-outline-info me-1" wire:click=""><div class="fs-6 text-white"><i class="bi bi-printer"></i></div></button>
+                            @if ($device_id != null)
+                                <button class="btn btn-sm btn-outline-info me-1" wire:click=""><div class="fs-6 text-white"><i class="bi bi-printer"></i></div></button>
+                                <button class="btn btn-sm btn-outline-warning me-1" wire:click="openModal('unlinkDoor')"><div class="fs-6 text-white"><i class="bi bi-cpu"></i></button>
+                            @endif
                             <button class="btn btn-sm btn-outline-primary me-1" wire:click="edit()"><div class="fs-6 text-white"><i class="bi bi-pencil-square"></i></div></button>
-                            <button class="btn btn-sm btn-outline-warning me-1" wire:click=""><div class="fs-6 text-white"><i class="bi bi-shield-x"></i></button>
                             <button class="btn btn-sm btn-outline-danger" wire:click="openModal('deleteConfirm')"><div class="fs-6 text-white"><i class="bi bi-trash"></i></div></button>
                         </div>
                     </div>
@@ -211,60 +221,60 @@
                         <input type="text" class="form-control form-control-sm bg-dark text-white" id="search" placeholder="Cari Akses ..." wire:model="searchAccess" autocomplete="off">
                     </div>
                 </div>
-                <div class="p-2 rounded border border-secondary">
-                    @if (sizeof($access) != 0)
-                        <table class="table text-white">
-                            <thead>
-                                <tr class="align-middle">
-                                    <th class="text-center">No</th>
-                                    <th>Nama</th>
-                                    <th class="text-center">Durasi Harian</th>
-                                    <th class="text-center">Batas Tanggal</th>
-                                    <th class="text-center">Remote</th>
-                                    <th class="text-center">Status</th>
-                                    <th class="text-center">Aksi</th>
+                @if (sizeof($access) != 0)
+                    <table class="table text-white">
+                        <thead>
+                            <tr class="align-middle bg-secondary">
+                                <th class="text-center" style="width: 60px">No</th>
+                                <th>Nama</th>
+                                <th class="text-center" style="width: 220px">Durasi Harian</th>
+                                <th class="text-center" style="width: 220px">Batas Tanggal</th>
+                                <th class="text-center" style="width: 90px">Remote</th>
+                                <th class="text-center" style="width: 100px">Status</th>
+                                <th class="text-center" style="width: 200px">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($access as $index => $list)
+                                <tr class="align-middle" style="height: 60px">
+                                    <td class="text-center">{{ $access->firstItem() + $index }}</td>
+                                    <td>{{ $list->user->name }}</td>
+                                    <td class="text-center">{{ $list->time_begin. ' sd '. $list->time_end }}</td>
+                                    @if ($list->is_temporary == 1)
+                                        <td class="text-center">{{ $list->date_begin. ' sd '. $list->date_end }}</td>
+                                    @else
+                                        <td class="text-center text-info">Tidak Terbatas</td>
+                                    @endif
+                                    @if ($list->is_remote == 1)
+                                        <td class="text-center text-warning">Ya</td>
+                                    @else
+                                        <td class="text-center text-info">Tidak</td>
+                                    @endif
+                                    @if ($list->is_running == 1)
+                                        <td class="text-center text-info">Aktif</td>
+                                    @else
+                                        <td class="text-center text-warning">Pending</td>
+                                    @endif
+                                    <td class="text-center">
+                                        <button wire:click="changeAccess('{{ $list->id }}')" wire:loading.attr="disabled" class="btn btn-sm {{ $list->is_running == 1 ? 'btn-warning' : 'btn-info' }} me-1" style="width: 100px;">
+                                            <i class="bi {{ $list->is_running == 1 ? 'bi-pause-circle' : 'bi-play-circle' }} me-1" wire:loading.class="d-none" wire:target="changeAccess('{{ $list->id }}')"></i>
+                                            <div wire:loading wire:target="changeAccess('{{ $list->id }}')">
+                                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                            </div>
+                                            {{ $list->is_running == 1 ? 'Blokir' : 'Aktifkan' }}
+                                        </button>
+                                        <button class="btn btn-sm btn-danger" wire:click="confirmDeleteAccess('{{ $list->id }}')"><i class="bi bi-trash me-1"></i>Hapus</button>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($access as $index => $list)
-                                    <tr class="align-middle">
-                                        <td class="text-center">{{ $access->firstItem() + $index }}</td>
-                                        <td>{{ $list->user->name }}</td>
-                                        <td class="text-center">{{ $list->time_begin. ' sd '. $list->time_end }}</td>
-                                        @if ($list->is_temporary == 1)
-                                            <td class="text-center">{{ $list->date_begin. ' sd '. $list->date_end }}</td>
-                                        @else
-                                            <td class="text-center text-info">Tidak Terbatas</td>
-                                        @endif
-                                        @if ($list->is_remote == 1)
-                                            <td class="text-center text-warning">Ya</td>
-                                        @else
-                                            <td class="text-center text-info">Tidak</td>
-                                        @endif
-                                        @if ($list->is_running == 1)
-                                            <td class="text-center text-info">Aktif</td>
-                                        @else
-                                            <td class="text-center text-warning">Pending</td>
-                                        @endif
-                                        <td class="text-center">
-                                            <button wire:click="changeAccess('{{ $list->id }}')" wire:loading.attr="disabled" class="btn btn-sm text-white {{ ($list->is_running) == 1 ? 'btn-warning' : 'btn-info' }} me-1">
-                                                <i class="bi {{ ($list->is_running) == 1 ? 'bi-pause-circle' : 'bi-play-circle' }} me-1" wire:loading.class="d-none" wire:target="changeAccess('{{ $list->id }}')"></i>
-                                                <div wire:loading wire:target="changeAccess('{{ $list->id }}')">
-                                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                                </div>
-                                                {{ ($list->is_running) == 1 ? 'Blokir' : 'Aktifkan' }}
-                                            </button>
-                                            <button class="btn btn-sm btn-danger" wire:click="confirmDeleteAccess('{{ $list->id }}')"><i class="bi bi-trash me-1"></i>Hapus</button>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                        {{ $access->links(); }}
-                    @else
+                            @endforeach
+                        </tbody>
+                    </table>
+                    {{ $access->links(); }}
+                @else
+                    <div class="p-2 rounded border border-secondary">
                         <div class="text-center mb-3 mt-3">-- tidak ada data --</div>
-                    @endif
-                </div>
+                    </div>
+                @endif
             </div>
         </div>
     @endif
@@ -476,6 +486,36 @@
 		</div>
 	</div>
 
+    {{-- unlink confirm --}}
+	<div wire:ignore.self class="modal fade" id="unlinkDoor" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+                <div class="modal-header">
+                    Konfirmasi Lepas Perangkat Kunci
+                </div>
+                <div class="modal-body">
+                    Apakah anda yakin untuk melepas perangkat <strong>{{ strtoupper($device_id) }}</strong> secara permanen ?
+                </div>
+                <div class="modal-footer">
+                    <div class="d-flex">
+                        <button class="btn btn-sm btn-primary ms-auto" wire:click="closeModal('unlinkDoor')" wire:loading.attr="disabled"
+                            wire:target="unlink">
+                            <i class="bi bi-x-circle me-1"></i>
+                            Batal
+                        </button>
+                        <button wire:click="unlink" wire:loading.attr="disabled" wire:target="closeModal('unlinkDoor')" class="btn btn-sm btn-danger ms-3">
+                            <i class="bi bi-scissors me-1" wire:loading.class="d-none" wire:target="unlink"></i>
+                            <div wire:loading wire:target="unlink">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            </div>
+                            Lepas
+                        </button>
+                    </div>
+                </div>
+			</div>
+		</div>
+	</div>
+
     {{-- delete access confirm --}}
 	<div wire:ignore.self class="modal fade" id="deleteAccessConfirm" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1">
 		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -526,18 +566,8 @@
 </div>
 
 @push('custom_script')
+    @vite('resources/js/app.js');
     <script>
-        var index = 0;
-        function blink(){
-            let indicator = document.getElementById('indicator');
-            if(index == 0){
-                indicator.style.backgroundColor = '#90EE90';
-                index = 1;
-            } else {
-                indicator.style.backgroundColor = '';
-                index = 0;
-            }
-        }
-        setInterval(blink, 800);
+        window.user = @json(auth()->user());
     </script>
 @endpush

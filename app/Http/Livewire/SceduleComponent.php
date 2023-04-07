@@ -299,4 +299,17 @@ class SceduleComponent extends Component
 
         $this->closeModal('addDoor');
     }
+
+    public function changeLocking($id)
+    {
+        $door = Door::where('id', $id)->first();
+
+        if ($door->is_lock == 0) {
+            $door->is_lock = 1;
+        } else {
+            $door->is_lock = 0;
+        }
+
+        $door->save();
+    }
 }

@@ -55,25 +55,23 @@
 					</div>
 				@else
 					<thead>
-						<tr class="align-middle">
-							<th class="text-center">No</th>
+						<tr class="align-middle bg-secondary">
+							<th class="text-center" style="width: 60px">No</th>
 							<th>Nama</th>
-							<th>Jenis Kelamin</th>
 							<th>Email</th>
-							<th>Nomor HP</th>
 							<th>Gedung</th>
-							<th class="text-center">Status</th>
-							<th class="text-center">Aksi</th>
+							<th class="text-center" style="width: 120px">Jenis Kelamin</th>
+							<th class="text-center" style="width: 70px">Nomor HP</th>
+							<th class="text-center" style="width: 80px">Status</th>
+							<th class="text-center" style="width: 120px">Aksi</th>
 						</tr>
 					</thead>
 					<tbody>
 						@foreach ($operators as $index => $operator)
-							<tr class="align-middle">
+							<tr class="align-middle" style="height: 60px">
 								<td class="text-center">{{ $operators->firstItem() + $index }}</td>
 								<td>{{ $operator->name }}</td>
-                                <td>{{ $operator->gender }}</td>
 								<td>{{ $operator->email }}</td>
-								<td>{{ $operator->phone }}</td>
 								<td>
 									@if ($operator->office != null)
 										<div class="text-info">{{ $operator->office->name }}</div>
@@ -81,6 +79,8 @@
 										<div class="text-warning">Belum Ada</div>
 									@endif
 								</td>
+                                <td class="text-center">{{ $operator->gender }}</td>
+								<td class="text-center">{{ $operator->phone }}</td>
                                 <td class="text-center">
 									@if ($operator->email_verified_at == null)
                                         <div class="text-warning">Belum Verifikasi</div>

@@ -1,14 +1,16 @@
 <?php
 
+use App\Events\DashboardDoorEvent;
+use Pusher\Pusher;
+use GuzzleHttp\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\OperatorController;
 use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\VerificationController;
-use GuzzleHttp\Middleware;
 
 /*
 |--------------------------------------------------------------------------
@@ -78,3 +80,9 @@ Route::middleware(['auth', 'verified', 'operator'])->group(function () {
 // account
 Route::get('/dashboard/my-account', [DashboardController::class, 'my_account'])->middleware(['auth', 'verified']);
 Route::get('my-account/avatar/{file}', [UserController::class, 'getAvatar'])->middleware(['auth', 'verified']);
+
+
+
+Route::get('/event-tester', function () {
+    event(new DashboardDoorEvent('a9tehwzic7jlg7lwkqbe', '123456.654321', 1));
+});
