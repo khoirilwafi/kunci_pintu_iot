@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Office;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -16,7 +17,9 @@ class IsOperator
      */
     public function handle(Request $request, Closure $next)
     {
-        if (auth()->user() && auth()->user()->role === 'operator') {
+        $office = Office::where('user_id', auth()->user()->id)->first();
+
+        if (auth()->user() && auth()->user()->role === 'operator' && $office != null) {
             return $next($request);
         }
 

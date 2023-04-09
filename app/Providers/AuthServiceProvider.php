@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\User;
+use App\Models\Office;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
@@ -31,7 +32,8 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         Gate::define('operator', function (User $user) {
-            return $user->role === 'operator';
+            $office = Office::where('user_id', auth()->user()->id)->first();
+            return $user->role === 'operator' && $office != null;
         });
     }
 }

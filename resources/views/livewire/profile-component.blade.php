@@ -216,12 +216,12 @@
                     Konfirmasi Password
                 </div>
                 <div class="modal-body">
-                    <div class="mb-4">
+                    <div class="mb-3">
                         <div style="text-align: justify">
                             Silahkan masukkan password anda saat ini.
                         </div>
                     </div>
-                    <form wire:submit.prevent="confirm" id="passwordForm" class="mb-4">
+                    <form wire:submit.prevent="confirm" id="passwordForm" class="mb-3">
                         <div class="mb-3">
                             <input type="password" class="form-control bg-dark text-white @error('password') is-invalid @enderror" wire:model.defer="password" required>
                             @error('password')

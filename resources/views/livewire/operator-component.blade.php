@@ -62,7 +62,7 @@
 							<th>Gedung</th>
 							<th class="text-center" style="width: 120px">Jenis Kelamin</th>
 							<th class="text-center" style="width: 70px">Nomor HP</th>
-							<th class="text-center" style="width: 80px">Status</th>
+							<th class="text-center" style="width: 150px">Status</th>
 							<th class="text-center" style="width: 120px">Aksi</th>
 						</tr>
 					</thead>
