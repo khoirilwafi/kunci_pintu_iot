@@ -90,3 +90,7 @@ Route::get('my-account/avatar/{file}', [UserController::class, 'getAvatar'])->mi
 Route::get('/socket-ping', function () {
     // event(new DashboardDoorEvent());
 });
+
+Route::get('/broadcasting/auth', function (Request $request) {
+    dump('here');
+});

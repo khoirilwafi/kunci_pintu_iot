@@ -12,9 +12,16 @@ const echo = new Echo({
     forceTLS: false,
     encrypted: false,
     enabledTransports: ["ws", "wss"],
+    authEndpoint: '/broadcasting/auth',
+    auth: {
+        headers: {
+            'X-Custom-Header': 'hello'
+        }
+    }
 });
 
-const channel = echo.private(`private.dashboard.${user.id}`);
+const channel = echo.channel(`channel.xyz`);
+// const channel = echo.private(`private.dashboard.${user.id}`);
 
 echo.connector.pusher.connection.bind('connected', () => {
     Livewire.emit('socketEvent', 'Terhubung');

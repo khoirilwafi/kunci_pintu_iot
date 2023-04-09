@@ -16,7 +16,7 @@ use BeyondCode\LaravelWebSockets\Facades\WebSocketsRouter;
 |
 */
 
-Broadcast::channel('public.channel', function () {
+Broadcast::channel('public.channel', function ($user) {
     return true;
 });
 
