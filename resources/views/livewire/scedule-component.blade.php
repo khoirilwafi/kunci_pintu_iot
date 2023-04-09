@@ -74,6 +74,7 @@
                                 <th class="text-center" style="width: 100px">Mulai</th>
                                 <th class="text-center" style="width: 100px">Berakhir</th>
                                 <th class="text-center" style="width: 100px">Berulang</th>
+                                <th class="text-center" style="width: 100px">Status</th>
                                 <th class="text-center" style="width: 200px">Aksi</th>
                             </tr>
                         </thead>
@@ -86,6 +87,7 @@
                                     <td class="text-center">{{ $scedule->time_begin }}</td>
                                     <td class="text-center">{{ $scedule->time_end }}</td>
                                     <td class="text-center">{{ ($scedule->is_repeating == 1) ? 'Ya' : 'Tidak' }}</td>
+                                    <td class="text-center {{ $scedule->status == 'waiting' ? 'text-info' : 'text-warning' }}">{{ ucfirst($scedule->status) }}</td>
                                     <td class="text-center">
                                         <button wire:click="getSceduleDetail('{{ $scedule->id }}')" type="button" class="btn btn-sm btn-primary bg-gradient me-1">
                                             <i class="bi bi-eye me-1"></i>
@@ -158,13 +160,20 @@
                     </table>
                     <div class="flex-grow-1 d-flex">
                         <div class="ms-auto">
-                            <button class="btn btn-sm btn-outline-primary me-2" wire:click="edit"><div class="fs-6 text-white"><i class="bi bi-pencil-square"></i></div></button>
+                            @if($insert_scedule_status == 'waiting')
+                                <button class="btn btn-sm btn-outline-primary ms-1" wire:click="edit"><div class="fs-6 text-white"><i class="bi bi-pencil-square"></i></div></button>
+                                <button class="btn btn-sm btn-outline-info ms-1" wire:click=""><div class="fs-6 text-white"><i class="bi bi-play-circle"></i></div></button>
+                            @else
+                                <button class="btn btn-sm btn-outline-warning ms-1" wire:click="edit"><div class="fs-6 text-white"><i class="bi bi-stop-circle"></i></div></button>
+                            @endif
                         </div>
                     </div>
                 </div>
-                <div class="d-flex mb-3">
-                    <button class="btn btn-sm btn-primary" wire:click="openModal('addDoor')"><i class="bi bi-plus-circle me-1"></i>Tambah Pintu</button>
-                </div>
+                @if($insert_scedule_status == 'waiting')
+                    <div class="d-flex mb-3">
+                        <button class="btn btn-sm btn-primary" wire:click="openModal('addDoor')"><i class="bi bi-plus-circle me-1"></i>Tambah Pintu</button>
+                    </div>
+                @endif
                 @if (sizeof($door_links) != 0)
                     <table class="table text-white">
                         <thead>
@@ -174,7 +183,9 @@
                                 <th class="text-center" style="width: 210px">Device ID</th>
                                 <th class="text-center" style="width: 90px">Status</th>
                                 <th class="text-center" style="width: 150px">Penguncian</th>
-                                <th class="text-center" style="width: 100px">Override</th>
+                                @if ($insert_scedule_status == 'running')
+                                    <th class="text-center" style="width: 100px">Override</th>
+                                @endif
                                 <th class="text-center" style="width: 100px">Aksi</th>
                             </tr>
                         </thead>
@@ -208,21 +219,22 @@
                                             @endif
                                         @endif
                                     </td>
+                                    @if ($insert_scedule_status == 'running')
+                                        <td class="text-center">
+                                            @if ($list->door->socket_id != null)
+                                                <button wire:click="changeLocking('{{ $list->door->id }}')" wire:loading.attr="disabled" class="btn btn-sm {{ $list->door->is_lock == 1 ? 'btn-primary' : 'btn-info' }} bg-gradient me-1" style="width: 80px">
+                                                    <div wire:loading wire:target="changeLocking('{{ $list->door->id }}')">
+                                                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                    </div>
+                                                    <i class="bi {{ $list->door->is_lock == 1 ? 'bi-unlock' : 'bi-lock' }} me-1" wire:loading.class="d-none" wire:target="changeLocking('{{ $list->door->id }}')"></i>
+                                                    {{ $list->door->is_lock == 1 ? 'Buka' : 'Kunci' }}
+                                                </button>
+                                            @else
+                                                <div style="font-family: monospace">-</div>
+                                            @endif
+                                        </td>
+                                    @endif
                                     <td class="text-center">
-                                        @if ($list->door->socket_id != null)
-                                            <button wire:click="changeLocking('{{ $list->door->id }}')" wire:loading.attr="disabled" class="btn btn-sm {{ $list->door->is_lock == 1 ? 'btn-primary' : 'btn-info' }} bg-gradient me-1">
-                                                <div wire:loading wire:target="changeLocking('{{ $list->door->id }}')">
-                                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                                </div>
-                                                <i class="bi {{ $list->door->is_lock == 1 ? 'bi-unlock' : 'bi-lock' }} me-1" wire:loading.class="d-none" wire:target="changeLocking('{{ $list->door->id }}')"></i>
-                                                {{ $list->door->is_lock == 1 ? 'Buka' : 'Kunci' }}
-                                            </button>
-                                        @else
-                                            <div style="font-family: monospace">-</div>
-                                        @endif
-                                    </td>
-                                    <td class="text-center">
-
                                         <button wire:click="deleteConfirm('{{ $list->id }}')" type="button" class="btn btn-sm btn-danger bg-gradient">
                                             <i class="bi bi-trash me-1"></i>
                                             Hapus

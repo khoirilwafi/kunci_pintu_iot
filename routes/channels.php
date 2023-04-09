@@ -1,8 +1,8 @@
 <?php
 
+use App\Websockets\Handlers\DoorSocketHandler;
+use App\Websockets\Handlers\OfficeSocketHandler;
 use Illuminate\Support\Facades\Broadcast;
-
-use App\Websockets\DoorSocketHandler;
 use BeyondCode\LaravelWebSockets\Facades\WebSocketsRouter;
 
 /*
@@ -16,11 +16,7 @@ use BeyondCode\LaravelWebSockets\Facades\WebSocketsRouter;
 |
 */
 
-Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
-    return (int) $user->id === (int) $id;
-});
-
-Broadcast::channel('public.testing', function () {
+Broadcast::channel('public.channel', function () {
     return true;
 });
 
@@ -29,3 +25,4 @@ Broadcast::channel('private.dashboard.{id}', function ($user, $id) {
 });
 
 WebSocketsRouter::webSocket('/door-connect', DoorSocketHandler::class);
+WebSocketsRouter::webSocket('/office-connect', OfficeSocketHandler::class);

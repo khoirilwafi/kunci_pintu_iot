@@ -23,7 +23,7 @@ class Office extends Model
         });
     }
 
-    protected $fillable = ['name', 'user_id'];
+    protected $fillable = ['name', 'user_id', 'socket_id'];
 
     protected $hidden = [];
 

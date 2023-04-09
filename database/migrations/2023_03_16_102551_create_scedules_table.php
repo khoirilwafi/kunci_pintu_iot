@@ -28,6 +28,7 @@ return new class extends Migration
             $table->boolean('day_4')->nullable();
             $table->boolean('day_5')->nullable();
             $table->boolean('day_6')->nullable();
+            $table->enum('status', ['waiting', 'running'])->default('waiting');
             $table->timestamps();
         });
 

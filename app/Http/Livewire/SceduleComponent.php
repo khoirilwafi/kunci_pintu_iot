@@ -18,7 +18,7 @@ class SceduleComponent extends Component
 
     public $scedule_id, $delete_name, $delete_id, $scedule_door_id;
 
-    public $insert_name, $insert_date, $insert_time_begin, $insert_time_end, $insert_is_repeat;
+    public $insert_name, $insert_date, $insert_time_begin, $insert_time_end, $insert_is_repeat, $insert_scedule_status;
     public $insert_day_0, $insert_day_1, $insert_day_2, $insert_day_3, $insert_day_4, $insert_day_5, $insert_day_6;
 
     public $edit_name, $edit_date, $edit_time_begin, $edit_time_end, $edit_is_repeat;
@@ -213,6 +213,8 @@ class SceduleComponent extends Component
         $this->insert_day_4 = $scedule->day_4;
         $this->insert_day_5 = $scedule->day_5;
         $this->insert_day_6 = $scedule->day_6;
+
+        $this->insert_scedule_status = $scedule->status;
 
         $this->showDetail();
     }

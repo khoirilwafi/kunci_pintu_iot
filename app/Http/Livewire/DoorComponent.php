@@ -59,7 +59,7 @@ class DoorComponent extends Component
 
     public function doorEvent($data)
     {
-        $door = Door::where('device_id', $data['id'])->first();
+        $door = Door::where('device_id', $data['device_id'])->first();
 
         $door->socket_id = $data['socket_id'];
         $door->is_lock = $data['is_lock'];

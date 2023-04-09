@@ -11,6 +11,10 @@ use App\Http\Controllers\OperatorController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\VerificationController;
+use BeyondCode\LaravelWebSockets\Facades\WebSocketsRouter;
+use BeyondCode\LaravelWebSockets\WebSockets\Channels\Channel;
+use BeyondCode\LaravelWebSockets\WebSockets\Channels\ChannelManager;
+use BeyondCode\LaravelWebSockets\WebSockets\Channels\ChannelManagers\ArrayChannelManager;
 
 /*
 |--------------------------------------------------------------------------
@@ -83,6 +87,6 @@ Route::get('my-account/avatar/{file}', [UserController::class, 'getAvatar'])->mi
 
 
 
-Route::get('/event-tester', function () {
-    event(new DashboardDoorEvent('a9tehwzic7jlg7lwkqbe', '123456.654321', 1));
+Route::get('/socket-ping', function () {
+    // event(new DashboardDoorEvent());
 });

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Websockets;
+namespace App\Websockets\Handlers;
 
 use App\Models\Door;
 use App\Websockets\Exceptions\InvalidCredentials;
@@ -12,10 +12,11 @@ use Ratchet\WebSocket\MessageComponentInterface;
 use BeyondCode\LaravelWebSockets\QueryParameters;
 use BeyondCode\LaravelWebSockets\Dashboard\DashboardLogger;
 use BeyondCode\LaravelWebSockets\Facades\StatisticsLogger;
+use BeyondCode\LaravelWebSockets\WebSockets\Channels\Channel;
 use BeyondCode\LaravelWebSockets\WebSockets\Exceptions\UnknownAppKey;
-use Illuminate\Http\Request;
 
-class DoorSocketHandler implements MessageComponentInterface
+
+class OfficeSocketHandler implements MessageComponentInterface
 {
     protected function validateAppKey(ConnectionInterface $conn)
     {
@@ -36,6 +37,14 @@ class DoorSocketHandler implements MessageComponentInterface
         return $this;
     }
 
+    protected function generateSocketId(ConnectionInterface $conn)
+    {
+        $socket_id = sprintf('%d.%d', random_int(1, 1000000000), random_int(1, 1000000000));
+        $conn->socketId = $socket_id;
+
+        return $this;
+    }
+
     protected function validateCredential(ConnectionInterface $conn)
     {
         $header = $conn->httpRequest->getHeaders();
@@ -48,30 +57,23 @@ class DoorSocketHandler implements MessageComponentInterface
         if ($device == null) {
             $conn->close();
             throw new InvalidCredentials($device_id, $token);
+        } else {
         }
 
         $device->socket_id = $conn->socketId;
-        $device->save();
+        $device->is_lock = $header['Is-Lock'][0];
+        $status = $device->save();
 
-        return $this;
-    }
-
-    protected function generateSocketId(ConnectionInterface $conn)
-    {
-        $socket_id = sprintf('%d.%d', random_int(1, 1000000000), random_int(1, 1000000000));
-        $conn->socketId = $socket_id;
+        if ($status) {
+            dump('here');
+        }
 
         return $this;
     }
 
     protected function establishConnection(ConnectionInterface $conn)
     {
-        $conn->send(json_encode([
-            'event' => 'connection_established',
-            'data' => json_encode([
-                'socket_id' => $conn->socketId,
-            ]),
-        ]));
+        $conn->send('success');
 
         DashboardLogger::connection($conn);
         StatisticsLogger::connection($conn);
@@ -81,23 +83,21 @@ class DoorSocketHandler implements MessageComponentInterface
 
     public function onOpen(ConnectionInterface $conn)
     {
-        $this->validateAppKey($conn)->generateSocketId($conn)->validateCredential($conn)->establishConnection($conn);
+        $this->validateAppKey($conn)->generateSocketId($conn)->establishConnection($conn);
     }
 
     public function onMessage(ConnectionInterface $conn, MessageInterface $msg)
     {
-        $conn->send($msg->getPayload());
+        dump('message : ' . $msg->getPayload());
     }
 
     public function onClose(ConnectionInterface $conn)
     {
-        $device = Door::where('socket_id', $conn->socketId)->first();
-        $device->socket_id = null;
-        $device->save();
+        dump('close');
     }
 
     public function onError(ConnectionInterface $conn, Exception $e)
     {
-        $conn->close();
+        dump('error');
     }
 }

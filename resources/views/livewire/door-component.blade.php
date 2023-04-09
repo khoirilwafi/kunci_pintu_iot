@@ -48,7 +48,6 @@
                 </div>
                 <div class="ms-auto d-flex align-items-center">
                     <div id="connection_status">{{ $connection_status }}</div>
-                    <div id="connection_indicator" class="ms-2 border border-warning" style="width: 15px; height:15px; border-radius: 50%;""></div>
                 </div>
             </div>
             <div class="card-body">
@@ -115,7 +114,7 @@
                                         @if ($door->socket_id == null)
                                             <div style="font-family: monospace">-</div>
                                         @else
-                                            <button wire:click="changeLocking('{{ $door->id }}')" wire:loading.attr="disabled" class="btn btn-sm {{ $door->is_lock == 1 ? 'btn-primary' : 'btn-info' }} bg-gradient">
+                                            <button wire:click="changeLocking('{{ $door->id }}')" wire:loading.attr="disabled" class="btn btn-sm {{ $door->is_lock == 1 ? 'btn-primary' : 'btn-info' }} bg-gradient" style="width: 80px">
                                                 <div wire:loading wire:target="changeLocking('{{ $door->id }}')">
                                                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                                                 </div>
@@ -147,7 +146,6 @@
                 </div>
                 <div class="ms-auto d-flex align-items-center">
                     <div id="connection_status">{{ $connection_status }}</div>
-                    <div id="connection_indicator" class="ms-2 border border-warning" style="width: 15px; height:15px; border-radius: 50%;""></div>
                 </div>
             </div>
             <div class="card-body">
@@ -566,7 +564,7 @@
 </div>
 
 @push('custom_script')
-    @vite('resources/js/app.js');
+    @vite('resources/js/door-socket.js');
     <script>
         window.user = @json(auth()->user());
     </script>
