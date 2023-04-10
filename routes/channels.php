@@ -21,8 +21,6 @@ Broadcast::channel('public.channel', function ($user) {
 });
 
 Broadcast::channel('private.dashboard.{id}', function ($user, $id) {
-    return $user->id === $id && $user->role === 'operator';
+    // return $user->id === $id && $user->role === 'operator';
+    return true;
 });
-
-WebSocketsRouter::webSocket('/door-connect', DoorSocketHandler::class);
-WebSocketsRouter::webSocket('/office-connect', OfficeSocketHandler::class);

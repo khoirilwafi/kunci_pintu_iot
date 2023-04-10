@@ -566,6 +566,28 @@
 @push('custom_script')
     @vite('resources/js/door-socket.js');
     <script>
+        // const user = @json(auth()->user());
+        // const key = '{{ env('PUSHER_APP_KEY') }}';
+
+        // const socket = new WebSocket(`ws://${window.location.hostname}:6001/app/${key}`);
+
+        // socket.addEventListener('open', function (event) {
+        //     socket.send(`{"event":"pusher:subscribe","data":{"auth":"","channel":"private-private.dashboard.${user.id}"}}`);
+        // });
+
+        // socket.addEventListener('message', function (event) {
+        //     console.log(event.data);
+        // });
+
+        // socket.addEventListener('close', function (event) {
+        //     console.log('Connection closed');
+        // });
+
+        // socket.addEventListener('error', function (event) {
+        //     console.log('Error: ', event);
+        // });
+
         window.user = @json(auth()->user());
+
     </script>
 @endpush

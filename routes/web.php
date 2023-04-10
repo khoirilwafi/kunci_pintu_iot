@@ -83,14 +83,7 @@ Route::middleware(['auth', 'verified', 'operator'])->group(function () {
 
 // account
 Route::get('/dashboard/my-account', [DashboardController::class, 'my_account'])->middleware(['auth', 'verified']);
-Route::get('my-account/avatar/{file}', [UserController::class, 'getAvatar'])->middleware(['auth', 'verified']);
+Route::get('/my-account/avatar/{file}', [UserController::class, 'getAvatar'])->middleware(['auth', 'verified']);
 
 
-
-Route::get('/socket-ping', function () {
-    // event(new DashboardDoorEvent());
-});
-
-Route::get('/broadcasting/auth', function (Request $request) {
-    dump('here');
-});
+// Route::post('/broadcasting/auth', )
