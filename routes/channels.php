@@ -1,10 +1,6 @@
 <?php
 
-use App\Websockets\Handlers\DoorSocketHandler;
-use App\Websockets\Handlers\OfficeSocketHandler;
 use Illuminate\Support\Facades\Broadcast;
-use BeyondCode\LaravelWebSockets\Facades\WebSocketsRouter;
-use React\Http\Browser;
 
 /*
 |--------------------------------------------------------------------------

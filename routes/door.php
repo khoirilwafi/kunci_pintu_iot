@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Door\AuthController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -15,5 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/doorLogin', [AuthController::class, 'doorLogin']);
+Route::post('/login', [AuthController::class, 'authenticate']);
 Route::get('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+
+Route::get('/get-doors', [AuthController::class, 'getDoor'])->middleware('auth:sanctum');
