@@ -2,8 +2,11 @@
 
 use App\Events\DashboardDoorEvent;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\Web\AuthController;
+use App\Http\Controllers\Web\UserController;
+use App\Http\Controllers\Web\DashboardController;
+use App\Http\Controllers\Web\VerificationController;
+
 
 /*
 |--------------------------------------------------------------------------

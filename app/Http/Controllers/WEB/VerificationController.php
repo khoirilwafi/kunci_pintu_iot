@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Web;
 
+use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use App\Models\Otp;
 use App\Models\User;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Notifications\sendOTP;
 use Exception;
-use Illuminate\Support\Facades\Hash;
 
 class VerificationController extends Controller
 {
