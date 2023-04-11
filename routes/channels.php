@@ -4,6 +4,7 @@ use App\Websockets\Handlers\DoorSocketHandler;
 use App\Websockets\Handlers\OfficeSocketHandler;
 use Illuminate\Support\Facades\Broadcast;
 use BeyondCode\LaravelWebSockets\Facades\WebSocketsRouter;
+use React\Http\Browser;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,7 +21,9 @@ Broadcast::channel('public.channel', function ($user) {
     return true;
 });
 
-Broadcast::channel('private.dashboard.{id}', function ($user, $id) {
-    // return $user->id === $id && $user->role === 'operator';
-    return true;
+Broadcast::channel('dashboard.{id}', function ($user, $id) {
+    return $user->id === $id && $user->role === 'operator';
+});
+
+Broadcast::channel('door.{id}.{token}', function () {
 });

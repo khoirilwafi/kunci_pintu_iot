@@ -6,10 +6,11 @@ use Ramsey\Uuid\Uuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Laravel\Sanctum\HasApiTokens;
 
 class Door extends Model
 {
-    use HasFactory;
+    use HasFactory, HasApiTokens;
 
     public $incrementing = false;
     protected $keyType = 'string';

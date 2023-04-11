@@ -13,19 +13,16 @@ class DashboardDoorEvent implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    protected $office_id, $device_id, $socket_id, $is_lock;
+    protected $name;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($office_id, $device_id, $socket_id, $is_lock)
+    public function __construct($const_name)
     {
-        $this->office_id = $office_id;
-        $this->device_id = $device_id;
-        $this->socket_id = $socket_id;
-        $this->is_lock   = $is_lock;
+        $this->name = $const_name;
     }
 
     /**
@@ -35,8 +32,7 @@ class DashboardDoorEvent implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        $office = Office::where('id', $this->office_id)->first();
-        return new PrivateChannel('private.dashboard.' . $office->user_id);
+        return new PrivateChannel('private.dashboard.1feee18f-2bea-e75-9512-7cbeb0989f27');
     }
 
     public function broadcastAs()
@@ -47,9 +43,8 @@ class DashboardDoorEvent implements ShouldBroadcastNow
     public function broadcastWith()
     {
         return array(
-            'device_id' => $this->device_id,
-            'socket_id' => $this->socket_id,
-            'is_lock'   => $this->is_lock,
+            'id' => $this->name,
+            'message' => 'success'
         );
     }
 }

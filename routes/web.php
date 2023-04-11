@@ -1,20 +1,9 @@
 <?php
 
 use App\Events\DashboardDoorEvent;
-use Pusher\Pusher;
-use GuzzleHttp\Middleware;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\OperatorController;
-use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\VerificationController;
-use BeyondCode\LaravelWebSockets\Facades\WebSocketsRouter;
-use BeyondCode\LaravelWebSockets\WebSockets\Channels\Channel;
-use BeyondCode\LaravelWebSockets\WebSockets\Channels\ChannelManager;
-use BeyondCode\LaravelWebSockets\WebSockets\Channels\ChannelManagers\ArrayChannelManager;
 
 /*
 |--------------------------------------------------------------------------
@@ -86,4 +75,6 @@ Route::get('/dashboard/my-account', [DashboardController::class, 'my_account'])-
 Route::get('/my-account/avatar/{file}', [UserController::class, 'getAvatar'])->middleware(['auth', 'verified']);
 
 
-// Route::post('/broadcasting/auth', )
+Route::get('/fire-event', function () {
+    event(new DashboardDoorEvent('1feee18f-2bea-e75-9512-7cbeb0989f27'));
+});

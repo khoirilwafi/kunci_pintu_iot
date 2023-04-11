@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('socket_id')->unique()->nullable();
             $table->string('name');
             $table->boolean('is_lock')->default(1);
-            $table->string('token')->unique()->nullable();
+            $table->string('key')->unique()->nullable();
             $table->timestamps();
         });
 

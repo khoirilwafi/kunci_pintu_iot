@@ -14,7 +14,7 @@ const echo = new Echo({
     enabledTransports: ["ws", "wss"],
 });
 
-const channel = echo.private(`private.dashboard.${user.id}`);
+const channel = echo.private(`dashboard.${user.id}`);
 
 echo.connector.pusher.connection.bind(`connected`, () => {
     Livewire.emit('socketEvent', 'Terhubung');
