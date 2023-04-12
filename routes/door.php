@@ -16,6 +16,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('/login', [AuthController::class, 'authenticate']);
-Route::get('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
-Route::get('/get-doors', [AuthController::class, 'getDoor'])->middleware('auth:sanctum');
+Route::post('/get-signature', [AuthController::class, 'signature'])->middleware('auth:sanctum');
+Route::get('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');

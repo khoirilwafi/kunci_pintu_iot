@@ -32,7 +32,7 @@ class DashboardDoorEvent implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('private.dashboard.1feee18f-2bea-e75-9512-7cbeb0989f27');
+        return new PrivateChannel('door.0f8795ff-f4fe-474e-9770-19c7d66c8da6');
     }
 
     public function broadcastAs()

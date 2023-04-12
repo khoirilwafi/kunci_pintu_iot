@@ -26,10 +26,31 @@ class AuthController extends Controller
 
         if ($door) {
             $token = $door->createToken('auth_token')->plainTextToken;
-            return response()->json(['message' => 'success', 'token' => $token], 200);
+            return response()->json(['message' => 'success', 'id' => $door->id, 'token' => $token], 200);
         }
 
         return response()->json(['message' => 'failed'], 401);
+    }
+
+    public function signature(Request $request)
+    {
+        $data = $request->only(['socket', 'id']);
+
+        $validator = Validator::make($data, [
+            'socket' => ['required', 'string'],
+            'id' => ['required', 'string']
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->messages(), 200);
+        }
+
+        $door = Door::where('device_id', $data['id'])->first();
+
+        $signature = $data['socket'] . ':private-door.' . $door->id;
+        $hash = hash_hmac('sha256', $signature, env('PUSHER_APP_SECRET', null));
+
+        return response()->json(['message' => 'success', 'signature' => $hash], 200);
     }
 
     public function logout(Request $request)

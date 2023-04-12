@@ -6,7 +6,8 @@ use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\UserController;
 use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\VerificationController;
-
+use BeyondCode\LaravelWebSockets\Facades\WebSocketsRouter;
+use BeyondCode\LaravelWebSockets\WebSockets\WebSocketHandler;
 
 /*
 |--------------------------------------------------------------------------

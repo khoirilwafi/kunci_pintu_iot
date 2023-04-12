@@ -20,6 +20,3 @@ Broadcast::channel('public.channel', function ($user) {
 Broadcast::channel('dashboard.{id}', function ($user, $id) {
     return $user->id === $id && $user->role === 'operator';
 });
-
-Broadcast::channel('door.{id}.{token}', function () {
-});

@@ -5,7 +5,6 @@ namespace App\Models;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Sanctum\HasApiTokens;
 
 class Door extends Model
@@ -39,5 +38,10 @@ class Door extends Model
     public function scedule()
     {
         return $this->hasMany(Scedule::class);
+    }
+
+    public function socket()
+    {
+        return $this->belongsTo(Socket::class);
     }
 }
