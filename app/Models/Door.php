@@ -39,9 +39,4 @@ class Door extends Model
     {
         return $this->hasMany(Scedule::class);
     }
-
-    public function socket()
-    {
-        return $this->belongsTo(Socket::class);
-    }
 }

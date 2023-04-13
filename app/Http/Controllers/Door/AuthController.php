@@ -11,53 +11,73 @@ class AuthController extends Controller
 {
     public function authenticate(Request $request)
     {
-        $data = $request->only(['id', 'key']);
+        $data = $request->only(['device_id', 'device_key']);
 
         $validator = Validator::make($data, [
-            'id' => ['required', 'string'],
-            'key' => ['required', 'string']
+            'device_id' => ['required', 'string'],
+            'device_key' => ['required', 'string']
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->messages(), 200);
+            return response()->json([
+                'status' => 'missing_parameter',
+                'data' => $validator->messages()
+            ], 200);
         }
 
-        $door = Door::where('device_id', $data['id'])->where('key', $data['key'])->first();
+        $door = Door::where('device_id', $data['device_id'])->where('key', $data['device_key'])->first();
 
         if ($door) {
             $token = $door->createToken('auth_token')->plainTextToken;
-            return response()->json(['message' => 'success', 'id' => $door->id, 'token' => $token], 200);
+            return response()->json([
+                'status' => 'success',
+                'data' => [
+                    'door_id' => $door->id,
+                    'office_id' => $door->office_id,
+                    'token' => $token
+                ]
+            ], 200);
         }
 
-        return response()->json(['message' => 'failed'], 401);
+        return response()->json([
+            'status' => 'failed',
+            'data' => []
+        ], 401);
     }
 
     public function signature(Request $request)
     {
-        $data = $request->only(['socket', 'id']);
+        $data = $request->only(['socket_id', 'office_id', 'channel_data']);
 
         $validator = Validator::make($data, [
-            'socket' => ['required', 'string'],
-            'id' => ['required', 'string']
+            'socket_id' => ['required', 'string'],
+            'office_id' => ['required', 'string'],
+            'channel_data' => ['required', 'string']
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->messages(), 200);
+            return response()->json([
+                'status' => 'missing_parameter',
+                'data' => $validator->messages()
+            ], 200);
         }
 
-        $door = Door::where('device_id', $data['id'])->first();
-
-        $signature = $data['socket'] . ':private-door.' . $door->id;
+        $signature = $data['socket_id'] . ':presence-office.' . $data['office_id'] . ':' . $data['channel_data'];
         $hash = hash_hmac('sha256', $signature, env('PUSHER_APP_SECRET', null));
 
-        return response()->json(['message' => 'success', 'signature' => $hash], 200);
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'signature' => $hash
+            ]
+        ], 200);
     }
 
     public function logout(Request $request)
     {
         $user = $request->user();
         $user->tokens()->delete();
-        return response()->json(['message' => 'success'], 200);
+        return response()->json(['status' => 'success'], 200);
     }
 
     public function getDoor()

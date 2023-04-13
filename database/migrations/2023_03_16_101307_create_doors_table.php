@@ -26,7 +26,6 @@ return new class extends Migration
 
         Schema::table('doors', function (Blueprint $table) {
             $table->foreign('office_id')->references('id')->on('offices')->onDelete('restrict')->onUpdate('cascade');
-            $table->foreign('socket_id')->references('id')->on('sockets')->onDelete('set null')->onUpdate('cascade');
         });
     }
 

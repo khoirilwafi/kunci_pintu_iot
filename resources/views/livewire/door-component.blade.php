@@ -47,7 +47,7 @@
                     Daftar Pintu
                 </div>
                 <div class="ms-auto d-flex align-items-center">
-                    <div id="connection_status">{{ $connection_status }}</div>
+                    <div id="connection_status" style="color: {{ $connection_color }}">{{ $connection_status }}</div>
                 </div>
             </div>
             <div class="card-body">
@@ -82,7 +82,6 @@
                         <tbody>
                             @foreach ($doors as $index => $door)
                                 <tr class="align-middle" style="height:60px">
-                                    {{-- <td class="text-center">{{ $doors->firstItem() + $index }}</td> --}}
                                     <td class="text-center">{{ $index + 1 }}</td>
                                     <td style="cursor: pointer;" wire:click="getDoorDetail('{{ $door->id }}')">{{ $door->name }}</td>
                                     <td class="text-center">
@@ -128,7 +127,6 @@
                         </tbody>
                     @endif
                 </table>
-                {{-- {{ $doors->links() }} --}}
             </div>
         </div>
     @endif
@@ -566,28 +564,7 @@
 @push('custom_script')
     @vite('resources/js/door-socket.js');
     <script>
-        // const user = @json(auth()->user());
-        // const key = '{{ env('PUSHER_APP_KEY') }}';
-
-        // const socket = new WebSocket(`ws://${window.location.hostname}:6001/app/${key}`);
-
-        // socket.addEventListener('open', function (event) {
-        //     socket.send(`{"event":"pusher:subscribe","data":{"auth":"","channel":"private-private.dashboard.${user.id}"}}`);
-        // });
-
-        // socket.addEventListener('message', function (event) {
-        //     console.log(event.data);
-        // });
-
-        // socket.addEventListener('close', function (event) {
-        //     console.log('Connection closed');
-        // });
-
-        // socket.addEventListener('error', function (event) {
-        //     console.log('Error: ', event);
-        // });
-
-        window.user = @json(auth()->user());
-
+        window.office = @json($office_id);
+        window.connection_status = document.getElementById("connection_status");
     </script>
 @endpush

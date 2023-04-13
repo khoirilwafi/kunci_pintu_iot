@@ -77,8 +77,3 @@ Route::middleware(['auth', 'verified', 'operator'])->group(function () {
 // account
 Route::get('/dashboard/my-account', [DashboardController::class, 'my_account'])->middleware(['auth', 'verified']);
 Route::get('/my-account/avatar/{file}', [UserController::class, 'getAvatar'])->middleware(['auth', 'verified']);
-
-
-Route::get('/fire-event', function () {
-    event(new DashboardDoorEvent('1feee18f-2bea-e75-9512-7cbeb0989f27'));
-});

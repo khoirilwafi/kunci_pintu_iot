@@ -14,12 +14,24 @@ const echo = new Echo({
     enabledTransports: ["ws", "wss"],
 });
 
-const channel = echo.private(`dashboard.${user.id}`);
-
-echo.connector.pusher.connection.bind(`connected`, () => {
-    Livewire.emit('socketEvent', 'Terhubung');
+echo.connector.pusher.connection.bind('error', () => {
+    Livewire.emit('socketEvent', { text: "Terputus", color: "red" });
 });
 
-channel.listen(".door-event", (event) => {
-    Livewire.emit('doorEvent', event);
+echo.connector.pusher.connection.bind('closed', () => {
+    Livewire.emit('socketEvent', { text: "Terputus", color: "red" });
+});
+
+const channel = echo.join(`office.${office}`);
+
+channel.here(() => {
+    Livewire.emit('socketEvent', { text: "Terhubung", color: "white" });
+});
+
+channel.leaving((door) => {
+    console.log('device keluar', door);
+});
+
+channel.listen('.door-status', () => {
+    Livewire.emit('doorStatusEvent');
 });

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Door\AuthController;
+use App\Http\Controllers\Door\DoorEventController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -17,5 +18,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [AuthController::class, 'authenticate']);
 
-Route::post('/get-signature', [AuthController::class, 'signature'])->middleware('auth:sanctum');
-Route::get('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+Route::middleware('auth:sanctum')->group(function () {
+
+    // get signature
+    Route::post('/get-signature', [AuthController::class, 'signature']);
+
+    // logout
+    Route::get('/logout', [AuthController::class, 'logout']);
+
+    // update door status
+    Route::post('/update-status', [DoorEventController::class, 'update_status']);
+});

@@ -4,25 +4,24 @@ namespace App\Events;
 
 use App\Models\Office;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class DashboardDoorEvent implements ShouldBroadcastNow
+class DoorStatusEvent implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    protected $name;
-
+    protected $office_id;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($const_name)
+    public function __construct($office_id)
     {
-        $this->name = $const_name;
+        $this->office_id = $office_id;
     }
 
     /**
@@ -32,19 +31,11 @@ class DashboardDoorEvent implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('door.0f8795ff-f4fe-474e-9770-19c7d66c8da6');
+        return new PresenceChannel('office.' . $this->office_id);
     }
 
     public function broadcastAs()
     {
-        return 'door-event';
-    }
-
-    public function broadcastWith()
-    {
-        return array(
-            'id' => $this->name,
-            'message' => 'success'
-        );
+        return 'door-status';
     }
 }

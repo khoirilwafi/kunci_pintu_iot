@@ -23,7 +23,7 @@ class DoorComponent extends Component
     public $access_user_id, $access_office_id, $access_is_temporary, $access_date_begin, $access_date_end, $access_time_begin, $access_time_end, $access_is_remote, $access_status;
 
     public $access_delete_id, $access_user_name, $access_door_name;
-    public $door_url;
+    public $door_url, $door_detail_id;
     public $available_user;
     public $search, $searchAccess;
 
@@ -32,8 +32,9 @@ class DoorComponent extends Component
     public $date_visibility = false;
 
     public $connection_status = 'Menghubungkan ...';
+    public $connection_color = 'yellow';
 
-    protected $listeners = ['doorEvent', 'socketEvent'];
+    protected $listeners = ['socketEvent', 'doorStatusEvent'];
 
 
     public function render()
@@ -57,23 +58,17 @@ class DoorComponent extends Component
         return view('livewire.door-component', $data);
     }
 
-    public function doorEvent($data)
+    public function doorStatusEvent()
     {
-        $door = Door::where('device_id', $data['device_id'])->first();
-
-        $door->socket_id = $data['socket_id'];
-        $door->is_lock = $data['is_lock'];
-
-        $door->save();
-
         if ($this->door_detail_visibility == true) {
-            $this->getDoorDetail($door->id);
+            $this->getDoorDetail($this->door_detail_id);
         }
     }
 
     public function socketEvent($data)
     {
-        $this->connection_status = $data;
+        $this->connection_status = $data['text'];
+        $this->connection_color = $data['color'];
     }
 
     public function updatingSearch()
@@ -193,6 +188,7 @@ class DoorComponent extends Component
         $this->created_at = $door->created_at;
 
         $this->door_url = $this->getMyUrl() . '/public-access/' . $this->edit_id;
+        $this->door_detail_id = $id;
 
         $this->show_detail();
     }

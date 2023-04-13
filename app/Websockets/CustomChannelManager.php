@@ -2,6 +2,8 @@
 
 namespace App\Websockets;
 
+use App\Events\DoorStatusEvent;
+use App\Models\Door;
 use App\Models\Socket;
 use BeyondCode\LaravelWebSockets\WebSockets\Channels\Channel;
 use BeyondCode\LaravelWebSockets\WebSockets\Channels\ChannelManager;
@@ -25,23 +27,6 @@ class CustomChannelManager implements ChannelManager
             $channelClass = $this->determineChannelClass($channelName);
 
             $this->channels[$appId][$channelName] = new $channelClass($channelName);
-
-            // prepare data
-            $data['app_id'] = $appId;
-
-            if (Str::startsWith($channelName, 'private-')) {
-                $data['type'] = 'private';
-                $data['channel'] = substr($channelName, 8);
-            } else if (Str::startsWith($channelName, 'presence-')) {
-                $data['type'] = 'presence';
-                $data['channel'] = substr($channelName, 9);
-            } else {
-                $data['type'] = 'public';
-                $data['channel'] = $channelName;
-            }
-
-            // insert to database
-            Socket::updateOrCreate(['channel' => $data['channel']], $data);
         }
 
         return $this->channels[$appId][$channelName];
@@ -91,6 +76,12 @@ class CustomChannelManager implements ChannelManager
          */
         collect(Arr::get($this->channels, $connection->app->id, []))->each->unsubscribe($connection);
 
+        // set door to offline
+        $door = Door::where('socket_id', $connection->socketId)->first();
+        if ($door) {
+            $door->socketId = null;
+            $door->save();
+        }
 
         /*
          * Unset all channels that have no connections so we don't leak memory.
@@ -99,21 +90,6 @@ class CustomChannelManager implements ChannelManager
             ->reject->hasConnections()
             ->each(function (Channel $channel, string $channelName) use ($connection) {
                 unset($this->channels[$connection->app->id][$channelName]);
-
-                // prepare data
-                $channel = '';
-
-                if (Str::startsWith($channelName, 'private-')) {
-                    $channel = substr($channelName, 8);
-                } else if (Str::startsWith($channelName, 'presence-')) {
-                    $channel = substr($channelName, 9);
-                } else {
-                    $channel = $channelName;
-                }
-
-                // delete data
-                $socket = Socket::where('channel', $channel)->first();
-                if ($socket) $socket->delete();
             });
 
         if (count(Arr::get($this->channels, $connection->app->id, [])) === 0) {
