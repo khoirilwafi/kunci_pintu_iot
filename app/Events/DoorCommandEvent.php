@@ -8,19 +8,22 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class DoorStatusEvent implements ShouldBroadcastNow
+class DoorCommandEvent implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    protected $office_id;
+    protected $office_id, $door_id, $locking;
+
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($office_id)
+    public function __construct($office_id, $door_id, $locking)
     {
         $this->office_id = $office_id;
+        $this->door_id = $door_id;
+        $this->locking = $locking;
     }
 
     /**
@@ -35,6 +38,14 @@ class DoorStatusEvent implements ShouldBroadcastNow
 
     public function broadcastAs()
     {
-        return 'door-status';
+        return 'door-command';
+    }
+
+    public function broadcastWith()
+    {
+        return [
+            'door_id' => $this->door_id,
+            'locking' => $this->locking,
+        ];
     }
 }

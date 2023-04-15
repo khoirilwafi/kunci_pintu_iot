@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Events\DoorCommandEvent;
 use Exception;
 use App\Models\Door;
 use App\Models\User;
@@ -34,7 +35,7 @@ class DoorComponent extends Component
     public $connection_status = 'Menghubungkan ...';
     public $connection_color = 'yellow';
 
-    protected $listeners = ['socketEvent', 'doorStatusEvent'];
+    protected $listeners = ['socketEvent' => 'socketEvent', 'doorStatusEvent' => 'doorStatusEvent'];
 
 
     public function render()
@@ -319,17 +320,9 @@ class DoorComponent extends Component
         }
     }
 
-    public function changeLocking($id)
+    public function changeLocking($id, $status)
     {
-        $door = Door::where('id', $id)->first();
-
-        if ($door->is_lock == 0) {
-            $door->is_lock = 1;
-        } else {
-            $door->is_lock = 0;
-        }
-
-        $door->save();
+        event(new DoorCommandEvent($this->office_id, $id, $status));
     }
 
     public function unlink()

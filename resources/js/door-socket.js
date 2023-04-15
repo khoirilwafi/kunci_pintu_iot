@@ -16,10 +16,12 @@ const echo = new Echo({
 
 echo.connector.pusher.connection.bind('error', () => {
     Livewire.emit('socketEvent', { text: "Terputus", color: "red" });
+    alert('Koneksi websocket terputus, kondisi pintu tidak bisa terpantau secara realtime.');
 });
 
 echo.connector.pusher.connection.bind('closed', () => {
     Livewire.emit('socketEvent', { text: "Terputus", color: "red" });
+    alert('Koneksi websocket terputus, kondisi pintu tidak bisa terpantau secara realtime.');
 });
 
 const channel = echo.join(`office.${office}`);
@@ -28,8 +30,8 @@ channel.here(() => {
     Livewire.emit('socketEvent', { text: "Terhubung", color: "white" });
 });
 
-channel.leaving((door) => {
-    console.log('device keluar', door);
+channel.leaving(() => {
+    Livewire.emit('doorStatusEvent');
 });
 
 channel.listen('.door-status', () => {

@@ -76,7 +76,7 @@
                                 <th class="text-center" style="width: 230px">Perangkat Kunci</th>
                                 <th class="text-center" style="width: 100px">Koneksi</th>
                                 <th class="text-center" style="width: 160px">Penguncian</th>
-                                <th class="text-center" style="width: 100px">Aksi</th>
+                                <th class="text-center" style="width: 120px">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -113,11 +113,11 @@
                                         @if ($door->socket_id == null)
                                             <div style="font-family: monospace">-</div>
                                         @else
-                                            <button wire:click="changeLocking('{{ $door->id }}')" wire:loading.attr="disabled" class="btn btn-sm {{ $door->is_lock == 1 ? 'btn-primary' : 'btn-info' }} bg-gradient" style="width: 80px">
-                                                <div wire:loading wire:target="changeLocking('{{ $door->id }}')">
+                                            <button wire:click="changeLocking('{{ $door->id }}', '{{ $door->is_lock == 1 ? 'open' : 'lock' }}')" wire:loading.attr="disabled" class="btn btn-sm {{ $door->is_lock == 1 ? 'btn-primary' : 'btn-info' }} bg-gradient" style="width: 80px">
+                                                <div wire:loading wire:target="changeLocking">
                                                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                                                 </div>
-                                                <i class="bi {{ $door->is_lock == 1 ? 'bi-unlock' : 'bi-lock' }} me-1" wire:loading.class="d-none" wire:target="changeLocking('{{ $door->id }}')"></i>
+                                                <i class="bi {{ $door->is_lock == 1 ? 'bi-unlock' : 'bi-lock' }} me-1" wire:loading.class="d-none" wire:target="changeLocking"></i>
                                                 {{ $door->is_lock == 1 ? 'Buka' : 'Kunci' }}
                                             </button>
                                         @endif

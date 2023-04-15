@@ -42,8 +42,8 @@
     {{-- scedule table --}}
     @if ($scedule_table_visibility)
         <div class="card text-white mb-4">
-            <div class="card-header d-flex">
-                <div class="col">
+            <div class="card-header">
+                <div class="text-white">
                     Daftar Jadwal
                 </div>
             </div>
@@ -70,10 +70,9 @@
                             <tr class="align-middle bg-secondary">
                                 <th class="text-center" style="width: 60px">No</th>
                                 <th>Nama</th>
-                                <th class="text-center" style="width: 100px">Tanggal</th>
-                                <th class="text-center" style="width: 100px">Mulai</th>
-                                <th class="text-center" style="width: 100px">Berakhir</th>
-                                <th class="text-center" style="width: 100px">Berulang</th>
+                                <th class="text-center" style="width: 220px">Tanggal</th>
+                                <th class="text-center" style="width: 190px">Waktu Harian</th>
+                                <th class="text-center" style="width: 80px">Berulang</th>
                                 <th class="text-center" style="width: 100px">Status</th>
                                 <th class="text-center" style="width: 200px">Aksi</th>
                             </tr>
@@ -81,11 +80,10 @@
                         <tbody>
                             @foreach ($scedules as $index => $scedule)
                                 <tr class="align-middle" style="height: 60px">
-                                    <td class="text-center">{{ $scedules->firstItem() + $index }}</td>
+                                    <td class="text-center">{{ $index + 1 }}</td>
                                     <td>{{ $scedule->name }}</td>
-                                    <td class="text-center">{{ $scedule->date_running }}</td>
-                                    <td class="text-center">{{ $scedule->time_begin }}</td>
-                                    <td class="text-center">{{ $scedule->time_end }}</td>
+                                    <td class="text-center">{{ $scedule->date_begin. ' sd '. $scedule->date_end }}</td>
+                                    <td class="text-center">{{ $scedule->time_begin. ' sd '. $scedule->time_end }}</td>
                                     <td class="text-center">{{ ($scedule->is_repeating == 1) ? 'Ya' : 'Tidak' }}</td>
                                     <td class="text-center {{ $scedule->status == 'waiting' ? 'text-info' : 'text-warning' }}">{{ ucfirst($scedule->status) }}</td>
                                     <td class="text-center">
@@ -103,7 +101,6 @@
                         </tbody>
                     @endif
                 </table>
-                {{ $scedules->links() }}
             </div>
         </div>
     @endif
@@ -116,7 +113,9 @@
         </button>
         <div class="card">
             <div class="card-header">
-                Detail Jadwal
+                <div class="text-white">
+                    Detail Jadwal
+                </div>
             </div>
             <div class="card-body">
                 <div class="p-2 mb-5 rounded border border-secondary d-flex">
@@ -128,48 +127,40 @@
                             <td class="px-2">{{ $insert_name }}</td>
                         </tr>
                         <tr>
-                            <td class="px-2">Tanggal</td>
+                            <td class="px-2">Tanggal Mulai</td>
                             <td class="px-2">:</td>
-                            <td class="px-2">{{ $insert_date }}</td>
+                            <td class="px-2">{{ $insert_date_begin. ' sd '. $insert_date_end }}</td>
                         </tr>
                         <tr>
-                            <td class="px-2">Mulai</td>
+                            <td class="px-2">Waktu</td>
                             <td class="px-2">:</td>
-                            <td class="px-2">{{ $insert_time_begin }}</td>
+                            <td class="px-2">{{ $insert_time_begin. ' sd '. $insert_time_end }}</td>
                         </tr>
                         <tr>
-                            <td class="px-2">Berakhir</td>
+                            <td class="px-2">Status</td>
                             <td class="px-2">:</td>
-                            <td class="px-2">{{ $insert_time_end }}</td>
+                            <td class="px-2 {{ $insert_status == 'waiting' ? 'text-info' : 'text-warning' }}">{{ ucfirst($insert_status) }}</td>
                         </tr>
                         @if ($insert_is_repeat == 1)
                             <tr>
                                 <td class="px-2">Berulang</td>
                                 <td class="px-2">:</td>
-                                <td class="px-2">
-                                    @if ($insert_day_0 == 1) Senin,  @endif
-                                    @if ($insert_day_1 == 1) Selasa, @endif
-                                    @if ($insert_day_2 == 1) Rabu,   @endif
-                                    @if ($insert_day_3 == 1) Kamis,  @endif
-                                    @if ($insert_day_4 == 1) Jumat,  @endif
-                                    @if ($insert_day_5 == 1) Sabtu,  @endif
-                                    @if ($insert_day_6 == 1) Minggu, @endif
-                                </td>
+                                <td class="px-2">{{ $day_repeating }}</td>
                             </tr>
                         @endif
                     </table>
                     <div class="flex-grow-1 d-flex">
                         <div class="ms-auto">
-                            @if($insert_scedule_status == 'waiting')
+                            @if($insert_status == 'waiting')
                                 <button class="btn btn-sm btn-outline-primary ms-1" wire:click="edit"><div class="fs-6 text-white"><i class="bi bi-pencil-square"></i></div></button>
                                 <button class="btn btn-sm btn-outline-info ms-1" wire:click=""><div class="fs-6 text-white"><i class="bi bi-play-circle"></i></div></button>
                             @else
-                                <button class="btn btn-sm btn-outline-warning ms-1" wire:click="edit"><div class="fs-6 text-white"><i class="bi bi-stop-circle"></i></div></button>
+                                <button class="btn btn-sm btn-outline-warning ms-1" wire:click="stopSceduleConfirm"><div class="fs-6 text-white"><i class="bi bi-stop-circle"></i></div></button>
                             @endif
                         </div>
                     </div>
                 </div>
-                @if($insert_scedule_status == 'waiting')
+                @if($insert_status == 'waiting')
                     <div class="d-flex mb-3">
                         <button class="btn btn-sm btn-primary" wire:click="openModal('addDoor')"><i class="bi bi-plus-circle me-1"></i>Tambah Pintu</button>
                     </div>
@@ -183,7 +174,7 @@
                                 <th class="text-center" style="width: 210px">Device ID</th>
                                 <th class="text-center" style="width: 90px">Status</th>
                                 <th class="text-center" style="width: 150px">Penguncian</th>
-                                @if ($insert_scedule_status == 'running')
+                                @if ($insert_status == 'running')
                                     <th class="text-center" style="width: 100px">Override</th>
                                 @endif
                                 <th class="text-center" style="width: 100px">Aksi</th>
@@ -192,7 +183,7 @@
                         <tbody>
                             @foreach ($door_links as $index => $list)
                                 <tr class="align-middle" style="height: 60px">
-                                    <td class="text-center">{{ $door_links->firstItem() + $index }}</td>
+                                    <td class="text-center">{{ $index + 1 }}</td>
                                     <td>{{ $list->door->name }}</td>
                                     <td class="text-center" style="font-family: monospace">
                                         @if ($list->door->device_id == null)
@@ -219,7 +210,7 @@
                                             @endif
                                         @endif
                                     </td>
-                                    @if ($insert_scedule_status == 'running')
+                                    @if ($insert_status == 'running')
                                         <td class="text-center">
                                             @if ($list->door->socket_id != null)
                                                 <button wire:click="changeLocking('{{ $list->door->id }}')" wire:loading.attr="disabled" class="btn btn-sm {{ $list->door->is_lock == 1 ? 'btn-primary' : 'btn-info' }} bg-gradient me-1" style="width: 80px">
@@ -244,7 +235,6 @@
                             @endforeach
                         </tbody>
                     </table>
-                    {{ $door_links->links(); }}
                 @else
                     <div class="p-2 rounded border border-secondary">
                         <div class="text-center mb-3 mt-3">-- tidak ada data --</div>
@@ -274,12 +264,30 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Tanggal</label>
-                            <input type="date" class="form-control bg-dark text-white @error('insert_date') is-invalid @enderror" wire:model.defer="insert_date" autocomplete="off" required>
-                            @error('insert_date')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="input-group mb-1">
+                                        <span class="input-group-text bg-dark text-white">Mulai</span>
+                                        <input type="date" class="form-control bg-dark text-white @error('insert_date_begin') is-invalid @enderror" wire:model.defer="insert_date_begin" required>
+                                        @error('insert_date_begin')
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
                                 </div>
-                            @enderror
+                                <div class="col-6">
+                                    <div class="input-group mb-1">
+                                        <span class="input-group-text bg-dark text-white">Sampai</span>
+                                        <input type="date" class="form-control bg-dark text-white @error('insert_date_end') is-invalid @enderror" wire:model.defer="insert_date_end" required>
+                                        @error('insert_date_end')
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Durasi Harian</label>
@@ -308,66 +316,45 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form-check mb-4">
-                            <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="insert_is_repeat" wire:click="addDay">
-                            <label class="form-check-label">
-                                Jadwal Berulang
-                            </label>
-                        </div>
-                        @if ($insert_day)
-                            <div class="row mb-4">
-                                <div class="col-3">
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="insert_day_0">
-                                        <label class="form-check-label">
-                                            Senin
-                                        </label>
+                        <div class="mb-3">
+                            <label class="form-label">Perulangan</label>
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="form-control bg-dark text-white mb-2 d-flex">
+                                        Senin
+                                        <input class="form-check-input bg-dark border ms-auto" type="checkbox" value="senin" wire:model.defer="insert_day_0">
                                     </div>
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="insert_day_4">
-                                        <label class="form-check-label">
-                                            Jumat
-                                        </label>
+                                    <div class="form-control bg-dark text-white mb-2 d-flex">
+                                        Selasa
+                                        <input class="form-check-input bg-dark border ms-auto" type="checkbox" value="selasa" wire:model.defer="insert_day_1">
+                                    </div>
+                                    <div class="form-control bg-dark text-white mb-2 d-flex">
+                                        Rabu
+                                        <input class="form-check-input bg-dark border ms-auto" type="checkbox" value="rabu" wire:model.defer="insert_day_2">
                                     </div>
                                 </div>
-                                <div class="col-3">
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="insert_day_1">
-                                        <label class="form-check-label">
-                                            Selasa
-                                        </label>
+                                <div class="col-4">
+                                    <div class="form-control bg-dark text-white mb-2 d-flex">
+                                        Kamis
+                                        <input class="form-check-input bg-dark border ms-auto" type="checkbox" value="kamis" wire:model.defer="insert_day_3">
                                     </div>
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="insert_day_5">
-                                        <label class="form-check-label">
-                                            Sabtu
-                                        </label>
+                                    <div class="form-control bg-dark text-white mb-2 d-flex">
+                                        Jumat
+                                        <input class="form-check-input bg-dark border ms-auto" type="checkbox" value="jumat" wire:model.defer="insert_day_4">
                                     </div>
-                                </div>
-                                <div class="col-3">
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="insert_day_2">
-                                        <label class="form-check-label">
-                                            Rabu
-                                        </label>
-                                    </div>
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="insert_day_6">
-                                        <label class="form-check-label">
-                                            Minggu
-                                        </label>
+                                    <div class="form-control bg-dark text-white mb-2 d-flex">
+                                        Sabtu
+                                        <input class="form-check-input bg-dark border ms-auto" type="checkbox" value="sabtu" wire:model.defer="insert_day_5">
                                     </div>
                                 </div>
-                                <div class="col-3">
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="insert_day_3">
-                                        <label class="form-check-label">
-                                            Kamis
-                                        </label>
+                                <div class="col-4">
+                                    <div class="form-control bg-dark text-white mb-2 d-flex">
+                                        Minggu
+                                        <input class="form-check-input bg-dark border ms-auto" type="checkbox" value="minggu" wire:model.defer="insert_day_6">
                                     </div>
                                 </div>
                             </div>
-                        @endif
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -409,12 +396,30 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Tanggal</label>
-                            <input type="date" class="form-control bg-dark text-white @error('edit_date') is-invalid @enderror" wire:model.defer="edit_date" autocomplete="off" required>
-                            @error('edit_date')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="input-group mb-1">
+                                        <span class="input-group-text bg-dark text-white">Mulai</span>
+                                        <input type="date" class="form-control bg-dark text-white @error('edit_date_begin') is-invalid @enderror" wire:model.defer="edit_date_begin" required>
+                                        @error('edit_date_begin')
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
                                 </div>
-                            @enderror
+                                <div class="col-6">
+                                    <div class="input-group mb-1">
+                                        <span class="input-group-text bg-dark text-white">Sampai</span>
+                                        <input type="date" class="form-control bg-dark text-white @error('edit_date_end') is-invalid @enderror" wire:model.defer="edit_date_end" required>
+                                        @error('edit_date_end')
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Durasi Harian</label>
@@ -443,66 +448,45 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form-check mb-4">
-                            <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="edit_is_repeat" wire:click="editDay">
-                            <label class="form-check-label">
-                                Jadwal Berulang
-                            </label>
-                        </div>
-                        @if ($insert_day)
-                            <div class="row mb-4">
-                                <div class="col-3">
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="edit_day_0">
-                                        <label class="form-check-label">
-                                            Senin
-                                        </label>
+                        <div class="mb-3">
+                            <label class="form-label">Ulangi</label>
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="form-control bg-dark text-white mb-2 d-flex">
+                                        Senin
+                                        <input class="form-check-input bg-dark border ms-auto" type="checkbox" value="1" wire:model.defer="edit_day_0">
                                     </div>
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="edit_day_4">
-                                        <label class="form-check-label">
-                                            Jumat
-                                        </label>
+                                    <div class="form-control bg-dark text-white mb-2 d-flex">
+                                        Selasa
+                                        <input class="form-check-input bg-dark border ms-auto" type="checkbox" value="1" wire:model.defer="edit_day_1">
+                                    </div>
+                                    <div class="form-control bg-dark text-white mb-2 d-flex">
+                                        Rabu
+                                        <input class="form-check-input bg-dark border ms-auto" type="checkbox" value="1" wire:model.defer="edit_day_2">
                                     </div>
                                 </div>
-                                <div class="col-3">
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="edit_day_1">
-                                        <label class="form-check-label">
-                                            Selasa
-                                        </label>
+                                <div class="col-4">
+                                    <div class="form-control bg-dark text-white mb-2 d-flex">
+                                        Kamis
+                                        <input class="form-check-input bg-dark border ms-auto" type="checkbox" value="1" wire:model.defer="edit_day_3">
                                     </div>
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="edit_day_5">
-                                        <label class="form-check-label">
-                                            Sabtu
-                                        </label>
+                                    <div class="form-control bg-dark text-white mb-2 d-flex">
+                                        Jumat
+                                        <input class="form-check-input bg-dark border ms-auto" type="checkbox" value="1" wire:model.defer="edit_day_4">
                                     </div>
-                                </div>
-                                <div class="col-3">
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="edit_day_2">
-                                        <label class="form-check-label">
-                                            Rabu
-                                        </label>
-                                    </div>
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="edit_day_6">
-                                        <label class="form-check-label">
-                                            Minggu
-                                        </label>
+                                    <div class="form-control bg-dark text-white mb-2 d-flex">
+                                        Sabtu
+                                        <input class="form-check-input bg-dark border ms-auto" type="checkbox" value="1" wire:model.defer="edit_day_5">
                                     </div>
                                 </div>
-                                <div class="col-3">
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="edit_day_3">
-                                        <label class="form-check-label">
-                                            Kamis
-                                        </label>
+                                <div class="col-4">
+                                    <div class="form-control bg-dark text-white mb-2 d-flex">
+                                        Minggu
+                                        <input class="form-check-input bg-dark border ms-auto" type="checkbox" value="1" wire:model.defer="edit_day_6">
                                     </div>
                                 </div>
                             </div>
-                        @endif
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -515,8 +499,8 @@
                             <div wire:loading wire:target='updateScedule'>
                                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                             </div>
-                            <i class="bi bi-plus-circle me-1" wire:loading.class='d-none' wire:target='updateScedule'></i>
-                            Tambahkan
+                            <i class="bi bi-pencil-square me-1" wire:loading.class='d-none' wire:target='updateScedule'></i>
+                            Update
                         </button>
                     </div>
                 </div>
@@ -524,7 +508,7 @@
 		</div>
 	</div>
 
-    {{-- add access form --}}
+    {{-- add door form --}}
 	<div wire:ignore.self class="modal fade" id="addDoor" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1">
 		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
@@ -597,4 +581,48 @@
 			</div>
 		</div>
 	</div>
+
+    {{-- stop confirm --}}
+	{{-- <div wire:ignore.self class="modal fade" id="stopConfirm" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+                <div class="modal-header">
+                    Konfirmasi Jadwal Berhenti
+                </div>
+                <div class="modal-body">
+                    Apakah anda yakin untuk menghentikan <strong>{{ $insert_name }}</strong> secara permanen ?
+
+                    <div class="mt-3" style="text-align: justify">
+                        <small>
+                            Jika jadwal berulang maka jadwal akan kembali dijalankan pada hari selanjutnya. Jika tidak berulang maka jadwal akan dihapus dari daftar jadwal.
+                        </small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="d-flex">
+                        <button class="btn btn-sm btn-primary ms-auto" wire:click="closeModal('stopConfirm')" wire:loading.attr="disabled"
+                            wire:target="stop">
+                            <i class="bi bi-x-circle me-1"></i>
+                            Batal
+                        </button>
+                        <button wire:click="stop" wire:loading.attr="disabled" wire:target="closeModal('stopConfirm')" class="btn btn-sm btn-danger ms-3">
+                            <i class="bi bi-stop-circle me-1" wire:loading.class="d-none" wire:target="stop"></i>
+                            <div wire:loading wire:target="stop">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            </div>
+                            Hentikan
+                        </button>
+                    </div>
+                </div>
+			</div>
+		</div>
+	</div> --}}
 </div>
+
+{{-- @push('custom_script')
+    @vite('resources/js/door-socket.js');
+    <script>
+        window.office = @json($office_id);
+        window.connection_status = document.getElementById("connection_status");
+    </script>
+@endpush --}}

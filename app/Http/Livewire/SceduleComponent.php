@@ -16,37 +16,55 @@ class SceduleComponent extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
 
-    public $scedule_id, $delete_name, $delete_id, $scedule_door_id;
+    public $office_id, $scedule_id, $delete_name, $delete_id, $scedule_door_id;
 
-    public $insert_name, $insert_date, $insert_time_begin, $insert_time_end, $insert_is_repeat, $insert_scedule_status;
+    public $insert_name, $insert_date_begin, $insert_date_end, $insert_time_begin, $insert_time_end, $insert_is_repeat, $insert_status;
     public $insert_day_0, $insert_day_1, $insert_day_2, $insert_day_3, $insert_day_4, $insert_day_5, $insert_day_6;
 
-    public $edit_name, $edit_date, $edit_time_begin, $edit_time_end, $edit_is_repeat;
+    public $edit_name, $edit_date_begin, $edit_date_end, $edit_time_begin, $edit_time_end;
     public $edit_day_0, $edit_day_1, $edit_day_2, $edit_day_3, $edit_day_4, $edit_day_5, $edit_day_6;
 
     public $scedule_table_visibility = true;
     public $scedule_detail_visibility = false;
-    public $insert_day = false;
 
-    public $search, $searchDoor = 'x';
+    public $connection_status = 'Menghubungkan ...';
+    public $connection_color = 'yellow';
+    public $search, $day_repeating;
+
+    protected $listeners = ['socketEvent' => 'socketEvent', 'doorStatusEvent' => 'doorStatusEvent'];
 
 
     public function render()
     {
-        // get all scedule
-        $data['scedules'] = Scedule::where('user_id', request()->user()->id)->where('name', 'like', '%' . $this->search . '%')->paginate(7);
-
         // get operator office
         $office = Office::where('user_id', request()->user()->id)->first();
+        $this->office_id = $office->id;
+
+        // get all scedule
+        $data['scedules'] = Scedule::where('office_id', $this->office_id)->where('name', 'like', '%' . $this->search . '%')->get();
+        // $data['scedules_this_day'] = Scedule::where('date')
 
         // get door available
         $query = ScedulePivot::select('door_id')->where('scedule_id', $this->scedule_id)->get();
-        $data['doors'] = Door::where('office_id', $office->id)->whereNotIn('id', $query)->get();
+        $data['doors'] = Door::where('office_id', $this->office_id)->whereNotIn('id', $query)->get();
 
         // get door linked
-        $data['door_links'] = ScedulePivot::with('door')->where('scedule_id', $this->scedule_id)->paginate(5);
+        $data['door_links'] = ScedulePivot::with('door')->where('scedule_id', $this->scedule_id)->get();
 
         return view('livewire.scedule-component', $data);
+    }
+
+    public function doorStatusEvent()
+    {
+        if ($this->scedule_detail_visibility == true) {
+            $this->getSceduleDetail($this->scedule_id);
+        }
+    }
+
+    public function socketEvent($data)
+    {
+        $this->connection_status = $data['text'];
+        $this->connection_color = $data['color'];
     }
 
     public function updatingSearch()
@@ -54,17 +72,10 @@ class SceduleComponent extends Component
         $this->resetPage();
     }
 
-    public function updatingSearchDoor()
-    {
-        $this->resetPage();
-    }
-
     protected function resetModal()
     {
-        $this->reset(['insert_name', 'insert_date', 'insert_time_begin', 'insert_time_end', 'insert_is_repeat']);
+        $this->reset(['insert_name', 'insert_date_begin', 'insert_date_end', 'insert_time_begin', 'insert_time_end', 'insert_is_repeat']);
         $this->reset(['insert_day_0', 'insert_day_1', 'insert_day_2', 'insert_day_3', 'insert_day_4', 'insert_day_5', 'insert_day_6']);
-
-        $this->insert_day = false;
 
         $this->resetErrorBag();
         $this->resetValidation();
@@ -72,8 +83,6 @@ class SceduleComponent extends Component
 
     public function showTable()
     {
-        $this->searchDoor = '';
-
         $this->scedule_table_visibility = true;
         $this->scedule_detail_visibility = false;
     }
@@ -108,25 +117,34 @@ class SceduleComponent extends Component
     {
         $this->validate([
             'insert_name'       => ['required', 'string', 'min:5', 'max:100'],
-            'insert_date'       => ['required', 'date'],
+            'insert_date_begin' => ['required', 'date'],
+            'insert_date_end'   => ['required', 'date'],
             'insert_time_begin' => ['required', 'date_format:H:i'],
             'insert_time_end'   => ['required', 'date_format:H:i'],
         ]);
 
-        $scedule['user_id']      = request()->user()->id;
-        $scedule['name']         = $this->insert_name;
-        $scedule['date_running'] = $this->insert_date;
-        $scedule['time_begin']   = $this->insert_time_begin;
-        $scedule['time_end']     = $this->insert_time_end;
-        $scedule['is_repeating'] = $this->insert_is_repeat;
+        $scedule['office_id']     = $this->office_id;
+        $scedule['name']          = $this->insert_name;
+        $scedule['date_begin']    = $this->insert_date_begin;
+        $scedule['date_end']      = $this->insert_date_end;
+        $scedule['time_begin']    = $this->insert_time_begin;
+        $scedule['time_end']      = $this->insert_time_end;
+        $scedule['is_repeating']  = 0;
+        $scedule['day_repeating'] = '';
 
-        $scedule['day_0'] = $this->insert_day_0 != null ? 1 : 0;
-        $scedule['day_1'] = $this->insert_day_1 != null ? 1 : 0;
-        $scedule['day_2'] = $this->insert_day_2 != null ? 1 : 0;
-        $scedule['day_3'] = $this->insert_day_3 != null ? 1 : 0;
-        $scedule['day_4'] = $this->insert_day_4 != null ? 1 : 0;
-        $scedule['day_5'] = $this->insert_day_5 != null ? 1 : 0;
-        $scedule['day_6'] = $this->insert_day_6 != null ? 1 : 0;
+        $day = [$this->insert_day_0, $this->insert_day_1, $this->insert_day_2, $this->insert_day_3, $this->insert_day_4, $this->insert_day_5, $this->insert_day_6];
+        $day_repeating = '';
+
+        for ($i = 0; $i < 7; $i++) {
+            if ($day[$i] != null) {
+                $scedule['is_repeating'] = 1;
+                $day_repeating .= $day[$i] . ',';
+            } else {
+                $day_repeating .= ',';
+            }
+        }
+
+        $scedule['day_repeating'] = $day_repeating == '' ? $day_repeating : substr($day_repeating, 0, -1);
 
         $status = Scedule::create($scedule);
 
@@ -139,38 +157,16 @@ class SceduleComponent extends Component
         $this->closeModal('addScedule');
     }
 
-    public function addDay()
-    {
-        if ($this->insert_is_repeat != null) {
-            $this->insert_day = true;
-        } else {
-            $this->reset(['insert_day_0', 'insert_day_1', 'insert_day_2', 'insert_day_3', 'insert_day_4', 'insert_day_5', 'insert_day_6']);
-            $this->insert_day = false;
-        }
-    }
-
-    public function editDay()
-    {
-        if ($this->edit_is_repeat != null) {
-            $this->insert_day = true;
-        } else {
-            $this->reset(['edit_day_0', 'edit_day_1', 'edit_day_2', 'edit_day_3', 'edit_day_4', 'edit_day_5', 'edit_day_6']);
-            $this->insert_day = false;
-        }
-    }
-
     public function deleteConfirm($id)
     {
         if ($this->scedule_table_visibility == true) {
             $scedule = Scedule::where('id', $id)->first();
-
             $this->delete_name = $scedule->name;
             $this->delete_id   = $scedule->id;
         } else {
             $doors = ScedulePivot::with('door')->where('id', $id)->first();
-
             $this->delete_name = $doors->door->name;
-            $this->delete_id   = $doors->id;
+            $this->delete_id   = $doors->door->id;
         }
 
         $this->openModal('deleteConfirm');
@@ -179,13 +175,11 @@ class SceduleComponent extends Component
     public function delete()
     {
         try {
-
             if ($this->scedule_table_visibility == true) {
                 Scedule::where('id', $this->delete_id)->delete();
             } else {
-                ScedulePivot::where('id', $this->delete_id)->delete();
+                ScedulePivot::where('scedule_id', $this->scedule_id)->where('door_id', $this->delete_id)->delete();
             }
-
             session()->flash('delete_success', $this->delete_name);
         } catch (Exception $e) {
             session()->flash('delete_failed', $this->delete_name);
@@ -201,21 +195,23 @@ class SceduleComponent extends Component
         $this->scedule_id = $scedule->id;
 
         $this->insert_name       = $scedule->name;
-        $this->insert_date       = $scedule->date_running;
+        $this->insert_date_begin = $scedule->date_begin;
+        $this->insert_date_end   = $scedule->date_end;
         $this->insert_time_begin = $scedule->time_begin;
         $this->insert_time_end   = $scedule->time_end;
         $this->insert_is_repeat  = $scedule->is_repeating;
 
-        $this->insert_day_0 = $scedule->day_0;
-        $this->insert_day_1 = $scedule->day_1;
-        $this->insert_day_2 = $scedule->day_2;
-        $this->insert_day_3 = $scedule->day_3;
-        $this->insert_day_4 = $scedule->day_4;
-        $this->insert_day_5 = $scedule->day_5;
-        $this->insert_day_6 = $scedule->day_6;
+        $this->insert_status = $scedule->status;
 
-        $this->insert_scedule_status = $scedule->status;
+        $days = explode(',', $scedule->day_repeating);
+        $day_repeating = '';
 
+
+        foreach ($days as $day) {
+            if ($day != '') $day_repeating .= ucfirst($day) . ', ';
+        }
+
+        $this->day_repeating = substr($day_repeating, 0, -2);
         $this->showDetail();
     }
 
@@ -224,22 +220,20 @@ class SceduleComponent extends Component
         $scedule = Scedule::where('id', $this->scedule_id)->first();
 
         $this->edit_name       = $scedule->name;
-        $this->edit_date       = $scedule->date_running;
+        $this->edit_date_begin = $scedule->date_begin;
+        $this->edit_date_end   = $scedule->date_end;
         $this->edit_time_begin = substr($scedule->time_begin, 0, -3);
         $this->edit_time_end   = substr($scedule->time_end, 0, -3);
-        $this->edit_is_repeat  = $scedule->is_repeating;
 
-        $this->edit_day_0 = $scedule->day_0;
-        $this->edit_day_1 = $scedule->day_1;
-        $this->edit_day_2 = $scedule->day_2;
-        $this->edit_day_3 = $scedule->day_3;
-        $this->edit_day_4 = $scedule->day_4;
-        $this->edit_day_5 = $scedule->day_5;
-        $this->edit_day_6 = $scedule->day_6;
+        $days = explode(',', $scedule->day_repeating);
 
-        if ($this->edit_is_repeat == 1) {
-            $this->editDay();
-        }
+        $this->edit_day_0 = $days[0];
+        $this->edit_day_1 = $days[1];
+        $this->edit_day_2 = $days[2];
+        $this->edit_day_3 = $days[3];
+        $this->edit_day_4 = $days[4];
+        $this->edit_day_5 = $days[5];
+        $this->edit_day_6 = $days[6];
 
         $this->openModal('editScedule');
     }
@@ -248,27 +242,36 @@ class SceduleComponent extends Component
     {
         $this->validate([
             'edit_name'       => ['required', 'string', 'min:5', 'max:100'],
-            'edit_date'       => ['required', 'date'],
+            'edit_date_begin' => ['required', 'date'],
+            'edit_date_end'   => ['required', 'date'],
             'edit_time_begin' => ['required', 'date_format:H:i'],
             'edit_time_end'   => ['required', 'date_format:H:i'],
         ]);
 
         $scedule = Scedule::where('id', $this->scedule_id)->first();
 
-        $scedule->name         = $this->edit_name;
-        $scedule->date_running = $this->edit_date;
-        $scedule->time_begin   = $this->edit_time_begin;
-        $scedule->time_end     = $this->edit_time_end;
-        $scedule->is_repeating = $this->edit_is_repeat;
+        $scedule->name       = $this->edit_name;
+        $scedule->date_begin = $this->edit_date_begin;
+        $scedule->date_end   = $this->edit_date_end;
+        $scedule->time_begin = $this->edit_time_begin;
+        $scedule->time_end   = $this->edit_time_end;
 
-        $scedule->day_0 = $this->edit_day_0 != null ? 1 : 0;
-        $scedule->day_1 = $this->edit_day_1 != null ? 1 : 0;
-        $scedule->day_2 = $this->edit_day_2 != null ? 1 : 0;
-        $scedule->day_3 = $this->edit_day_3 != null ? 1 : 0;
-        $scedule->day_4 = $this->edit_day_4 != null ? 1 : 0;
-        $scedule->day_5 = $this->edit_day_5 != null ? 1 : 0;
-        $scedule->day_6 = $this->edit_day_6 != null ? 1 : 0;
+        $scedule->is_repeating = 0;
+        $scedule->day_repeating = '';
 
+        $day = [$this->edit_day_0, $this->edit_day_1, $this->edit_day_2, $this->edit_day_3, $this->edit_day_4, $this->edit_day_5, $this->edit_day_6];
+        $day_repeating = '';
+
+        for ($i = 0; $i < 7; $i++) {
+            if ($day[$i] != null) {
+                $scedule['is_repeating'] = 1;
+                $day_repeating .= $day[$i] . ',';
+            } else {
+                $day_repeating .= ',';
+            }
+        }
+
+        $scedule->day_repeating = $day_repeating == '' ? $day_repeating : substr($day_repeating, 0, -1);
         $status = $scedule->save();
 
         if ($status) {
@@ -302,16 +305,21 @@ class SceduleComponent extends Component
         $this->closeModal('addDoor');
     }
 
-    public function changeLocking($id)
-    {
-        $door = Door::where('id', $id)->first();
+    // public function stopSceduleConfirm()
+    // {
+    //     $this->openModal('stopConfirm');
+    // }
 
-        if ($door->is_lock == 0) {
-            $door->is_lock = 1;
-        } else {
-            $door->is_lock = 0;
-        }
+    // public function changeLocking($id)
+    // {
+    //     $door = Door::where('id', $id)->first();
 
-        $door->save();
-    }
+    //     if ($door->is_lock == 0) {
+    //         $door->is_lock = 1;
+    //     } else {
+    //         $door->is_lock = 0;
+    //     }
+
+    //     $door->save();
+    // }
 }

@@ -33,4 +33,9 @@ class Office extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function scedule()
+    {
+        return $this->hasMany(Scedule::class);
+    }
 }

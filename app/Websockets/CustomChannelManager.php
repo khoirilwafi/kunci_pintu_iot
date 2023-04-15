@@ -79,7 +79,7 @@ class CustomChannelManager implements ChannelManager
         // set door to offline
         $door = Door::where('socket_id', $connection->socketId)->first();
         if ($door) {
-            $door->socketId = null;
+            $door->socket_id = null;
             $door->save();
         }
 

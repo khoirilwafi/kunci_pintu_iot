@@ -25,17 +25,12 @@ class Scedule extends Model
 
     protected $hidden = [];
 
-    protected $fillable = ['name', 'user_id', 'door_id', 'date_running', 'time_begin', 'time_end', 'is_repeating', 'day_0', 'day_1', 'day_2', 'day_3', 'day_4', 'day_5', 'day_6', 'status'];
+    protected $fillable = ['name', 'office_id', 'date_begin', 'date_end', 'time_begin', 'time_end', 'is_repeating', 'day_repeating', 'status'];
 
     protected $cast = [];
 
-    public function user()
+    public function office()
     {
-        return $this->belongsTo(User::class);
-    }
-
-    public function scedule()
-    {
-        return $this->hasMany(Scedule::class);
+        return $this->belongsTo(Office::class);
     }
 }
