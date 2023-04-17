@@ -29,7 +29,7 @@ Route::get('/login', [AuthController::class, 'index'])->middleware('guest')->nam
 Route::post('/login', [AuthController::class, 'authenticate'])->middleware('guest');
 
 // logout
-Route::get('/logout', [AuthController::class, 'logout']);
+Route::get('/logout', [AuthController::class, 'logout'])->middleware('auth');
 
 // forgot password
 Route::get('/forgot-password', [AuthController::class, 'requestResetPAssword'])->middleware('guest')->name('password.request');
@@ -41,12 +41,8 @@ Route::post('/reset-password', [AuthController::class, 'updatePassword'])->middl
 Route::get('/email-verification', [VerificationController::class, 'index'])->name('verification.notice');
 Route::post('/email-verification', [VerificationController::class, 'verify']);
 
-
-
-
-
 // dashboard
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified']);
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth');
 
 // route group for moderator
 Route::middleware(['auth', 'verified', 'moderator'])->group(function () {

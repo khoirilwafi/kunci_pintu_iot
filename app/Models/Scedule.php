@@ -5,6 +5,7 @@ namespace App\Models;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Scedule extends Model
 {
@@ -32,5 +33,10 @@ class Scedule extends Model
     public function office()
     {
         return $this->belongsTo(Office::class);
+    }
+
+    public function door()
+    {
+        return $this->belongsToMany(Door::class);
     }
 }

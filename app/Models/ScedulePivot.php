@@ -13,7 +13,7 @@ class ScedulePivot extends Model
     public $incrementing  = false;
     protected $keyType    = 'string';
     protected $primaryKey = 'id';
-    protected $table      = 'scedule_pivots';
+    protected $table      = 'door_scedule';
 
     protected static function boot()
     {

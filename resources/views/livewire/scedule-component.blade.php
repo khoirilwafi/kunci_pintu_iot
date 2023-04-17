@@ -42,9 +42,12 @@
     {{-- scedule table --}}
     @if ($scedule_table_visibility)
         <div class="card text-white mb-4">
-            <div class="card-header">
+            <div class="card-header d-flex">
                 <div class="text-white">
                     Daftar Jadwal
+                </div>
+                <div class="ms-auto d-flex align-items-center">
+                    <div id="connection_status" style="color: {{ $connection_color }}">{{ $connection_status }}</div>
                 </div>
             </div>
             <div class="card-body">
@@ -112,9 +115,12 @@
             Kembali
         </button>
         <div class="card">
-            <div class="card-header">
+            <div class="card-header d-flex">
                 <div class="text-white">
                     Detail Jadwal
+                </div>
+                <div class="ms-auto d-flex align-items-center">
+                    <div id="connection_status" style="color: {{ $connection_color }}">{{ $connection_status }}</div>
                 </div>
             </div>
             <div class="card-body">
@@ -151,16 +157,15 @@
                     </table>
                     <div class="flex-grow-1 d-flex">
                         <div class="ms-auto">
-                            @if($insert_status == 'waiting')
+                            @if($insert_status != 'running')
                                 <button class="btn btn-sm btn-outline-primary ms-1" wire:click="edit"><div class="fs-6 text-white"><i class="bi bi-pencil-square"></i></div></button>
-                                <button class="btn btn-sm btn-outline-info ms-1" wire:click=""><div class="fs-6 text-white"><i class="bi bi-play-circle"></i></div></button>
                             @else
-                                <button class="btn btn-sm btn-outline-warning ms-1" wire:click="stopSceduleConfirm"><div class="fs-6 text-white"><i class="bi bi-stop-circle"></i></div></button>
+                                <button class="btn btn-sm btn-outline-warning ms-1" wire:click="sceduleStop" wire:loading.attr='disabled'><div class="fs-6 text-white"><i class="bi bi-stop-circle"></i></div></button>
                             @endif
                         </div>
                     </div>
                 </div>
-                @if($insert_status == 'waiting')
+                @if($insert_status != 'running')
                     <div class="d-flex mb-3">
                         <button class="btn btn-sm btn-primary" wire:click="openModal('addDoor')"><i class="bi bi-plus-circle me-1"></i>Tambah Pintu</button>
                     </div>
@@ -175,9 +180,10 @@
                                 <th class="text-center" style="width: 90px">Status</th>
                                 <th class="text-center" style="width: 150px">Penguncian</th>
                                 @if ($insert_status == 'running')
-                                    <th class="text-center" style="width: 100px">Override</th>
+                                    <th class="text-center" style="width: 120px">Override</th>
+                                @else
+                                    <th class="text-center" style="width: 120px">Aksi</th>
                                 @endif
-                                <th class="text-center" style="width: 100px">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -212,25 +218,26 @@
                                     </td>
                                     @if ($insert_status == 'running')
                                         <td class="text-center">
-                                            @if ($list->door->socket_id != null)
-                                                <button wire:click="changeLocking('{{ $list->door->id }}')" wire:loading.attr="disabled" class="btn btn-sm {{ $list->door->is_lock == 1 ? 'btn-primary' : 'btn-info' }} bg-gradient me-1" style="width: 80px">
-                                                    <div wire:loading wire:target="changeLocking('{{ $list->door->id }}')">
-                                                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                                    </div>
-                                                    <i class="bi {{ $list->door->is_lock == 1 ? 'bi-unlock' : 'bi-lock' }} me-1" wire:loading.class="d-none" wire:target="changeLocking('{{ $list->door->id }}')"></i>
-                                                    {{ $list->door->is_lock == 1 ? 'Buka' : 'Kunci' }}
-                                                </button>
-                                            @else
-                                                <div style="font-family: monospace">-</div>
-                                            @endif
+                                            @if ($list->door->socket_id == null)
+                                            <div style="font-family: monospace">-</div>
+                                        @else
+                                            <button wire:click="changeLocking('{{ $list->door->id }}', '{{ $list->door->is_lock == 1 ? 'open' : 'lock' }}')" wire:loading.attr="disabled" class="btn btn-sm {{ $list->door->is_lock == 1 ? 'btn-primary' : 'btn-info' }} bg-gradient" style="width: 80px">
+                                                <div wire:loading wire:target="changeLocking">
+                                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                </div>
+                                                <i class="bi {{ $list->door->is_lock == 1 ? 'bi-unlock' : 'bi-lock' }} me-1" wire:loading.class="d-none" wire:target="changeLocking"></i>
+                                                {{ $list->door->is_lock == 1 ? 'Buka' : 'Kunci' }}
+                                            </button>
+                                        @endif
+                                        </td>
+                                    @else
+                                        <td class="text-center">
+                                            <button wire:click="deleteConfirm('{{ $list->id }}')" type="button" class="btn btn-sm btn-danger bg-gradient">
+                                                <i class="bi bi-trash me-1"></i>
+                                                Hapus
+                                            </button>
                                         </td>
                                     @endif
-                                    <td class="text-center">
-                                        <button wire:click="deleteConfirm('{{ $list->id }}')" type="button" class="btn btn-sm btn-danger bg-gradient">
-                                            <i class="bi bi-trash me-1"></i>
-                                            Hapus
-                                        </button>
-                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -581,48 +588,12 @@
 			</div>
 		</div>
 	</div>
-
-    {{-- stop confirm --}}
-	{{-- <div wire:ignore.self class="modal fade" id="stopConfirm" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1">
-		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-			<div class="modal-content">
-                <div class="modal-header">
-                    Konfirmasi Jadwal Berhenti
-                </div>
-                <div class="modal-body">
-                    Apakah anda yakin untuk menghentikan <strong>{{ $insert_name }}</strong> secara permanen ?
-
-                    <div class="mt-3" style="text-align: justify">
-                        <small>
-                            Jika jadwal berulang maka jadwal akan kembali dijalankan pada hari selanjutnya. Jika tidak berulang maka jadwal akan dihapus dari daftar jadwal.
-                        </small>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <div class="d-flex">
-                        <button class="btn btn-sm btn-primary ms-auto" wire:click="closeModal('stopConfirm')" wire:loading.attr="disabled"
-                            wire:target="stop">
-                            <i class="bi bi-x-circle me-1"></i>
-                            Batal
-                        </button>
-                        <button wire:click="stop" wire:loading.attr="disabled" wire:target="closeModal('stopConfirm')" class="btn btn-sm btn-danger ms-3">
-                            <i class="bi bi-stop-circle me-1" wire:loading.class="d-none" wire:target="stop"></i>
-                            <div wire:loading wire:target="stop">
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                            </div>
-                            Hentikan
-                        </button>
-                    </div>
-                </div>
-			</div>
-		</div>
-	</div> --}}
 </div>
 
-{{-- @push('custom_script')
+@push('custom_script')
     @vite('resources/js/door-socket.js');
     <script>
         window.office = @json($office_id);
         window.connection_status = document.getElementById("connection_status");
     </script>
-@endpush --}}
+@endpush

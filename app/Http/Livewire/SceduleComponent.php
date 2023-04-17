@@ -2,13 +2,15 @@
 
 namespace App\Http\Livewire;
 
+use Exception;
 use App\Models\Door;
 use App\Models\Office;
 use App\Models\Scedule;
-use App\Models\ScedulePivot;
-use Exception;
 use Livewire\Component;
+use App\Models\ScedulePivot;
 use Livewire\WithPagination;
+use App\Events\DoorCommandEvent;
+use App\Events\DoorScheduleEvent;
 
 class SceduleComponent extends Component
 {
@@ -32,7 +34,6 @@ class SceduleComponent extends Component
     public $search, $day_repeating;
 
     protected $listeners = ['socketEvent' => 'socketEvent', 'doorStatusEvent' => 'doorStatusEvent'];
-
 
     public function render()
     {
@@ -305,21 +306,22 @@ class SceduleComponent extends Component
         $this->closeModal('addDoor');
     }
 
-    // public function stopSceduleConfirm()
-    // {
-    //     $this->openModal('stopConfirm');
-    // }
+    public function sceduleStop()
+    {
+        $scedule = Scedule::with('door')->where('id', $this->scedule_id)->first();
 
-    // public function changeLocking($id)
-    // {
-    //     $door = Door::where('id', $id)->first();
+        foreach ($scedule->door as $door) {
+            event(new DoorScheduleEvent($scedule->office_id, $door->id, 'stop', $scedule->time_end));
+        }
 
-    //     if ($door->is_lock == 0) {
-    //         $door->is_lock = 1;
-    //     } else {
-    //         $door->is_lock = 0;
-    //     }
+        $scedule->status = 'done';
+        $scedule->save();
 
-    //     $door->save();
-    // }
+        $this->getSceduleDetail($scedule->id);
+    }
+
+    public function changeLocking($id, $status)
+    {
+        event(new DoorCommandEvent($this->office_id, $id, $status));
+    }
 }

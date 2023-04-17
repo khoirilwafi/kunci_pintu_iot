@@ -9,12 +9,11 @@ bagian dashboard operator
 
 
 
-<div class="modal-header">
-
-</div>
-<div class="modal-body">
-
-</div>
-<div class="modal-footer">
-
-</div>
+Muhammad Reinhardandi Brillian
+Muhammad Fachri Azfar
+Muhammad Irfan Saputra
+Muhammad Farhan
+Muhammad Khoiril Wafi
+Aldian Suyoto
+Arifin Kurniawan Arpan
+Briyantama Wahab

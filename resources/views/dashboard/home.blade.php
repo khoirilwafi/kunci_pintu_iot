@@ -1,5 +1,14 @@
 @extends('template.dashboard')
 
 @section('content')
-	<div class="text-center mt-5">dashboard.html</div>
+    @can('operator')
+        @livewire('operator-dashboard-component')
+    @endcan
+    @can('moderator')
+
+    @endcan
+    <div class="text-center">
+        <div class="fs-3">Selamat Datang</div>
+        <small>dashboard.html</small>
+    </div>
 @endsection
