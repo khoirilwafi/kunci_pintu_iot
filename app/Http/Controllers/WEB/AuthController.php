@@ -35,7 +35,7 @@ class AuthController extends Controller
             // login
             if (Auth::attempt($credentials, $request->get('remember'))) {
                 $request->session()->regenerate();
-                return redirect()->intended('dashboard');
+                return redirect()->intended('/dashboard');
             }
 
             // kembali dengan error credential

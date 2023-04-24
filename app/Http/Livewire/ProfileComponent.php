@@ -7,7 +7,6 @@ use App\Models\User;
 use App\Models\Avatar;
 use Livewire\Component;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Livewire\WithFileUploads;
 use Illuminate\Validation\Rule;

@@ -157,7 +157,6 @@
                                 <th>Gedung</th>
                                 <th class="text-center" style="width: 170px">Durasi Harian</th>
                                 <th class="text-center" style="width: 210px">Batas Tanggal</th>
-                                <th class="text-center" style="width: 100px">Remote</th>
                                 <th class="text-center" style="width: 100px">Status</th>
                             </tr>
                         </thead>
@@ -172,11 +171,6 @@
                                         <td class="text-center">{{ $list->date_begin. ' sd '. $list->date_end }}</td>
                                     @else
                                         <td class="text-center text-info">Tidak Terbatas</td>
-                                    @endif
-                                    @if ($list->is_remote == 1)
-                                        <td class="text-center text-warning">Ya</td>
-                                    @else
-                                        <td class="text-center text-info">Tidak</td>
                                     @endif
                                     @if ($list->is_running == 1)
                                         <td class="text-center text-info">Aktif</td>

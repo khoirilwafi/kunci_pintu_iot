@@ -21,7 +21,7 @@ class DoorComponent extends Component
     public $name, $device_id, $socket_id, $is_lock, $created_at;
     public $edit_id, $name_edited, $device_id_edited;
     public $office_name, $office_id;
-    public $access_user_id, $access_office_id, $access_is_temporary, $access_date_begin, $access_date_end, $access_time_begin, $access_time_end, $access_is_remote, $access_status;
+    public $access_user_id, $access_office_id, $access_is_temporary, $access_date_begin, $access_date_end, $access_time_begin, $access_time_end, $access_status;
 
     public $access_delete_id, $access_user_name, $access_door_name;
     public $door_url, $door_detail_id;
@@ -100,7 +100,6 @@ class DoorComponent extends Component
         $this->access_date_end     = '';
         $this->access_time_begin   = '';
         $this->access_time_end     = '';
-        $this->access_is_remote    = '';
         $this->access_status       = '';
 
         $this->date_visibility = false;
@@ -265,7 +264,6 @@ class DoorComponent extends Component
             'date_begin'   => $this->access_date_begin ?  $this->access_date_begin : null,
             'date_end'     => $this->access_date_end ?  $this->access_date_end : null,
             'is_temporary' => $this->access_is_temporary ? 1 : 0,
-            'is_remote'    => $this->access_is_remote ? 1 : 0,
             'is_running'   => 1,
         );
 

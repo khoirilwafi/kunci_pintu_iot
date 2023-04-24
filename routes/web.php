@@ -1,13 +1,12 @@
 <?php
 
-use App\Events\DashboardDoorEvent;
+use Carbon\Carbon;
+use App\Models\TestModel;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\UserController;
 use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\VerificationController;
-use BeyondCode\LaravelWebSockets\Facades\WebSocketsRouter;
-use BeyondCode\LaravelWebSockets\WebSockets\WebSocketHandler;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,10 +38,10 @@ Route::post('/reset-password', [AuthController::class, 'updatePassword'])->middl
 
 // verify email
 Route::get('/email-verification', [VerificationController::class, 'index'])->name('verification.notice');
-Route::post('/email-verification', [VerificationController::class, 'verify']);
+Route::post('/email-verification', [VerificationController::class, 'verify'])->middleware('auth');
 
 // dashboard
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified']);
 
 // route group for moderator
 Route::middleware(['auth', 'verified', 'moderator'])->group(function () {
@@ -73,3 +72,8 @@ Route::middleware(['auth', 'verified', 'operator'])->group(function () {
 // account
 Route::get('/dashboard/my-account', [DashboardController::class, 'my_account'])->middleware(['auth', 'verified']);
 Route::get('/my-account/avatar/{file}', [UserController::class, 'getAvatar'])->middleware(['auth', 'verified']);
+
+Route::get('/test_table', function () {
+    TestModel::create(['data' => Carbon::now()]);
+    return 'ok';
+});

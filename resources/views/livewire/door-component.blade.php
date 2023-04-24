@@ -225,7 +225,6 @@
                                 <th>Nama</th>
                                 <th class="text-center" style="width: 220px">Durasi Harian</th>
                                 <th class="text-center" style="width: 220px">Batas Tanggal</th>
-                                <th class="text-center" style="width: 90px">Remote</th>
                                 <th class="text-center" style="width: 100px">Status</th>
                                 <th class="text-center" style="width: 200px">Aksi</th>
                             </tr>
@@ -240,11 +239,6 @@
                                         <td class="text-center">{{ $list->date_begin. ' sd '. $list->date_end }}</td>
                                     @else
                                         <td class="text-center text-info">Tidak Terbatas</td>
-                                    @endif
-                                    @if ($list->is_remote == 1)
-                                        <td class="text-center text-warning">Ya</td>
-                                    @else
-                                        <td class="text-center text-info">Tidak</td>
                                     @endif
                                     @if ($list->is_running == 1)
                                         <td class="text-center text-info">Aktif</td>
@@ -363,12 +357,6 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:model.defer="access_is_remote">
-                            <label class="form-check-label">
-                                Akses Remote
-                            </label>
                         </div>
                         <div class="form-check mb-3">
                             <input class="form-check-input bg-dark border" type="checkbox" value="1" wire:click="showDate" wire:model.defer="access_is_temporary">

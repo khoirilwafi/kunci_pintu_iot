@@ -43,4 +43,22 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(Avatar::class);
     }
+
+
+    /**
+     * Send a password reset notification to the user.
+     *
+     * @param  string  $token
+     */
+    public function sendPasswordResetNotification($token): void
+    {
+        $url_protocol = (!empty($_SERVER['HTTPS']) && (strtolower($_SERVER['HTTPS']) == 'on' || $_SERVER['HTTPS'] == '1')) ? 'https://' : 'http://';
+        $url_server   = $_SERVER['SERVER_NAME'];
+        $url_port     = $_SERVER['SERVER_PORT'] ? ':' . $_SERVER['SERVER_PORT'] : '';
+
+        $email = $this->getEmailForPasswordReset();
+        $url = $url_protocol . $url_server . $url_port . '/reset-password/' . $token . '?email=' . $email;
+
+        $this->notify(new resetPassword($url));
+    }
 }

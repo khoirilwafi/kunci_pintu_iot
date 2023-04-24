@@ -79,10 +79,4 @@ class AuthController extends Controller
         $user->tokens()->delete();
         return response()->json(['status' => 'success'], 200);
     }
-
-    public function getDoor()
-    {
-        $door = Door::all();
-        return response()->json(['message' => 'success', 'data' => $door], 200);
-    }
 }
