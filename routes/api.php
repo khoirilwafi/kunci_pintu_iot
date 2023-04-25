@@ -46,5 +46,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/verify-access/{door_id}', [AccessController::class, 'verifyAccess']);
 
     // remote access
-
+    Route::post('/remote-access', [AccessController::class, 'remoteAccess']);
 });

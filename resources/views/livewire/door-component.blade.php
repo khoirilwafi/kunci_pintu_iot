@@ -66,7 +66,7 @@
                 <table class="table text-white mb-4">
                     @if (sizeof($doors) == 0)
                         <div class="text-center text-white p-3">
-                            --- Tidak Ada Data ---
+                            --- tidak ada data ---
                         </div>
                     @else
                         <thead>

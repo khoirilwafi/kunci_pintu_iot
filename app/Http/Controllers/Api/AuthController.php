@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use Carbon\Carbon;
 use App\Models\Otp;
 use App\Models\User;
-use App\Models\Access;
 use Illuminate\Http\Request;
 use App\Notifications\sendOTP;
 use App\Http\Controllers\Controller;

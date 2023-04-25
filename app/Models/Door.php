@@ -26,7 +26,7 @@ class Door extends Model
 
     protected $hidden = [];
 
-    protected $fillable = ['name', 'status', 'is_lock', 'office_id', 'device_id', 'socket_id'];
+    protected $fillable = ['name', 'is_lock', 'office_id', 'device_id', 'device_key', 'socket_id', 'token', 'ble_data'];
 
     protected $cast = [];
 

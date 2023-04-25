@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Door;
 use App\Models\Door;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Nette\Utils\Random;
+use Ramsey\Uuid\Uuid;
 
 class AuthController extends Controller
 {
@@ -25,24 +28,81 @@ class AuthController extends Controller
             ], 200);
         }
 
-        $door = Door::where('device_id', $data['device_id'])->where('key', $data['device_key'])->first();
+        $door = Door::where('device_id', $data['device_id'])->first();
 
-        if ($door) {
-            $token = $door->createToken('auth_token')->plainTextToken;
+        if (!$door || !Hash::check($data['device_key'], $door->device_key)) {
+            return response()->json([
+                'status' => 'failed',
+                'data' => []
+            ], 200);
+        }
+
+        $token = $door->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'door_id' => $door->id,
+                'office_id' => $door->office_id,
+                'token' => $token
+            ]
+        ], 200);
+    }
+
+    public function register(Request $request)
+    {
+        $data = $request->only(['id', 'device_id', 'ble_data']);
+
+        $validator = Validator::make($data, [
+            'id' => ['required', 'string'],
+            'device_id' => ['required', 'string'],
+            'ble_data' => ['string'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'missing_parameter',
+                'data' => $validator->messages()
+            ], 200);
+        }
+
+        $door = Door::where('id', $data['id'])->first();
+
+        if (!$door) {
+            return response()->json([
+                'status' => 'no_data',
+                'data' => []
+            ], 200);
+        }
+
+        if ($door->device_id != null) {
+            return response()->json([
+                'status' => 'already_exist',
+                'data' => []
+            ], 200);
+        }
+
+        $key = Random::generate(20);
+
+        $door->device_id = $data['device_id'];
+        $door->device_key = Hash::make($key);
+        $door->token = (string) Uuid::uuid4();
+        $door->ble_data = $data['ble_data'];
+
+        $status = $door->save();
+
+        if ($status) {
             return response()->json([
                 'status' => 'success',
-                'data' => [
-                    'door_id' => $door->id,
-                    'office_id' => $door->office_id,
-                    'token' => $token
-                ]
+                'data' => $door,
+                'key' => $key
             ], 200);
         }
 
         return response()->json([
             'status' => 'failed',
             'data' => []
-        ], 401);
+        ], 200);
     }
 
     public function signature(Request $request)

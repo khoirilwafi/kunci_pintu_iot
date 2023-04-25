@@ -7,6 +7,7 @@ use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\UserController;
 use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\VerificationController;
+use Illuminate\Support\Facades\Hash;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,7 +21,7 @@ use App\Http\Controllers\Web\VerificationController;
 */
 
 Route::get('/', function () {
-    return view('oret');
+    return Hash::make('vbhy5ss04y63iemv6z87');
 });
 
 // login
@@ -72,8 +73,3 @@ Route::middleware(['auth', 'verified', 'operator'])->group(function () {
 // account
 Route::get('/dashboard/my-account', [DashboardController::class, 'my_account'])->middleware(['auth', 'verified']);
 Route::get('/my-account/avatar/{file}', [UserController::class, 'getAvatar'])->middleware(['auth', 'verified']);
-
-Route::get('/test_table', function () {
-    TestModel::create(['data' => Carbon::now()]);
-    return 'ok';
-});

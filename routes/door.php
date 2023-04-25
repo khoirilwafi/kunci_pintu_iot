@@ -16,7 +16,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/login', [AuthController::class, 'authenticate']);
+Route::post('/login', [AuthController::class, 'authenticate'])->middleware('guest');
+Route::post('/register', [AuthController::class, 'register'])->middleware('guest');
 
 Route::middleware('auth:sanctum')->group(function () {
 
@@ -28,4 +29,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // update door status
     Route::post('/update-status', [DoorEventController::class, 'update_status']);
+
+    // door alert
+    Route::post('/alert', [DoorEventController::class, 'alert']);
 });

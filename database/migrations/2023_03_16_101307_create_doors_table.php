@@ -15,12 +15,14 @@ return new class extends Migration
     {
         Schema::create('doors', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->string('name');
             $table->uuid('office_id');
             $table->string('device_id')->unique()->nullable();
-            $table->uuid('socket_id')->nullable();
-            $table->string('name');
+            $table->string('device_key')->unique()->nullable();
+            $table->uuid('socket_id')->unique()->nullable();
+            $table->string('token')->nullable();
+            $table->string('ble_data')->nullable();
             $table->boolean('is_lock')->default(1);
-            $table->string('key')->unique()->nullable();
             $table->timestamps();
         });
 

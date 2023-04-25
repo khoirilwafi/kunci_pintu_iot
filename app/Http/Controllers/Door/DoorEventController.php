@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Door;
 
+use App\Events\DoorAlertEvent;
 use App\Events\DoorStatusEvent;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -50,7 +51,36 @@ class DoorEventController extends Controller
         ], 401);
     }
 
-    public function alarm($device_id)
+    public function alert(Request $request)
     {
+        $data = $request->only(['door_id', 'office_id']);
+
+        $validator = Validator::make($data, [
+            'office_id' => ['required', 'string'],
+            'door_id' => ['required', 'string']
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'missing_parameter',
+                'data' => $validator->messages()
+            ], 200);
+        }
+
+        $door = Door::where('id', $data['door_id'])->first();
+
+        if (!$door) {
+            return response()->json([
+                'status' => 'no_data',
+                'data' => []
+            ], 200);
+        }
+
+        event(new DoorAlertEvent($data['office_id'], $door->name));
+
+        return response()->json([
+            'status' => 'success',
+            'data' => []
+        ], 200);
     }
 }

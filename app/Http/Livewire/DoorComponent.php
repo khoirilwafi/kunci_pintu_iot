@@ -186,8 +186,8 @@ class DoorComponent extends Component
         $this->socket_id  = $door->socket_id;
         $this->is_lock    = $door->is_lock;
         $this->created_at = $door->created_at;
+        $this->door_url   = $this->edit_id;
 
-        $this->door_url = $this->getMyUrl() . '/public-access/' . $this->edit_id;
         $this->door_detail_id = $id;
 
         $this->show_detail();
