@@ -2,30 +2,28 @@
 
 namespace App\Events;
 
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class DoorScheduleEvent
+class DoorScheduleEvent implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    protected $office_id, $door_id, $status, $time_end;
+    protected $office_id, $device_id, $token, $time_end;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($office_id, $door_id, $status, $time_end)
+    public function __construct($office_id, $device_id, $token, $time_end)
     {
         $this->office_id = $office_id;
-        $this->door_id = $door_id;
-        $this->status = $status;
+        $this->device_id = $device_id;
+        $this->token = $token;
         $this->time_end = $time_end;
     }
 
@@ -47,8 +45,8 @@ class DoorScheduleEvent
     public function broadcastWith()
     {
         return [
-            'door_id' => $this->door_id,
-            'status' => $this->status,
+            'device_id' => $this->device_id,
+            'token' => $this->token,
             'time_end' => $this->time_end,
         ];
     }

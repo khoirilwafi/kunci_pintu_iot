@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Door;
 
+use App\Models\Door;
+use Illuminate\Http\Request;
 use App\Events\DoorAlertEvent;
 use App\Events\DoorStatusEvent;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Door;
 use Illuminate\Support\Facades\Validator;
 
 class DoorEventController extends Controller

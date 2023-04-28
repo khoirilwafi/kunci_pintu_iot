@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Notifications\resetPassword;
+use App\Notifications\ResetPasswordNotification;
 use Ramsey\Uuid\Uuid;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
@@ -59,6 +59,6 @@ class User extends Authenticatable implements MustVerifyEmail
         $email = $this->getEmailForPasswordReset();
         $url = $url_protocol . $url_server . $url_port . '/reset-password/' . $token . '?email=' . $email;
 
-        $this->notify(new resetPassword($url));
+        $this->notify(new ResetPasswordNotification($url));
     }
 }

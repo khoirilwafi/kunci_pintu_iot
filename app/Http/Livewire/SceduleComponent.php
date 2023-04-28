@@ -119,7 +119,7 @@ class SceduleComponent extends Component
         $this->validate([
             'insert_name'       => ['required', 'string', 'min:5', 'max:100'],
             'insert_date_begin' => ['required', 'date'],
-            'insert_date_end'   => ['required', 'date'],
+            'insert_date_end'   => ['required', 'date', 'after_or_equal:insert_date_begin'],
             'insert_time_begin' => ['required', 'date_format:H:i'],
             'insert_time_end'   => ['required', 'date_format:H:i'],
         ]);

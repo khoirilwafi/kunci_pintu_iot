@@ -8,20 +8,20 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class resetPassword extends Notification
+class NewUserNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    protected $url;
+    private $password;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($url)
+    public function __construct($password)
     {
-        $this->url = $url;
+        $this->password = $password;
     }
 
     /**
@@ -44,12 +44,12 @@ class resetPassword extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject("Reset Password")
+            ->subject("Smart Lock Password")
             ->greeting("Halo,")
-            ->line("Anda menerima email ini karena kami menerima permintaan reset password untuk akun Anda.")
-            ->line("Silakan klik tombol di bawah ini untuk mereset password Anda")
-            ->action('Reset Password', $this->url)
-            ->line("Perlu diperhatikan bahwa link reset password anda hanya berlaku selama 60 menit. Jika Anda tidak meminta reset password, silahkan abaikan email ini.")
+            ->line("Anda menerima email ini karena alamat email anda telah didaftarkan pada Sistem Penguncian Gedung BErbasis IoT")
+            ->line("Silakan login menggunakan password berikut.")
+            ->line(new HtmlString('<h3 style="text-align:center; margin-top:30px; margin-bottom:30px">' . $this->password . '</h3>'))
+            ->line("Jangan lupa untuk mengganti password ini setelah anda login.")
             ->salutation("\n\n\nTerimakasih.");
     }
 
@@ -61,6 +61,8 @@ class resetPassword extends Notification
      */
     public function toArray($notifiable)
     {
-        return [];
+        return [
+            //
+        ];
     }
 }

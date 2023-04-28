@@ -5,12 +5,14 @@ namespace App\Http\Livewire;
 use App\Models\Avatar;
 use Exception;
 use App\Models\User;
+use App\Notifications\NewUserNotification;
 use Ramsey\Uuid\Uuid;
 use Livewire\Component;
 use Illuminate\Http\Request;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Nette\Utils\Random;
 
 class OperatorComponent extends Component
 {
@@ -74,24 +76,27 @@ class OperatorComponent extends Component
             'phone'  => ['required', 'numeric', 'unique:users,phone', 'digits_between:11,13'],
         ]);
 
+        $password = Random::generate(15);
+
         // add data to object
         $operator['name']     = $this->name;
         $operator['gender']   = $this->gender;
         $operator['email']    = $this->email;
         $operator['phone']    = $this->phone;
-        $operator['password'] = Hash::make('password');
+        $operator['password'] = Hash::make($password);
         $operator['role']     = 'operator';
         $operator['added_by'] = $request->user()->id;
 
-        // kirimkan email disini !!!!!
-
         // insert to databse
-        $insert = User::create($operator);
+        $status = User::create($operator);
+
+        // email notification
+        $status->notify(new NewUserNotification($password));
 
         // close formulir
         $this->dispatchBrowserEvent('modal_close', 'addOperator');
 
-        if ($insert) {
+        if ($status) {
             session()->flash('insert_success', $this->name);
         } else {
             session()->flash('insert_failed', $this->name);

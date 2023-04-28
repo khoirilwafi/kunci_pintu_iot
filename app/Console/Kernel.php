@@ -3,6 +3,8 @@
 namespace App\Console;
 
 use App\Events\PublicTestEvent;
+use App\Jobs\DoorScheduleJob;
+use App\Jobs\ScheduleDailyJob;
 use Carbon\Carbon;
 use App\Models\TestModel;
 use Illuminate\Console\Scheduling\Schedule;
@@ -20,9 +22,10 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
 
-        $schedule->call(function () {
-            event(new PublicTestEvent());
-        })->everyMinute();
+        $schedule->command('auth:clear-resets')->everyThirtyMinutes();
+
+        $schedule->job(new DoorScheduleJob)->everyMinute();
+        $schedule->job(new ScheduleDailyJob)->dailyAt('00:02:00');
     }
 
     /**

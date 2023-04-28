@@ -23,7 +23,7 @@ return new class extends Migration
             $table->time('time_end');
             $table->boolean('is_repeating')->default(0);
             $table->string('day_repeating');
-            $table->enum('status', ['waiting', 'running'])->default('waiting');
+            $table->enum('status', ['waiting', 'done'])->default('waiting');
             $table->timestamps();
         });
 

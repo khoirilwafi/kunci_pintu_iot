@@ -6,9 +6,8 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use App\Models\Otp;
 use App\Models\User;
+use App\Notifications\SendOTPNotification;
 use Illuminate\Http\Request;
-use App\Notifications\sendOTP;
-use Exception;
 
 class VerificationController extends Controller
 {
@@ -18,7 +17,7 @@ class VerificationController extends Controller
         $otp  = $this->generateOTP($request);
 
         // kirim notifikasi disini
-        $user->notify(new sendOTP($otp));
+        $user->notify(new SendOTPNotification($otp));
 
         return view('auth.otp', ['id' => $user->id]);
     }

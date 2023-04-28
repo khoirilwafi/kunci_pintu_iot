@@ -2,15 +2,17 @@
 
 namespace App\Http\Livewire;
 
-use App\Models\Access;
 use Exception;
 use App\Models\User;
+use App\Models\Access;
 use App\Models\Avatar;
 use Livewire\Component;
+use Nette\Utils\Random;
 use Illuminate\Http\Request;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use App\Notifications\NewUserNotification;
 
 class UserComponent extends Component
 {
@@ -89,22 +91,27 @@ class UserComponent extends Component
             'phone'  => ['required', 'numeric', 'unique:users,phone', 'digits_between:11,13'],
         ]);
 
+        $password = Random::generate(15);
+
         // add data to object
         $user['name']     = $this->name;
         $user['email']    = $this->email;
         $user['phone']    = $this->phone;
         $user['gender']   = $this->gender;
-        $user['password'] = Hash::make($this->email);
+        $user['password'] = Hash::make($password);
         $user['role']     = 'pengguna';
         $user['added_by'] = $request->user()->id;
 
         // insert to databse
-        $insert = User::create($user);
+        $status = User::create($user);
+
+        // email notification
+        $status->notify(new NewUserNotification($password));
 
         // close formulir
         $this->dispatchBrowserEvent('modal_close', 'addUser');
 
-        if ($insert) {
+        if ($status) {
             session()->flash('insert_success', $this->name);
         } else {
             session()->flash('insert_failed', $this->name);

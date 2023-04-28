@@ -3,25 +3,24 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Support\HtmlString;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class sendOTP extends Notification
+class ResetPasswordNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    protected $otp_code;
+    protected $url;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($otp_code)
+    public function __construct($url)
     {
-        $this->otp_code = $otp_code;
+        $this->url = $url;
     }
 
     /**
@@ -44,12 +43,12 @@ class sendOTP extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject("Verifikasi OTP")
+            ->subject("Reset Password")
             ->greeting("Halo,")
-            ->line("Anda menerima email ini karena anda belum melakukan verifikasi akun, atau mungkin anda baru saja login pada perangkat baru.")
-            ->line("Silakan masukkan kode dibawah ini untuk memverifikasi akun anda.")
-            ->line(new HtmlString('<h1 style="text-align:center; margin-top:30px; margin-bottom:30px">' . $this->otp_code . '</h1>'))
-            ->line("Perlu diperhatikan bahwa kode tersebut hanya berlaku selama 5 menit. Untuk keamanan anda, jangan berikan kode tersebut kepada pihak lain.")
+            ->line("Anda menerima email ini karena kami menerima permintaan reset password untuk akun Anda.")
+            ->line("Silakan klik tombol di bawah ini untuk mereset password Anda")
+            ->action('Reset Password', $this->url)
+            ->line("Perlu diperhatikan bahwa link reset password anda hanya berlaku selama 60 menit. Jika Anda tidak meminta reset password, silahkan abaikan email ini.")
             ->salutation("\n\n\nTerimakasih.");
     }
 

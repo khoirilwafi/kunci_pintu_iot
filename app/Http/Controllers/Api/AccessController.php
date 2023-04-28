@@ -72,14 +72,17 @@ class AccessController extends Controller
 
         $now = Carbon::now();
 
+        $date = $now->toDateString();
+        $time = $now->toTimeString();
+
         $access = Access::with('door')
             ->where('user_id', $user->id)
             ->where('door_id', $door_id)
             ->where('is_running', 1)
-            ->where('time_begin', '<=', $now->toTimeString())
-            ->where('time_end', '>=',  $now->toTimeString())
-            ->where('date_begin', '<=',  $now->toDateString())
-            ->where('date_end', '>=',  $now->toDateString())
+            ->where('time_begin', '<=', $time)
+            ->where('date_begin', '<=',  $date)
+            ->where('time_end', '>=',  $time)
+            ->where('date_end', '>=',  $date)
             ->first();
 
         if ($access) {

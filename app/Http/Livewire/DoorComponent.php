@@ -253,7 +253,7 @@ class DoorComponent extends Component
             'access_time_begin' => ['required', 'date_format:H:i'],
             'access_time_end'   => ['required', 'date_format:H:i'],
             'access_date_begin' => ['required_if:access_is_temporary,1', 'date'],
-            'access_date_end'   => ['required_if:access_is_temporary,1', 'date', 'after:access_date_begin'],
+            'access_date_end'   => ['required_if:access_is_temporary,1', 'date', 'after_or_equal:access_date_begin'],
         ]);
 
         $access = array(

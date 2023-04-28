@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Door\DoorEventController;
 use Carbon\Carbon;
 use App\Models\TestModel;
 use Illuminate\Support\Facades\Route;
@@ -7,6 +8,7 @@ use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\UserController;
 use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\VerificationController;
+use App\Models\Scedule;
 use Illuminate\Support\Facades\Hash;
 
 /*
@@ -20,9 +22,8 @@ use Illuminate\Support\Facades\Hash;
 |
 */
 
-Route::get('/', function () {
-    return Hash::make('vbhy5ss04y63iemv6z87');
-});
+
+Route::get('/', [DoorEventController::class, 'getScheduleNow']);
 
 // login
 Route::get('/login', [AuthController::class, 'index'])->middleware('guest')->name('login');
