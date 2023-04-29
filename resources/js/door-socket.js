@@ -37,3 +37,7 @@ channel.leaving(() => {
 channel.listen('.door-status', () => {
     Livewire.emit('doorStatusEvent');
 });
+
+channel.listen('.door-alert', (data) => {
+    Livewire.emit('doorAlertEvent', { name: data.name });
+});

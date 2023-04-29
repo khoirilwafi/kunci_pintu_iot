@@ -7,9 +7,10 @@ use App\Models\User;
 use App\Models\Avatar;
 use Livewire\Component;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Livewire\WithFileUploads;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class ProfileComponent extends Component
@@ -130,6 +131,7 @@ class ProfileComponent extends Component
         $this->dispatchBrowserEvent('name_change', $user->name);
 
         if ($result) {
+            Log::info('update profile', ['user' => $user]);
             session()->flash('update_success', 'Profil Anda');
         } else {
             session()->flash('update_failed', 'Profil Anda');
@@ -167,6 +169,7 @@ class ProfileComponent extends Component
         $this->closeModal('changePassword');
 
         if ($result) {
+            Log::info('change password', ['user' => $user]);
             session()->flash('update_success', 'Password');
         } else {
             session()->flash('update_failed', 'Password');

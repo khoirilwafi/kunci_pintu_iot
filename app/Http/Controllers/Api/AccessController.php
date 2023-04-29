@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Events\DoorCommandEvent;
-use App\Http\Controllers\Controller;
-use App\Models\Access;
-use App\Models\Door;
-use App\Models\Office;
 use Carbon\Carbon;
+use App\Models\Door;
+use App\Models\Access;
+use App\Models\Office;
+use App\Logs\CustomLog;
 use Illuminate\Http\Request;
+use App\Events\DoorCommandEvent;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
 class AccessController extends Controller
@@ -20,6 +22,8 @@ class AccessController extends Controller
         $access = Access::with('door')->where('user_id', $user->id)->get();
 
         if ($access) {
+            Log::info('user request acccess using api', ['user' => $user]);
+
             return response()->json([
                 'status' => 'success',
                 'data' => $access
@@ -44,6 +48,8 @@ class AccessController extends Controller
         }
 
         $office = Office::select('id')->where('user_id', $user->id)->first();
+
+        Log::info('user request door using api', ['user' => $user]);
 
         return response()->json([
             'status' => 'success',
@@ -86,6 +92,10 @@ class AccessController extends Controller
             ->first();
 
         if ($access) {
+
+            // save log
+            new CustomLog($access->user_id, $access->door_id, $access->door->office_id, 'mendapatkan kunci akses');
+
             return response()->json([
                 'status' => 'success',
                 'data' => $access->door
@@ -113,7 +123,7 @@ class AccessController extends Controller
 
         $validator = Validator::make($data, [
             'door_id' => ['required', 'string'],
-            'locking' => ['required', 'numeric']
+            'locking' => ['required', 'string']
         ]);
 
         if ($validator->fails()) {
@@ -132,7 +142,11 @@ class AccessController extends Controller
             ], 200);
         }
 
-        event(new DoorCommandEvent($door->office_id, $door->id, $data['locking']));
+        // broadcast event
+        event(new DoorCommandEvent($door->office_id, $user->id, $door->id, $data['locking'], $door->token));
+
+        // save log
+        new CustomLog($user->id, $door->id, $door->office_id, 'remote akses');
 
         return response()->json([
             'status' => 'success',

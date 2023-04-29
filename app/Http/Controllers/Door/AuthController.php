@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Door;
 
 use App\Models\Door;
+use Ramsey\Uuid\Uuid;
+use Nette\Utils\Random;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Nette\Utils\Random;
-use Ramsey\Uuid\Uuid;
 
 class AuthController extends Controller
 {
@@ -38,6 +39,7 @@ class AuthController extends Controller
         }
 
         $token = $door->createToken('auth_token')->plainTextToken;
+        Log::info('door device login', ['door' => $door, 'token' => $token]);
 
         return response()->json([
             'status' => 'success',
@@ -92,6 +94,7 @@ class AuthController extends Controller
         $status = $door->save();
 
         if ($status) {
+            Log::info('door device register', ['door' => $door]);
             return response()->json([
                 'status' => 'success',
                 'data' => $door,
@@ -125,6 +128,8 @@ class AuthController extends Controller
         $signature = $data['socket_id'] . ':presence-office.' . $data['office_id'] . ':' . $data['channel_data'];
         $hash = hash_hmac('sha256', $signature, env('PUSHER_APP_SECRET', null));
 
+        Log::info('door device signature', ['door' => $data]);
+
         return response()->json([
             'status' => 'success',
             'data' => [
@@ -136,6 +141,9 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         $user = $request->user();
+
+        Log::info('door device logout', ['door' => $user]);
+
         $user->tokens()->delete();
         return response()->json(['status' => 'success'], 200);
     }

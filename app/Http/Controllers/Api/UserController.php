@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
@@ -40,6 +41,7 @@ class UserController extends Controller
             $status = $user->save();
 
             if ($status) {
+                Log::info('user update profile using api', ['user' => $user]);
                 return response()->json([
                     'status' => 'success',
                     'data' => $user

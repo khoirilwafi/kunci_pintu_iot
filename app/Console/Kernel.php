@@ -4,11 +4,14 @@ namespace App\Console;
 
 use App\Events\PublicTestEvent;
 use App\Jobs\DoorScheduleJob;
+use App\Jobs\ExportAccessLogJob;
 use App\Jobs\ScheduleDailyJob;
 use Carbon\Carbon;
 use App\Models\TestModel;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+
+use function PHPUnit\Framework\at;
 
 class Kernel extends ConsoleKernel
 {
@@ -25,7 +28,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('auth:clear-resets')->everyThirtyMinutes();
 
         $schedule->job(new DoorScheduleJob)->everyMinute();
-        $schedule->job(new ScheduleDailyJob)->dailyAt('00:02:00');
+        $schedule->job(new ScheduleDailyJob)->dailyAt('00:01:00');
+        $schedule->job(new ExportAccessLogJob)->monthlyOn(1, '00:02:00');
     }
 
     /**

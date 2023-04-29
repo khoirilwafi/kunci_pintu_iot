@@ -5,12 +5,14 @@ namespace App\Http\Livewire;
 use Exception;
 use App\Models\Door;
 use App\Models\Office;
+use App\Logs\CustomLog;
 use App\Models\Scedule;
 use Livewire\Component;
 use App\Models\ScedulePivot;
 use Livewire\WithPagination;
 use App\Events\DoorCommandEvent;
 use App\Events\DoorScheduleEvent;
+use Illuminate\Support\Facades\Log;
 
 class SceduleComponent extends Component
 {
@@ -32,8 +34,10 @@ class SceduleComponent extends Component
     public $connection_status = 'Menghubungkan ...';
     public $connection_color = 'yellow';
     public $search, $day_repeating;
+    public $door_name;
 
-    protected $listeners = ['socketEvent' => 'socketEvent', 'doorStatusEvent' => 'doorStatusEvent'];
+    protected $listeners = ['socketEvent', 'doorStatusEvent', 'doorAlertEvent'];
+
 
     public function render()
     {
@@ -43,7 +47,6 @@ class SceduleComponent extends Component
 
         // get all scedule
         $data['scedules'] = Scedule::where('office_id', $this->office_id)->where('name', 'like', '%' . $this->search . '%')->get();
-        // $data['scedules_this_day'] = Scedule::where('date')
 
         // get door available
         $query = ScedulePivot::select('door_id')->where('scedule_id', $this->scedule_id)->get();
@@ -66,6 +69,12 @@ class SceduleComponent extends Component
     {
         $this->connection_status = $data['text'];
         $this->connection_color = $data['color'];
+    }
+
+    public function doorAlertEvent($data)
+    {
+        $this->door_name = $data['name'];
+        $this->dispatchBrowserEvent('modal_open', 'alertModal');
     }
 
     public function updatingSearch()
@@ -150,6 +159,7 @@ class SceduleComponent extends Component
         $status = Scedule::create($scedule);
 
         if ($status) {
+            Log::info('add new schedule', ['schedule' => $scedule]);
             session()->flash('insert_success', $scedule['name']);
         } else {
             session()->flash('insert_failed', $scedule['name']);
@@ -177,12 +187,17 @@ class SceduleComponent extends Component
     {
         try {
             if ($this->scedule_table_visibility == true) {
-                Scedule::where('id', $this->delete_id)->delete();
+                $schedule = Scedule::where('id', $this->delete_id)->first();
+                Log::info('delete schedule', ['schedule' => $schedule]);
+                $schedule->delete();
             } else {
-                ScedulePivot::where('scedule_id', $this->scedule_id)->where('door_id', $this->delete_id)->delete();
+                $door = ScedulePivot::where('scedule_id', $this->scedule_id)->where('door_id', $this->delete_id)->first();
+                Log::info('delete door in schedule', ['door' => $door]);
+                $door->delete();
             }
             session()->flash('delete_success', $this->delete_name);
         } catch (Exception $e) {
+            Log::error('delete schedule failed', ['error' => $e]);
             session()->flash('delete_failed', $this->delete_name);
         }
 
@@ -276,6 +291,7 @@ class SceduleComponent extends Component
         $status = $scedule->save();
 
         if ($status) {
+            Log::info('update schedule', ['schedule' => $scedule]);
             session()->flash('update_success', $this->edit_name);
         } else {
             session()->flash('update_failed', $this->edit_name);
@@ -298,6 +314,7 @@ class SceduleComponent extends Component
         $status = ScedulePivot::create($pivot);
 
         if ($status) {
+            Log::info('add door to schedule', ['door' => $door, 'pivot' => $pivot]);
             session()->flash('insert_success', $door->name);
         } else {
             session()->flash('insert_failed', $door->name);
@@ -311,7 +328,12 @@ class SceduleComponent extends Component
         $scedule = Scedule::with('door')->where('id', $this->scedule_id)->first();
 
         foreach ($scedule->door as $door) {
-            event(new DoorScheduleEvent($scedule->office_id, $door->id, 'stop', $scedule->time_end));
+
+            // broadcast event
+            event(new DoorScheduleEvent($scedule->office_id, request()->user()->id, $door->id, $scedule->time_end, 'stop', $door->token));
+
+            // save log
+            new CustomLog(request()->user()->id, $door->id, $this->office_id, 'membatalkan jadwal');
         }
 
         $scedule->status = 'done';
@@ -320,8 +342,12 @@ class SceduleComponent extends Component
         $this->getSceduleDetail($scedule->id);
     }
 
-    public function changeLocking($id, $status)
+    public function changeLocking($id, $status, $token)
     {
-        event(new DoorCommandEvent($this->office_id, $id, $status));
+        // broadcast event
+        event(new DoorCommandEvent($this->office_id, request()->user()->id, $id, $status, $token));
+
+        // save log
+        new CustomLog(request()->user()->id, $id, $this->office_id, 'remote akses');
     }
 }

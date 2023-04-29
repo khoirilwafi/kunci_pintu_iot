@@ -1,15 +1,11 @@
 <?php
 
-use App\Http\Controllers\Door\DoorEventController;
-use Carbon\Carbon;
-use App\Models\TestModel;
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\UserController;
 use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\VerificationController;
-use App\Models\Scedule;
-use Illuminate\Support\Facades\Hash;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,7 +19,12 @@ use Illuminate\Support\Facades\Hash;
 */
 
 
-Route::get('/', [DoorEventController::class, 'getScheduleNow']);
+Route::get('/', function () {
+
+
+
+    return 'done';
+});
 
 // login
 Route::get('/login', [AuthController::class, 'index'])->middleware('guest')->name('login');
@@ -67,8 +68,10 @@ Route::middleware(['auth', 'verified', 'operator'])->group(function () {
     // get all schedules
     Route::get('/dashboard/schedules', [DashboardController::class, 'scedules']);
 
+    // get all histories
+    Route::get('/dashboard/schedules', [DashboardController::class, 'scedules']);
     // get all guest
-    Route::get('/dashboard/guests', [DashboardController::class, 'guests']);
+    Route::get('/dashboard/histories', [DashboardController::class, 'histories']);
 });
 
 // account

@@ -12,18 +12,20 @@ class DoorScheduleEvent implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    protected $office_id, $device_id, $token, $time_end;
+    protected $office_id, $user_id, $door_id, $token, $time_end, $status;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($office_id, $device_id, $token, $time_end)
+    public function __construct($office_id, $user_id, $door_id, $time_end, $status, $token)
     {
         $this->office_id = $office_id;
-        $this->device_id = $device_id;
+        $this->user_id = $user_id;
+        $this->door_id = $door_id;
         $this->token = $token;
+        $this->status = $status;
         $this->time_end = $time_end;
     }
 
@@ -45,9 +47,11 @@ class DoorScheduleEvent implements ShouldBroadcastNow
     public function broadcastWith()
     {
         return [
-            'device_id' => $this->device_id,
-            'token' => $this->token,
+            'device_id' => $this->door_id,
+            'user_id' => $this->user_id,
             'time_end' => $this->time_end,
+            'status' => $this->status,
+            'token' => $this->token,
         ];
     }
 }

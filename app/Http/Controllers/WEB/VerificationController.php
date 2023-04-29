@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Web;
 
-use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use App\Models\Otp;
 use App\Models\User;
-use App\Notifications\SendOTPNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use App\Notifications\SendOTPNotification;
 
 class VerificationController extends Controller
 {
@@ -16,8 +17,8 @@ class VerificationController extends Controller
         $user = $request->user();
         $otp  = $this->generateOTP($request);
 
-        // kirim notifikasi disini
         $user->notify(new SendOTPNotification($otp));
+        Log::info('otp send', ['user' => $user]);
 
         return view('auth.otp', ['id' => $user->id]);
     }
@@ -51,6 +52,9 @@ class VerificationController extends Controller
         if ($otp && $now->lessThanOrEqualTo($otp->valid_until)) {
             User::where('id', $otp->user_id)->update(['email_verified_at' => $now]);
             Otp::with('user_id', $data_otp['id'])->delete();
+
+            Log::info('user validate email using api', ['user' => $request->user()]);
+
             return redirect()->intended('dashboard');
         } elseif ($otp) {
             return redirect()->back()->with('failed', 'OTP sudah kadaluarsa');

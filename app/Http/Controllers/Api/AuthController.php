@@ -6,10 +6,11 @@ use Carbon\Carbon;
 use App\Models\Otp;
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Notifications\sendOTP;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Notifications\SendOTPNotification;
 
 
 class AuthController extends Controller
@@ -60,7 +61,7 @@ class AuthController extends Controller
 
             // kirim kode otp
             $otp = $this->generateOTP($user->id);
-            // $user->notify(new sendOTP($otp));
+            $user->notify(new SendOTPNotification($otp));
 
             // send email notifcation
             return response()->json([
@@ -72,6 +73,8 @@ class AuthController extends Controller
             ], 200);
         }
 
+        Log::info('user login with api', ['user' => $user]);
+
         return response()->json([
             'status' => 'success',
             'data' => $user,
@@ -82,6 +85,8 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         $user = $request->user();
+        Log::info('user logout using api', ['user' => $user]);
+
         $user->tokens()->delete();
         return response()->json(['status' => 'success', 'data' => []], 200);
     }
@@ -109,6 +114,8 @@ class AuthController extends Controller
         if ($otp && $now->lessThanOrEqualTo($otp->valid_until)) {
             User::where('id', $data['id'])->update(['email_verified_at' => $now]);
             Otp::with('user_id', $data['id'])->delete();
+
+            Log::info('user validate email using api', ['user' => $request->user()]);
 
             return response()->json([
                 'status' => 'success',

@@ -61,18 +61,6 @@
                             <i class="bi bi-clock-history me-2"></i>Penjadwalan
                         </a>
                     </li>
-                    {{-- <hr class="sidebar-hr">
-                    <li class="sidebar-menu {{ request()->is('dashboard/guests') ? 'high-light' : '' }}">
-                        <a href="{{ url('/dashboard/guests') }}" class="nav-link">
-                            <i class="bi bi-clipboard-check me-2"></i>Undangan
-                        </a>
-                    </li> --}}
-                    {{-- <hr class="sidebar-hr">
-                    <li class="sidebar-menu {{ request()->is('dashboard/inboxs') ? 'high-light' : '' }}">
-                        <a href="{{ url('/dashboard/inboxs') }}" class="nav-link">
-                            <i class="bi bi-envelope me-2"></i>Pesan Masuk
-                        </a>
-                    </li> --}}
                     <hr class="sidebar-hr">
                     <li class="sidebar-menu {{ request()->is('dashboard/histories') ? 'high-light' : '' }}">
                         <a href="{{ url('/dashboard/histories') }}" class="nav-link">
@@ -130,10 +118,7 @@
                 <div class="p-3 p-md-4">
                     @yield('content')
                 </div>
-
             </div>
-
-
 		</div>
 
 
@@ -150,6 +135,7 @@
     @stack('custom_script')
 
     <script type="text/javascript">
+
         window.addEventListener('modal_open', (event) => {
 			$('#'+event.detail).modal('show');
 		});

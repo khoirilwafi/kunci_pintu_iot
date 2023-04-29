@@ -2,15 +2,17 @@
 
 namespace App\Http\Livewire;
 
-use App\Events\DoorCommandEvent;
 use Exception;
 use App\Models\Door;
 use App\Models\User;
 use App\Models\Access;
 use App\Models\Office;
+use App\Logs\CustomLog;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Validation\Rule;
+use App\Events\DoorCommandEvent;
+use Illuminate\Support\Facades\Log;
 
 class DoorComponent extends Component
 {
@@ -24,7 +26,7 @@ class DoorComponent extends Component
     public $access_user_id, $access_office_id, $access_is_temporary, $access_date_begin, $access_date_end, $access_time_begin, $access_time_end, $access_status;
 
     public $access_delete_id, $access_user_name, $access_door_name;
-    public $door_url, $door_detail_id;
+    public $door_name, $door_url, $door_detail_id;
     public $available_user;
     public $search, $searchAccess;
 
@@ -35,7 +37,7 @@ class DoorComponent extends Component
     public $connection_status = 'Menghubungkan ...';
     public $connection_color = 'yellow';
 
-    protected $listeners = ['socketEvent' => 'socketEvent', 'doorStatusEvent' => 'doorStatusEvent'];
+    protected $listeners = ['socketEvent', 'doorStatusEvent', 'doorAlertEvent'];
 
 
     public function render()
@@ -70,6 +72,12 @@ class DoorComponent extends Component
     {
         $this->connection_status = $data['text'];
         $this->connection_color = $data['color'];
+    }
+
+    public function doorAlertEvent($data)
+    {
+        $this->door_name = $data['name'];
+        $this->dispatchBrowserEvent('modal_open', 'alertModal');
     }
 
     public function updatingSearch()
@@ -167,6 +175,7 @@ class DoorComponent extends Component
         $status = Door::create($door);
 
         if ($status) {
+            Log::info('add new door', ['door' => $door]);
             session()->flash('insert_success', $door['name']);
         } else {
             session()->flash('insert_failed', $door['name']);
@@ -212,6 +221,7 @@ class DoorComponent extends Component
         $status = $door->save();
 
         if ($status) {
+            Log::info('change door detail', ['door' => $door]);
             session()->flash('update_success', $this->name);
         } else {
             session()->flash('update_failed', $this->name);
@@ -224,9 +234,12 @@ class DoorComponent extends Component
     public function delete()
     {
         try {
-            Door::where('id', $this->edit_id)->delete();
+            $door = Door::where('id', $this->edit_id)->first();
+            Log::info('user change door detail', ['door' => $door]);
+            $door->delete();
             session()->flash('delete_success', $this->name);
         } catch (Exception $e) {
+            Log::error('delete door failed', ['error' => $e]);
             session()->flash('delete_failed', $this->name);
         }
 
@@ -270,6 +283,7 @@ class DoorComponent extends Component
         $status = Access::create($access);
 
         if ($status) {
+            Log::info('add new user access', ['access' => $access]);
             session()->flash('insert_success', 'Akses Pengguna');
         } else {
             session()->flash('insert_failed', 'Akses Pengguna');
@@ -293,9 +307,12 @@ class DoorComponent extends Component
     public function deleteAccess()
     {
         try {
-            Access::where('id', $this->access_delete_id)->delete();
+            $access = Access::where('id', $this->access_delete_id)->first();
+            Log::info('delete user access', ['access' => $access]);
+            $access->delete();
             session()->flash('delete_success', $this->access_user_name);
         } catch (Exception $e) {
+            Log::error('delete user access failed', ['error' => $e]);
             session()->flash('delete_failed', $this->access_user_name);
         }
 
@@ -314,13 +331,19 @@ class DoorComponent extends Component
             }
 
             $access->save();
+            Log::info('change user access', ['access' => $access]);
         } catch (Exception $e) {
+            Log::error('change user access failed', ['error' => $e]);
         }
     }
 
-    public function changeLocking($id, $status)
+    public function changeLocking($id, $status, $token)
     {
-        event(new DoorCommandEvent($this->office_id, $id, $status));
+        // broadcast event
+        event(new DoorCommandEvent($this->office_id, request()->user()->id, $id, $status, $token));
+
+        // save log
+        new CustomLog(request()->user()->id, $id, $this->office_id, 'remote akses');
     }
 
     public function unlink()
@@ -332,6 +355,7 @@ class DoorComponent extends Component
         $status = $door->save();
 
         if ($status) {
+            Log::info('unlink door device', ['door' => $door]);
             session()->flash('update_success', $this->name);
         } else {
             session()->flash('update_failed', $this->name);

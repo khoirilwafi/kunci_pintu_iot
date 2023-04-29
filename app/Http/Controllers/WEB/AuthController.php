@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Web;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
@@ -22,7 +23,7 @@ class AuthController extends Controller
     {
         // validate input
         $credentials = $request->validate([
-            'email'    => ['required', 'email:dns'],
+            'email'    => ['required', 'email'],
             'password' => ['required'],
         ]);
 
@@ -34,7 +35,10 @@ class AuthController extends Controller
 
             // login
             if (Auth::attempt($credentials, $request->get('remember'))) {
+
                 $request->session()->regenerate();
+                Log::info('user login', ['user' => $user]);
+
                 return redirect()->intended('/dashboard');
             }
 
@@ -48,6 +52,8 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
+        Log::info('user logout', ['user' => $request->user()]);
+
         Auth::logout();
 
         $request->session()->invalidate();
@@ -67,13 +73,16 @@ class AuthController extends Controller
             'email' => ['required', 'email:dns'],
         ]);
 
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+        $email = $request->only('email');
 
-        return $status === Password::RESET_LINK_SENT
-            ? back()->with(['status' => __($status)])
-            : back()->withErrors(['email' => __($status)]);
+        $status = Password::sendResetLink($email);
+
+        if ($status === Password::RESET_LINK_SENT) {
+            Log::info('reset link send', ['email' => $email]);
+            back()->with(['status' => __($status)]);
+        }
+
+        return back()->withErrors(['email' => __($status)]);
     }
 
     public function resetPassword($token)
@@ -97,6 +106,7 @@ class AuthController extends Controller
                 ])->setRememberToken(Str::random(60));
 
                 $user->save();
+                Log::info('password reset', ['user' => $user]);
                 event(new PasswordReset($user));
             }
         );

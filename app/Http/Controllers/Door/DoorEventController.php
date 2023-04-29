@@ -7,18 +7,20 @@ use Illuminate\Http\Request;
 use App\Events\DoorAlertEvent;
 use App\Events\DoorStatusEvent;
 use App\Http\Controllers\Controller;
+use App\Logs\CustomLog;
 use Illuminate\Support\Facades\Validator;
 
 class DoorEventController extends Controller
 {
     public function update_status(Request $request)
     {
-        $data = $request->only(['door_id', 'office_id', 'socket_id', 'lock_status']);
+        $data = $request->only(['door_id', 'office_id', 'socket_id', 'user_id', 'lock_status']);
 
         $validator = Validator::make($data, [
             'door_id' => ['required', 'string'],
             'office_id' => ['required', 'string'],
             'socket_id' => ['required', 'string'],
+            'user_id' => ['required', 'string'],
             'lock_status' => ['required', 'integer']
         ]);
 
@@ -38,7 +40,13 @@ class DoorEventController extends Controller
         }
 
         if ($status) {
+
+            // broadcast event
             event(new DoorStatusEvent($data['office_id']));
+
+            // save log
+            new CustomLog($data['user_id'], $data['door_id'], $door->office_id, 'pintu terbuka');
+
             return response()->json([
                 'status' => 'success',
                 'data' => []

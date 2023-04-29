@@ -8,6 +8,7 @@ use App\Models\Office;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Log;
 
 class OfficeComponent extends Component
 {
@@ -69,6 +70,7 @@ class OfficeComponent extends Component
         $insert = Office::create($office);
 
         if ($insert) {
+            Log::info('add new office', ['office' => $insert]);
             session()->flash('insert_success', $this->name);
         } else {
             session()->flash('insert_failed', $this->name);
@@ -111,6 +113,7 @@ class OfficeComponent extends Component
         $this->dispatchBrowserEvent('modal_close', 'editOffice');
 
         if ($update) {
+            Log::info('update office', ['office' => $office]);
             session()->flash('update_success', $this->name);
         } else {
             session()->flash('update_failed', $this->name);
@@ -141,10 +144,12 @@ class OfficeComponent extends Component
     public function delete()
     {
         try {
-            // delete operator
-            Office::where('id', $this->delete_id)->delete();
+            $office = Office::where('id', $this->delete_id)->first();
+            Log::info('delete office', ['office' => $office]);
+            $office->delete();
             session()->flash('delete_success', $this->name);
         } catch (Exception $e) {
+            Log::error('delete office failed', ['error' => $e]);
             session()->flash('delete_failed', $this->name);
         }
 

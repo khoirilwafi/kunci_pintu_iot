@@ -113,7 +113,7 @@
                                         @if ($door->socket_id == null)
                                             <div style="font-family: monospace">-</div>
                                         @else
-                                            <button wire:click="changeLocking('{{ $door->id }}', '{{ $door->is_lock == 1 ? 'open' : 'lock' }}')" wire:loading.attr="disabled" class="btn btn-sm {{ $door->is_lock == 1 ? 'btn-primary' : 'btn-info' }} bg-gradient" style="width: 80px">
+                                            <button wire:click="changeLocking('{{ $door->id }}', '{{ $door->is_lock == 1 ? 'open' : 'lock' }}', '{{ $door->token }}')" wire:loading.attr="disabled" class="btn btn-sm {{ $door->is_lock == 1 ? 'btn-primary' : 'btn-info' }} bg-gradient" style="width: 80px">
                                                 <div wire:loading wire:target="changeLocking">
                                                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                                                 </div>
@@ -148,7 +148,7 @@
             </div>
             <div class="card-body">
                 <div class="p-2 mb-5 rounded border border-secondary d-flex">
-                    <div class="p-2 bg-white rounded" style="cursor: pointer" wire:click="openModal('qrCode')">
+                    <div class="p-2 bg-white rounded">
                         {!! QrCode::size(130)->generate($door_url) !!}
                     </div>
                     <table class="ms-2">
@@ -530,19 +530,31 @@
 		</div>
 	</div>
 
-    {{-- qr code view --}}
-    <div wire:ignore.self class="modal fade" id="qrCode" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1">
+    {{-- alert modal --}}
+    <div wire:ignore.self class="modal fade" id="alertModal" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="alertModalLabel" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
-				<div class="card">
-                    <div class="card-header">
-                        Label Pintu
-                    </div>
-                    <div class="card-body">
-                        <div class="bg-white">
-                            test
+                <div class="modal-header">
+                    Peringatan
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex p-1">
+                        <div class="text-warning" style="font-size:80px">
+                            <i class="bi bi-exclamation-triangle ms-2"></i>
+                        </div>
+                        <div class="ms-4 me-2 d-flex align-items-center">
+                            <div>
+                                <div class="fs-5 mb-1">{{ $door_name }}</div>
+                                <div style="text-align: justify">Terbuka tanpa autentikasi yang sah. Mungkin terjadi penerobosan pada pintu tersebut.</div>
+                            </div>
                         </div>
                     </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle me-2"></i>
+                        Keluar
+                    </button>
                 </div>
 			</div>
 		</div>

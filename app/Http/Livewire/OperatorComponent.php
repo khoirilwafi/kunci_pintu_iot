@@ -11,6 +11,7 @@ use Livewire\Component;
 use Illuminate\Http\Request;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Nette\Utils\Random;
 
@@ -97,6 +98,7 @@ class OperatorComponent extends Component
         $this->dispatchBrowserEvent('modal_close', 'addOperator');
 
         if ($status) {
+            Log::info('add new operator', ['operator' => $operator, 'user' => $request->user()]);
             session()->flash('insert_success', $this->name);
         } else {
             session()->flash('insert_failed', $this->name);
@@ -127,9 +129,12 @@ class OperatorComponent extends Component
 
         try {
             // delete operator
-            User::where('id', $this->delete_id)->delete();
+            $operator = User::where('id', $this->delete_id)->first();
+            Log::info('delete operator', ['operator' => $operator]);
+            $operator->delete();
             session()->flash('delete_success', $this->name);
         } catch (Exception $e) {
+            Log::error('delete operator failed', ['error' => $e]);
             session()->flash('delete_failed', $this->name);
         }
 

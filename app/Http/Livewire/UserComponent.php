@@ -10,6 +10,7 @@ use Livewire\Component;
 use Nette\Utils\Random;
 use Illuminate\Http\Request;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use App\Notifications\NewUserNotification;
@@ -112,6 +113,7 @@ class UserComponent extends Component
         $this->dispatchBrowserEvent('modal_close', 'addUser');
 
         if ($status) {
+            Log::info('add new user', ['user' => $user]);
             session()->flash('insert_success', $this->name);
         } else {
             session()->flash('insert_failed', $this->name);
@@ -142,9 +144,12 @@ class UserComponent extends Component
 
         try {
             // delete operator
-            User::where('id', $this->delete_id)->delete();
+            $user = User::where('id', $this->delete_id)->first();
+            Log::info('delete user', ['user' => $user]);
+            $user->delete();
             session()->flash('delete_success', $this->name);
         } catch (Exception $e) {
+            Log::error('delete user failed', ['error' => $e]);
             session()->flash('delete_failed', $this->name);
         }
 

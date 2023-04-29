@@ -100,4 +100,13 @@ class DashboardController extends Controller
         // render view
         return view('dashboard.scedule', $this->data);
     }
+
+    public function histories(Request $request)
+    {
+        // set user profil
+        $this->setUserProfil($request);
+
+        // render view
+        return view('dashboard.histories', $this->data);
+    }
 }
