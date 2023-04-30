@@ -2,16 +2,12 @@
 
 namespace App\Console;
 
-use App\Events\PublicTestEvent;
 use App\Jobs\DoorScheduleJob;
 use App\Jobs\ExportAccessLogJob;
 use App\Jobs\ScheduleDailyJob;
-use Carbon\Carbon;
-use App\Models\TestModel;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
-use function PHPUnit\Framework\at;
 
 class Kernel extends ConsoleKernel
 {
@@ -23,8 +19,6 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
-
         $schedule->command('auth:clear-resets')->everyThirtyMinutes();
 
         $schedule->job(new DoorScheduleJob)->everyMinute();

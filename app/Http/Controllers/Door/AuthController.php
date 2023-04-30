@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Door;
 
 use App\Models\Door;
-use Ramsey\Uuid\Uuid;
 use Nette\Utils\Random;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use Exception;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -15,11 +15,11 @@ class AuthController extends Controller
 {
     public function authenticate(Request $request)
     {
-        $data = $request->only(['device_id', 'device_key']);
+        $data = $request->only(['device_name', 'device_pass']);
 
         $validator = Validator::make($data, [
-            'device_id' => ['required', 'string'],
-            'device_key' => ['required', 'string']
+            'device_name' => ['required', 'string'],
+            'device_pass' => ['required', 'string']
         ]);
 
         if ($validator->fails()) {
@@ -29,9 +29,9 @@ class AuthController extends Controller
             ], 200);
         }
 
-        $door = Door::where('device_id', $data['device_id'])->first();
+        $door = Door::where('device_name', $data['device_name'])->first();
 
-        if (!$door || !Hash::check($data['device_key'], $door->device_key)) {
+        if (!$door || !Hash::check($data['device_pass'], $door->device_pass)) {
             return response()->json([
                 'status' => 'failed',
                 'data' => []
@@ -39,25 +39,25 @@ class AuthController extends Controller
         }
 
         $token = $door->createToken('auth_token')->plainTextToken;
-        Log::info('door device login', ['door' => $door, 'token' => $token]);
+        Log::info('door device login', ['door' => $door]);
 
         return response()->json([
             'status' => 'success',
             'data' => [
                 'door_id' => $door->id,
                 'office_id' => $door->office_id,
-                'token' => $token
-            ]
+            ],
+            'token' => $token
         ], 200);
     }
 
     public function register(Request $request)
     {
-        $data = $request->only(['id', 'device_id']);
+        $data = $request->only(['id', 'device_name']);
 
         $validator = Validator::make($data, [
             'id' => ['required', 'string'],
-            'device_id' => ['required', 'string'],
+            'device_name' => ['required', 'string'],
         ]);
 
         if ($validator->fails()) {
@@ -76,36 +76,38 @@ class AuthController extends Controller
             ], 200);
         }
 
-        if ($door->device_id != null) {
+        if ($door->device_name != null) {
             return response()->json([
                 'status' => 'already_exist',
                 'data' => []
             ], 200);
         }
 
-        $key = Random::generate(30);
+        $pass = Random::generate(20);
 
-        $door->device_id = $data['device_id'];
-        $door->device_key = Hash::make($key);
-        $door->token = (string) Uuid::uuid4();
+        $door->device_name = $data['device_id'];
 
-        $status = $door->save();
+        $door->forceFill(['device_pass' => Hash::make($pass)]);
 
-        if ($status) {
+        try {
+            $door->save();
             Log::info('door device register', ['door' => $door]);
+
             return response()->json([
                 'status' => 'success',
                 'data' => [
-                    'device_key' => $key,
-                    ''
+                    'door' => $door,
+                    'device_pass' => $pass,
                 ],
             ], 200);
-        }
+        } catch (Exception $e) {
+            Log::error('door device register failed', ['door' => $door, 'error' => $e]);
 
-        return response()->json([
-            'status' => 'failed',
-            'data' => []
-        ], 200);
+            return response()->json([
+                'status' => 'failed',
+                'data' => []
+            ], 200);
+        }
     }
 
     public function signature(Request $request)

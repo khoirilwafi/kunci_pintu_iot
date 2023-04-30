@@ -5,7 +5,6 @@ namespace App\Http\Livewire;
 use Exception;
 use App\Models\User;
 use App\Models\Access;
-use App\Models\Avatar;
 use Livewire\Component;
 use Nette\Utils\Random;
 use Illuminate\Http\Request;

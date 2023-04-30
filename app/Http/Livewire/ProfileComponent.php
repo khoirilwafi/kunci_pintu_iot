@@ -4,7 +4,6 @@ namespace App\Http\Livewire;
 
 use Carbon\Carbon;
 use App\Models\User;
-use App\Models\Avatar;
 use Exception;
 use Livewire\Component;
 use Illuminate\Http\Request;

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
-use App\Models\Avatar;
 use App\Models\Office;
 use Illuminate\Http\Request;
 

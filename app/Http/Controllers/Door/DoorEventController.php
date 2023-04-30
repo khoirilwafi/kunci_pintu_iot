@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Door;
 
 use App\Models\Door;
+use App\Logs\CustomLog;
+use Nette\Utils\Random;
 use Illuminate\Http\Request;
 use App\Events\DoorAlertEvent;
 use App\Events\DoorStatusEvent;
 use App\Http\Controllers\Controller;
-use App\Logs\CustomLog;
 use Illuminate\Support\Facades\Validator;
 
 class DoorEventController extends Controller
@@ -17,10 +18,10 @@ class DoorEventController extends Controller
         $data = $request->only(['door_id', 'office_id', 'socket_id', 'user_id', 'lock_status']);
 
         $validator = Validator::make($data, [
-            'door_id' => ['required', 'string'],
-            'office_id' => ['required', 'string'],
-            'socket_id' => ['required', 'string'],
-            'user_id' => ['required', 'string'],
+            'door_id'     => ['required', 'string'],
+            'office_id'   => ['required', 'string'],
+            'socket_id'   => ['required', 'string'],
+            'user_id'     => ['required', 'string'],
             'lock_status' => ['required', 'integer']
         ]);
 
@@ -33,9 +34,13 @@ class DoorEventController extends Controller
 
         $door = Door::where('id', $data['door_id'])->first();
 
+        // generate key
+        $key = Random::generate(20);
+
         if ($door) {
             $door->socket_id = $data['socket_id'];
             $door->is_lock = $data['lock_status'];
+            $door->key = $key;
             $status = $door->save();
         }
 

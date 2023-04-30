@@ -44,7 +44,7 @@ class AuthController extends Controller
             ], 200);
         }
 
-        $user = User::with('avatar')->where('email', $data['email'])->first();
+        $user = User::where('email', $data['email'])->first();
 
         // cek jika email valid dan password sesuai
         if (!$user || !Hash::check($data['password'], $user->password)) {
@@ -115,13 +115,13 @@ class AuthController extends Controller
             User::where('id', $data['id'])->update(['email_verified_at' => $now]);
             Otp::with('user_id', $data['id'])->delete();
 
-            Log::info('user validate email using api', ['user' => $request->user()]);
+            Log::info('user verify email using api', ['user' => $request->user()]);
 
             return response()->json([
                 'status' => 'success',
                 'data' => []
             ], 200);
-        } elseif ($otp) {
+        } else if ($otp) {
             return response()->json([
                 'status' => 'otp_expired',
                 'data' => []

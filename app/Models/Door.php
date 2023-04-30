@@ -27,8 +27,8 @@ class Door extends Model
     }
 
     // column setting
-    protected $fillable = ['name', 'is_lock', 'office_id', 'device_name', 'device_pass', 'socket_id', 'key'];
-    protected $hidden   = [];
+    protected $fillable = ['name', 'is_lock', 'office_id', 'device_name', 'socket_id', 'key'];
+    protected $hidden   = ['device_pass'];
     protected $cast     = [];
 
 
