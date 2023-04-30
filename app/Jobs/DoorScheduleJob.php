@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use Carbon\Carbon;
-use App\Models\Scedule;
+use App\Models\Schedule;
 use Illuminate\Bus\Queueable;
 use App\Events\DoorScheduleEvent;
 use App\Logs\CustomLog;
@@ -40,7 +40,7 @@ class DoorScheduleJob implements ShouldQueue
         $day_week = ['minggu', 'senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu'];
         $day = $day_week[$now->format('w')];
 
-        $schedules = Scedule::with(['door', 'office'])
+        $schedules = Schedule::with(['door', 'office'])
             ->where('status', 'waiting')
             ->where('time_begin', '<=', $time)
             ->where('time_end', '>=', $time)
@@ -70,10 +70,10 @@ class DoorScheduleJob implements ShouldQueue
                 }
             }
 
-            Scedule::where('id', $schedule->id)->update(['status' => 'running']);
+            Schedule::where('id', $schedule->id)->update(['status' => 'running']);
         }
 
         // set done to schedule
-        Scedule::where('status', 'running')->where('time_end', '<', $time)->update(['status' => 'done']);
+        Schedule::where('status', 'running')->where('time_end', '<', $time)->update(['status' => 'done']);
     }
 }

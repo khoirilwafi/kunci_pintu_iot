@@ -88,36 +88,44 @@ class UserComponent extends Component
         $this->validate([
             'name'   => ['required', 'min:4', 'unique:users,name'],
             'gender' => ['required'],
-            'email'  => ['required', 'email:dns', 'unique:users,email'],
+            'email'  => ['required', 'email', 'unique:users,email'],
             'phone'  => ['required', 'numeric', 'unique:users,phone', 'digits_between:11,13'],
         ]);
 
         $password = Random::generate(15);
 
+        $user = new User();
+
         // add data to object
-        $user['name']     = $this->name;
-        $user['email']    = $this->email;
-        $user['phone']    = $this->phone;
-        $user['gender']   = $this->gender;
-        $user['password'] = Hash::make($password);
-        $user['role']     = 'pengguna';
-        $user['added_by'] = $request->user()->id;
+        $user->name     = $this->name;
+        $user->email    = $this->email;
+        $user->phone    = $this->phone;
+        $user->gender   = $this->gender;
+        $user->role     = 'pengguna';
+        $user->added_by = $request->user()->id;
 
-        // insert to databse
-        $status = User::create($user);
+        // store password
+        $user->forceFill(['password' => Hash::make($password)]);
 
-        // email notification
-        $status->notify(new NewUserNotification($password));
+        try {
+            // insert to databse
+            $user->save();
+
+            // email notification
+            $user->notify(new NewUserNotification($password));
+
+            // notification
+            session()->flash('insert_success', $this->name);
+            Log::info('add new user', ['user' => $user]);
+        } catch (Exception $e) {
+
+            // notification
+            session()->flash('insert_failed', $this->name);
+            Log::error('add new user failed', ['user' => $user, 'error' => $e]);
+        }
 
         // close formulir
         $this->dispatchBrowserEvent('modal_close', 'addUser');
-
-        if ($status) {
-            Log::info('add new user', ['user' => $user]);
-            session()->flash('insert_success', $this->name);
-        } else {
-            session()->flash('insert_failed', $this->name);
-        }
     }
 
     // delete confirmation
@@ -137,20 +145,21 @@ class UserComponent extends Component
     // delete action
     public function delete()
     {
-        $avatar = Avatar::where('user_id', $this->delete_id)->first();
-        if ($avatar) {
-            Storage::disk('local')->delete($avatar->file);
-        }
-
         try {
             // delete operator
             $user = User::where('id', $this->delete_id)->first();
+
+            // delete avatar
+            if ($user->avatar != null) {
+                Storage::disk('local')->delete('/images/' . $user->avatar);
+            }
+
             Log::info('delete user', ['user' => $user]);
             $user->delete();
             session()->flash('delete_success', $this->name);
         } catch (Exception $e) {
-            Log::error('delete user failed', ['error' => $e]);
             session()->flash('delete_failed', $this->name);
+            Log::error('delete user failed', ['user' => $user, 'error' => $e]);
         }
 
         // close confirmation
@@ -164,10 +173,9 @@ class UserComponent extends Component
     public function getUserDetail($id)
     {
         $user = User::where('id', $id)->first();
-        $avatar = Avatar::where('user_id', $id)->first();
 
-        if ($avatar) {
-            $this->avatar_name = $avatar->name;
+        if ($user->avatar) {
+            $this->avatar_name = $user->avatar;
         } else {
             $this->avatar_name = '02943e5368adf6cc72f4a2e0a435090b.png';
         }

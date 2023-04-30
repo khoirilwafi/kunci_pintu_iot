@@ -27,38 +27,42 @@ class AuthController extends Controller
             'password' => ['required'],
         ]);
 
-        // ambil data user
+        // user data
         $user = User::where('email', $credentials['email'])->first();
 
-        // cek user dan levelnya
+        // check level (only moderator and operator can login)
         if ($user && $user->role != 'pengguna') {
 
-            // login
+            // login attempt
             if (Auth::attempt($credentials, $request->get('remember'))) {
 
+                // generate session
                 $request->session()->regenerate();
-                Log::info('user login', ['user' => $user]);
+                Log::info('login', ['user' => $user]);
 
+                // redirect
                 return redirect()->intended('/dashboard');
             }
 
-            // kembali dengan error credential
+            // error credential
             return back()->with('login_failed', 'Login Gagal, Data Tidak Sesuai');
         }
 
-        // kembali dengan error akses
+        // error credential
         return back()->with('login_failed', 'Login Gagal, Data Tidak Ditemukan');
     }
 
     public function logout(Request $request)
     {
-        Log::info('user logout', ['user' => $request->user()]);
-
+        // logout
+        Log::info('logout', ['user' => $request->user()]);
         Auth::logout();
 
+        // delete session
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
+        // redirect
         return redirect('/login');
     }
 
@@ -69,19 +73,24 @@ class AuthController extends Controller
 
     public function handleResetPassword(Request $request)
     {
+        // validate data
         $request->validate([
             'email' => ['required', 'email:dns'],
         ]);
 
+        // get email
         $email = $request->only('email');
 
+        // send link to user via email
         $status = Password::sendResetLink($email);
 
+        // check status
         if ($status === Password::RESET_LINK_SENT) {
             Log::info('reset link send', ['email' => $email]);
             back()->with(['status' => __($status)]);
         }
 
+        // redirect error
         return back()->withErrors(['email' => __($status)]);
     }
 
@@ -92,25 +101,29 @@ class AuthController extends Controller
 
     public function updatePassword(Request $request)
     {
+        // validate input
         $request->validate([
             'token'    => ['required'],
             'email'    => ['required', 'email:dns'],
             'password' => ['required', 'min:8', 'max:20', 'confirmed'],
         ]);
 
+        // reset password
         $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user, $password) {
-                $user->forceFill([
-                    'password' => Hash::make($password)
-                ])->setRememberToken(Str::random(60));
 
-                $user->save();
+            // get input data
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+
+            // reset function
+            function ($user, $password) {
+                $user->forceFill(['password' => Hash::make($password)]);
                 Log::info('password reset', ['user' => $user]);
+                $user->save();
                 event(new PasswordReset($user));
             }
         );
 
+        // redirect
         return $status === Password::PASSWORD_RESET
             ? redirect()->route('login')->with('status', __($status))
             : back()->withErrors(['email' => [__($status)]]);

@@ -2,11 +2,9 @@
 
 namespace App\Http\Livewire;
 
-use App\Models\Avatar;
 use Exception;
 use App\Models\User;
 use App\Notifications\NewUserNotification;
-use Ramsey\Uuid\Uuid;
 use Livewire\Component;
 use Illuminate\Http\Request;
 use Livewire\WithPagination;
@@ -70,39 +68,49 @@ class OperatorComponent extends Component
     // store new operator
     public function storeOperator(Request $request)
     {
+        // validate input
         $this->validate([
             'name'   => ['required', 'min:4', 'unique:users,name'],
             'gender' => ['required'],
-            'email'  => ['required', 'email:dns', 'unique:users,email'],
+            'email'  => ['required', 'email', 'unique:users,email'],
             'phone'  => ['required', 'numeric', 'unique:users,phone', 'digits_between:11,13'],
         ]);
 
+        // generate random password
         $password = Random::generate(15);
 
-        // add data to object
-        $operator['name']     = $this->name;
-        $operator['gender']   = $this->gender;
-        $operator['email']    = $this->email;
-        $operator['phone']    = $this->phone;
-        $operator['password'] = Hash::make($password);
-        $operator['role']     = 'operator';
-        $operator['added_by'] = $request->user()->id;
+        // prepare data
+        $operator = new User();
 
-        // insert to databse
-        $status = User::create($operator);
+        $operator->name     = $this->name;
+        $operator->gender   = $this->gender;
+        $operator->email    = $this->email;
+        $operator->phone    = $this->phone;
+        $operator->role     = 'operator';
+        $operator->added_by = $request->user()->id;
 
-        // email notification
-        $status->notify(new NewUserNotification($password));
+        // add password
+        $operator->forceFill(['password' => Hash::make($password)]);
+
+        try {
+            // insert to databse
+            $operator->save();
+
+            // email notification
+            $operator->notify(new NewUserNotification($password));
+
+            // notification
+            session()->flash('insert_success', $this->name);
+            Log::info('add new operator', ['operator' => $operator]);
+        } catch (Exception $e) {
+
+            // error notification
+            session()->flash('insert_failed', $this->name);
+            Log::error('add new operator failed', ['operator' => $operator, 'error' => $e]);
+        }
 
         // close formulir
         $this->dispatchBrowserEvent('modal_close', 'addOperator');
-
-        if ($status) {
-            Log::info('add new operator', ['operator' => $operator, 'user' => $request->user()]);
-            session()->flash('insert_success', $this->name);
-        } else {
-            session()->flash('insert_failed', $this->name);
-        }
     }
 
     // delete confirmation
@@ -122,19 +130,20 @@ class OperatorComponent extends Component
     // delete action
     public function delete()
     {
-        $avatar = Avatar::where('user_id', $this->delete_id)->first();
-        if ($avatar) {
-            Storage::disk('local')->delete($avatar->file);
-        }
-
         try {
             // delete operator
             $operator = User::where('id', $this->delete_id)->first();
+
+            // delete avatar
+            if ($operator->avatar != null) {
+                Storage::disk('local')->delete('/images/' . $operator->avatar);
+            }
+
             Log::info('delete operator', ['operator' => $operator]);
             $operator->delete();
             session()->flash('delete_success', $this->name);
         } catch (Exception $e) {
-            Log::error('delete operator failed', ['error' => $e]);
+            Log::error('delete operator failed', ['operator' => $operator, 'error' => $e]);
             session()->flash('delete_failed', $this->name);
         }
 

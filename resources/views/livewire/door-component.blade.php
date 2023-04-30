@@ -83,12 +83,12 @@
                             @foreach ($doors as $index => $door)
                                 <tr class="align-middle" style="height:60px">
                                     <td class="text-center">{{ $index + 1 }}</td>
-                                    <td style="cursor: pointer;" wire:click="getDoorDetail('{{ $door->id }}')">{{ $door->name }}</td>
+                                    <td style="cursor: pointer" wire:click="getDoorDetail('{{ $door->id }}')">{{ $door->name }}</td>
                                     <td class="text-center">
-                                        @if ($door->device_id === null)
+                                        @if ($door->device_name === null)
                                             <div class="text-warning">Belum Ada</div>
                                         @else
-                                            <div class="text-info" style="font-family: monospace">{{ strtoupper($door->device_id) }}</div>
+                                            <div class="text-info" style="font-family: monospace">{{ strtoupper($door->device_name) }}</div>
                                         @endif
                                     </td>
                                     <td class="text-center" id="door_connection_{{ $door->id }}">
@@ -161,10 +161,10 @@
                             <td class="px-2">Perangkat Kunci</td>
                             <td class="px-2">:</td>
                             <td class="px-2">
-                                @if ($device_id == null)
+                                @if ($device_name == null)
                                     <div class="text-warning">Belum Ada</div>
                                 @else
-                                    <div class="text-info" style="font-family: monospace">{{ strtoupper($device_id) }}</div>
+                                    <div class="text-info" style="font-family: monospace">{{ strtoupper($device_name) }}</div>
                                 @endif
                             </td>
                         </tr>
@@ -202,7 +202,7 @@
                     </table>
                     <div class="flex-grow-1 d-flex">
                         <div class="ms-auto">
-                            @if ($device_id != null)
+                            @if ($device_name != null)
                                 <button class="btn btn-sm btn-outline-info me-1" wire:click=""><div class="fs-6 text-white"><i class="bi bi-printer"></i></div></button>
                                 <button class="btn btn-sm btn-outline-warning me-1" wire:click="openModal('unlinkDoor')"><div class="fs-6 text-white"><i class="bi bi-cpu"></i></button>
                             @endif
@@ -370,12 +370,22 @@
                                     <div class="input-group mb-1">
                                         <span class="input-group-text bg-dark text-white">Mulai</span>
                                         <input type="date" class="form-control bg-dark text-white @error('access_date_begin') is-invalid @enderror" wire:model.defer="access_date_begin">
+                                        @error('access_date_begin')
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="input-group mb-1">
                                         <span class="input-group-text bg-dark text-white">Sampai</span>
                                         <input type="date" class="form-control bg-dark text-white @error('access_date_end') is-invalid @enderror" wire:model.defer="access_date_end">
+                                        @error('access_date_end')
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
@@ -478,7 +488,7 @@
                     Konfirmasi Lepas Perangkat Kunci
                 </div>
                 <div class="modal-body">
-                    Apakah anda yakin untuk melepas perangkat <strong>{{ strtoupper($device_id) }}</strong> secara permanen ?
+                    Apakah anda yakin untuk melepas perangkat <strong>{{ strtoupper($device_name) }}</strong> secara permanen ?
                 </div>
                 <div class="modal-footer">
                     <div class="d-flex">

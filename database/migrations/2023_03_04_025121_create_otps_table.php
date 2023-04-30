@@ -14,15 +14,23 @@ return new class extends Migration
     public function up()
     {
         Schema::create('otps', function (Blueprint $table) {
+
+            // identifier
             $table->uuid('id')->primary();
             $table->uuid('user_id');
+
+            // data
             $table->string('code_otp');
             $table->dateTime('valid_until');
+
+            // timestamp
             $table->timestamps();
         });
 
         Schema::table('otps', function (Blueprint $table) {
-            $table->foreign('user_id')->references('id')->on('users');
+
+            // relation to users table
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

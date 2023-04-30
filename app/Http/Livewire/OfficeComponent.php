@@ -18,12 +18,13 @@ class OfficeComponent extends Component
 
     // data model
     public $name, $user_id, $operator_name, $delete_id, $update_id, $office_id;
+    public $search = '';
 
     // render
     public function render()
     {
         // get office and its operator
-        $data['offices'] = Office::with('user')->paginate(7);
+        $data['offices'] = Office::with('user')->where('name', 'like', '%' . $this->search . '%')->paginate(7);
 
         // get available operator
         $sub_query = Office::select('user_id')->where('user_id', '!=', null);
@@ -40,6 +41,11 @@ class OfficeComponent extends Component
 
         $this->resetErrorBag();
         $this->resetValidation();
+    }
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
     }
 
     // open modal
@@ -59,26 +65,33 @@ class OfficeComponent extends Component
     // store new office
     public function storeOffice()
     {
+        // validate input
         $this->validate([
             'name'    => ['required', 'min:4', 'unique:offices,name'],
             'user_id' => ['required'],
         ]);
 
-        $office['name']    = $this->name;
-        $office['user_id'] = $this->user_id;
 
-        $insert = Office::create($office);
+        try {
+            // prepare data
+            $office['name']    = $this->name;
+            $office['user_id'] = $this->user_id;
 
-        if ($insert) {
-            Log::info('add new office', ['office' => $insert]);
+            // insert data
+            Office::create($office);
+
+            // notification
             session()->flash('insert_success', $this->name);
-        } else {
+            Log::info('add new office', ['office' => $office]);
+        } catch (Exception $e) {
+
+            // notification
             session()->flash('insert_failed', $this->name);
+            Log::error('add new office failed', ['office' => $office, 'error' => $e]);
         }
 
         // close formulir
         $this->dispatchBrowserEvent('modal_close', 'addOffice');
-        session()->flash('insert_success', $this->name);
     }
 
     // edit office
@@ -99,25 +112,32 @@ class OfficeComponent extends Component
 
     public function updateOffice()
     {
+        // validate input
         $this->validate([
             'name'    => ['required', Rule::unique('offices')->ignore($this->office_id)],
             'user_id' => ['required'],
         ]);
 
+        // get office
         $office = Office::where('id', $this->update_id)->first();
 
-        $office->name    = $this->name;
-        $office->user_id = $this->user_id;
+        try {
+            // update data
+            $office->name    = $this->name;
+            $office->user_id = $this->user_id;
+            $office->save();
 
-        $update = $office->save();
-        $this->dispatchBrowserEvent('modal_close', 'editOffice');
-
-        if ($update) {
-            Log::info('update office', ['office' => $office]);
+            // notification
             session()->flash('update_success', $this->name);
-        } else {
+            Log::info('update office', ['office' => $office]);
+        } catch (Exception $e) {
+
+            // notification
             session()->flash('update_failed', $this->name);
+            Log::error('update office failed', ['office' => $office, 'error' => $e]);
         }
+
+        $this->dispatchBrowserEvent('modal_close', 'editOffice');
 
         $this->name          = '';
         $this->user_id       = '';
@@ -149,8 +169,8 @@ class OfficeComponent extends Component
             $office->delete();
             session()->flash('delete_success', $this->name);
         } catch (Exception $e) {
-            Log::error('delete office failed', ['error' => $e]);
             session()->flash('delete_failed', $this->name);
+            Log::error('delete office failed', ['office' => $office, 'error' => $e]);
         }
 
         // close confirmation

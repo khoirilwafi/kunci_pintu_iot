@@ -11,24 +11,26 @@ class Door extends Model
 {
     use HasFactory, HasApiTokens;
 
-    public $incrementing = false;
-    protected $keyType = 'string';
+    // model properties
+    public $incrementing  = false;
+    protected $keyType    = 'string';
     protected $primaryKey = 'id';
+    protected $table      = 'doors';
 
+    // uuid as primary key
     protected static function boot()
     {
         parent::boot();
-
         static::creating(function ($model) {
             $model->{$model->getKeyName()} = (string) Uuid::uuid4();
         });
     }
 
-    protected $hidden = [];
+    // column setting
+    protected $fillable = ['name', 'is_lock', 'office_id', 'device_name', 'device_pass', 'socket_id', 'key'];
+    protected $hidden   = [];
+    protected $cast     = [];
 
-    protected $fillable = ['name', 'is_lock', 'office_id', 'device_id', 'device_key', 'socket_id', 'token', 'ble_data'];
-
-    protected $cast = [];
 
     public function office()
     {

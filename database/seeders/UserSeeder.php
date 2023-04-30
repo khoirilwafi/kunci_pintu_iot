@@ -20,37 +20,17 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
+        // insert moderator
         DB::table('users')->insert([
-
             'id'                => Uuid::uuid4(),
             'name'              => 'Muhammad Khoiril Wafi',
             'email'             => 'wafienginer@gmail.com',
             'phone'             => '083116291606',
-            'gender'            => 'Laki-laki',
-            'email_verified_at' => Carbon::now(),
+            'gender'            => 'laki-laki',
             'password'          => Hash::make('password'),
             'role'              => 'moderator',
+            'created_at'        => Carbon::now(),
+            'updated_at'        => Carbon::now(),
         ]);
-
-        // for ($index = 0; $index < 50; $index++) {
-
-        //     $id        = Uuid::uuid4();
-        //     $name      = 'User_' . ($index + 1);
-        //     $jenis_kel = ($index % 2 == 0) ? 'Laki-laki' : 'Perempuan';
-        //     $email     = 'user_' . ($index + 1) . '@gmail.com';
-        //     $password  = Hash::make('password');
-        //     $role      = ($index % 2 == 0) ? 'operator' : 'pengguna';
-
-        //     User::create([
-
-        //         'id'                => $id,
-        //         'name'              => $name,
-        //         'gender'            => $jenis_kel,
-        //         'email'             => $email,
-        //         'email_verified_at' => Carbon::now(),
-        //         'password'          => $password,
-        //         'role'              => $role,
-        //     ]);
-        // }
     }
 }

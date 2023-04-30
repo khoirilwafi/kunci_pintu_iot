@@ -17,25 +17,30 @@ class DashboardController extends Controller
         $user = $request->user();
 
         // set name and role
-        $this->data['user_name'] = $user->name;
-        $this->data['user_role'] = $user->role;
+        $this->data['user_name']   = $user->name;
+        $this->data['user_role']   = $user->role;
+        $this->data['user_office'] = 'Tidak Ada';
 
         // get opereator office
         $office = Office::where('user_id', $user->id)->get('name');
-        $img_avatar = Avatar::where('user_id', $user->id)->first();
 
-        $this->data['user_office'] = 'Tidak Ada';
-
-        if ($img_avatar == null) {
+        // check avatar
+        if ($user->avatar == null) {
             $this->data['img_avatar'] = '02943e5368adf6cc72f4a2e0a435090b.png';
         } else {
-            $this->data['img_avatar'] = $img_avatar->name;
+            $this->data['img_avatar'] = $user->avatar;
         }
 
         // set operator office
         if (sizeof($office) != 0) {
             $this->data['user_office'] = $office[0]->name;
         }
+    }
+
+    public function get_avatar($file)
+    {
+        // return avatar
+        return response()->file(storage_path('/app/images/' . $file));
     }
 
     public function index(Request $request)
@@ -92,13 +97,13 @@ class DashboardController extends Controller
         return view('dashboard.door', $this->data);
     }
 
-    public function scedules(Request $request)
+    public function schedules(Request $request)
     {
         // set user profil
         $this->setUserProfil($request);
 
         // render view
-        return view('dashboard.scedule', $this->data);
+        return view('dashboard.schedule', $this->data);
     }
 
     public function histories(Request $request)

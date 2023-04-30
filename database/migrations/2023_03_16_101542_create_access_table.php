@@ -14,20 +14,30 @@ return new class extends Migration
     public function up()
     {
         Schema::create('access', function (Blueprint $table) {
+
+            // identifier
             $table->uuid('id')->primary();
             $table->uuid('user_id');
             $table->uuid('door_id');
+
+            // data
             $table->time('time_begin');
             $table->time('time_end');
-            $table->boolean('is_temporary')->nullable();
             $table->date('date_begin')->default(null)->nullable();
             $table->date('date_end')->default(null)->nullable();
+            $table->boolean('is_temporary')->nullable();
             $table->boolean('is_running')->nullable();
+
+            // timestamp
             $table->timestamps();
         });
 
         Schema::table('access', function (Blueprint $table) {
+
+            // relation to users table
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+
+            // relation to doors table
             $table->foreign('door_id')->references('id')->on('doors')->onUpdate('cascade')->onDelete('cascade');
         });
     }

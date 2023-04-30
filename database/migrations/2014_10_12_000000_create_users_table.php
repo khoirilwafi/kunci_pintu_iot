@@ -14,20 +14,31 @@ return new class extends Migration
     public function up()
     {
         Schema::create('users', function (Blueprint $table) {
+
+            // indentifier
             $table->uuid('id')->primary();
+            $table->uuid('added_by')->nullable();
+
+            // authentication parameter
             $table->string('email')->unique();
+            $table->string('password');
+            $table->rememberToken();
+
+            // profile
             $table->string('name')->unique();
             $table->string('phone')->unique();
-            $table->enum('gender', ['Laki-laki', 'Perempuan']);
+            $table->enum('gender', ['laki-laki', 'perempuan']);
             $table->enum('role', ['moderator', 'operator', 'pengguna']);
-            $table->string('password');
+            $table->string('avatar')->nullable();
+
+            // timestamp data
             $table->timestamp('email_verified_at')->nullable();
-            $table->uuid('added_by')->nullable();
-            $table->rememberToken();
             $table->timestamps();
         });
 
         Schema::table('users', function (Blueprint $table) {
+
+            // self-reference relation
             $table->foreign('added_by')->references('id')->on('users')->onUpdate('cascade')->onDelete('restrict');
         });
     }

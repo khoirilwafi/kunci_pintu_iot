@@ -10,23 +10,27 @@ class Otp extends Model
 {
     use HasFactory;
 
-    public $incrementing = false;
-    protected $keyType = 'string';
+    // model properties
+    public $incrementing  = false;
+    protected $keyType    = 'string';
     protected $primaryKey = 'id';
+    protected $table      = 'otps';
 
+    // uuid as primary key
     protected static function boot()
     {
         parent::boot();
-
         static::creating(function ($model) {
             $model->{$model->getKeyName()} = (string) Uuid::uuid4();
         });
     }
 
+    // column setting
     protected $fillable = ['user_id', 'code_otp', 'valid_until'];
+    protected $hidden   = [];
+    protected $cast     = [];
 
-    protected $hidden = [];
-
+    // relation to user
     public function user()
     {
         return $this->belongsTo(User::class);

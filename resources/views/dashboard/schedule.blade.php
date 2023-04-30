@@ -1,5 +1,5 @@
 @extends('template.dashboard')
 
 @section('content')
-    @livewire('scedule-component')
+    @livewire('schedule-component')
 @endsection

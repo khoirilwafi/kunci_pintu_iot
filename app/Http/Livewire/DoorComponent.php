@@ -20,7 +20,7 @@ class DoorComponent extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
 
-    public $name, $device_id, $socket_id, $is_lock, $created_at;
+    public $name, $device_name, $socket_id, $is_lock, $created_at;
     public $edit_id, $name_edited, $device_id_edited;
     public $office_name, $office_id;
     public $access_user_id, $access_office_id, $access_is_temporary, $access_date_begin, $access_date_end, $access_time_begin, $access_time_end, $access_status;
@@ -38,7 +38,6 @@ class DoorComponent extends Component
     public $connection_color = 'yellow';
 
     protected $listeners = ['socketEvent', 'doorStatusEvent', 'doorAlertEvent'];
-
 
     public function render()
     {
@@ -93,7 +92,7 @@ class DoorComponent extends Component
     protected function resetData()
     {
         $this->name       = '';
-        $this->device_id  = '';
+        $this->device_name  = '';
         $this->socket_id  = '';
         $this->is_lock    = '';
         $this->created_at = '';
@@ -172,13 +171,18 @@ class DoorComponent extends Component
         $door['name'] = $this->name;
         $door['office_id'] = $this->office_id;
 
-        $status = Door::create($door);
+        try {
+            // insert door
+            Door::create($door);
 
-        if ($status) {
-            Log::info('add new door', ['door' => $door]);
+            // notification
             session()->flash('insert_success', $door['name']);
-        } else {
+            Log::info('add new door', ['door' => $door]);
+        } catch (Exception $e) {
+
+            // notification
             session()->flash('insert_failed', $door['name']);
+            Log::error('add new door failed', ['door' => $door, 'error' => $e]);
         }
 
         $this->resetData();
@@ -189,16 +193,15 @@ class DoorComponent extends Component
     {
         $door = Door::where('id', $id)->first();
 
-        $this->edit_id    = $door->id;
-        $this->name       = $door->name;
-        $this->device_id  = $door->device_id;
-        $this->socket_id  = $door->socket_id;
-        $this->is_lock    = $door->is_lock;
-        $this->created_at = $door->created_at;
-        $this->door_url   = $this->edit_id;
+        $this->edit_id     = $door->id;
+        $this->name        = $door->name;
+        $this->device_name = $door->device_name;
+        $this->socket_id   = $door->socket_id;
+        $this->is_lock     = $door->is_lock;
+        $this->created_at  = $door->created_at;
+        $this->door_url    = $this->edit_id;
 
         $this->door_detail_id = $id;
-
         $this->show_detail();
     }
 
@@ -216,15 +219,20 @@ class DoorComponent extends Component
         ]);
 
         $door = Door::where('id', $this->edit_id)->first();
-        $door->name = $this->name_edited;
 
-        $status = $door->save();
+        try {
+            // update
+            $door->name = $this->name_edited;
+            $door->save();
 
-        if ($status) {
-            Log::info('change door detail', ['door' => $door]);
+            // notification
             session()->flash('update_success', $this->name);
-        } else {
+            Log::info('change door detail', ['door' => $door]);
+        } catch (Exception $e) {
+
+            // notification
             session()->flash('update_failed', $this->name);
+            Log::error('change door detail failed', ['door' => $door, 'error' => $e]);
         }
 
         $this->getDoorDetail($this->edit_id);
@@ -235,12 +243,12 @@ class DoorComponent extends Component
     {
         try {
             $door = Door::where('id', $this->edit_id)->first();
-            Log::info('user change door detail', ['door' => $door]);
+            Log::info('delete door', ['door' => $door]);
             $door->delete();
             session()->flash('delete_success', $this->name);
         } catch (Exception $e) {
-            Log::error('delete door failed', ['error' => $e]);
             session()->flash('delete_failed', $this->name);
+            Log::error('delete door failed', ['door' => $door, 'error' => $e]);
         }
 
         $this->resetData();
@@ -280,13 +288,16 @@ class DoorComponent extends Component
             'is_running'   => 1,
         );
 
-        $status = Access::create($access);
+        try {
+            // insert
+            Access::create($access);
 
-        if ($status) {
-            Log::info('add new user access', ['access' => $access]);
+            // notificarion
             session()->flash('insert_success', 'Akses Pengguna');
-        } else {
+            Log::info('add new user access', ['access' => $access]);
+        } catch (Exception $e) {
             session()->flash('insert_failed', 'Akses Pengguna');
+            Log::info('add new user access failed', ['access' => $access, 'error' => $e]);
         }
 
         $this->closeModal('addAccess');
@@ -312,7 +323,7 @@ class DoorComponent extends Component
             $access->delete();
             session()->flash('delete_success', $this->access_user_name);
         } catch (Exception $e) {
-            Log::error('delete user access failed', ['error' => $e]);
+            Log::error('delete user access failed', ['access' => $access, 'error' => $e]);
             session()->flash('delete_failed', $this->access_user_name);
         }
 
@@ -321,19 +332,19 @@ class DoorComponent extends Component
 
     public function changeAccess($id)
     {
+        $access = Access::with('user')->where('id', $id)->first();
+
+        if ($access->is_running == 0) {
+            $access->is_running = 1;
+        } else {
+            $access->is_running = 0;
+        }
+
         try {
-            $access = Access::with('user')->where('id', $id)->first();
-
-            if ($access->is_running == 0) {
-                $access->is_running = 1;
-            } else {
-                $access->is_running = 0;
-            }
-
             $access->save();
             Log::info('change user access', ['access' => $access]);
         } catch (Exception $e) {
-            Log::error('change user access failed', ['error' => $e]);
+            Log::error('change user access failed', ['access' => $access, 'error' => $e]);
         }
     }
 
@@ -349,16 +360,20 @@ class DoorComponent extends Component
     public function unlink()
     {
         $door = Door::where('id', $this->edit_id)->first();
-        $door->device_id = null;
+
+        $door->device_name = null;
         $door->socket_id = null;
 
-        $status = $door->save();
+        try {
+            // update
+            $door->save();
 
-        if ($status) {
-            Log::info('unlink door device', ['door' => $door]);
+            // notification
             session()->flash('update_success', $this->name);
-        } else {
+            Log::info('unlink door device', ['door' => $door]);
+        } catch (Exception $e) {
             session()->flash('update_failed', $this->name);
+            Log::error('unlink door device failed', ['door' => $door, 'error' => $e]);
         }
 
         $this->getDoorDetail($this->edit_id);

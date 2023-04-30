@@ -30,7 +30,7 @@
 		<div class="card-body px-5 py-4">
             <div class="row mb-3">
                 <div class="col-4 d-flex">
-                    <img src="{{ url("my-account/avatar/". $data_avatar->name) }}" alt="avatar" style="height:100%; max-height:45vh; max-width:100%;" class="mx-auto">
+                    <img src="{{ url('/dashboard/my-account/avatar', [$avatar_file]) }}" alt="avatar" style="height:100%; max-height:45vh; max-width:100%;" class="mx-auto">
                 </div>
                 <div class="col-1"></div>
                 <div class="col-7">
@@ -41,7 +41,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label mb-1">Jenis Kelamin</label>
-                            <input class="form-control bg-dark text-white" value="{{ $user->gender }}" disabled>
+                            <input class="form-control bg-dark text-white" value="{{ ucfirst($user->gender) }}" disabled>
                         </div>
                         <div class="mb-3">
                             <label class="form-label mb-1">Email</label>
@@ -154,8 +154,8 @@
                         <div class="mb-3">
                             <label class="form-label mb-1 @error('gender') is-invalid @enderror">Jenis Kelamin</label>
                             <select class="form-select bg-dark text-white @error('gender') is-invalid @enderror" id="gender" name="gender" wire:model.defer="gender">
-                                <option value="Laki-laki" {{ (auth()->user()->gender == 'Laki-laki') ? 'selected' : ''}}>Laki-laki</option>
-                                <option value="Perempuan" {{ (auth()->user()->gender == 'Perempuan') ? 'selected' : ''}}>Perempuan</option>
+                                <option value="laki-laki" {{ (auth()->user()->gender == 'laki-laki') ? 'selected' : ''}}>Laki-laki</option>
+                                <option value="perempuan" {{ (auth()->user()->gender == 'perempuan') ? 'selected' : ''}}>Perempuan</option>
                             </select>
                             @error('gender')
                                 <div class="invalid-feedback">
@@ -182,12 +182,6 @@
                             @enderror
                         </div>
                     </form>
-                    <div class="mb-3">
-                        <strong>Pastikan data sudah benar</strong>
-                        <div style="text-align: justify">
-                            pastikan semua data sudah benar, terutama jika mengubah alamat email anda, pastikan email yang dimasukkan valid dan aktif.
-                        </div>
-                    </div>
                 </div>
                 <div class="modal-footer">
                     <div class="d-flex">

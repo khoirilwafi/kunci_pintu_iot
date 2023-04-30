@@ -13,15 +13,23 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('door_scedule', function (Blueprint $table) {
+        Schema::create('door_schedule', function (Blueprint $table) {
+
+            // identifier
             $table->uuid('id')->primary();
-            $table->uuid('scedule_id');
+            $table->uuid('schedule_id');
             $table->uuid('door_id');
+
+            // timestamp
             $table->timestamps();
         });
 
-        Schema::table('door_scedule', function (Blueprint $table) {
-            $table->foreign('scedule_id')->references('id')->on('scedules')->onUpdate('cascade')->onDelete('cascade');
+        Schema::table('door_schedule', function (Blueprint $table) {
+
+            // relation to schedules table
+            $table->foreign('schedule_id')->references('id')->on('schedules')->onUpdate('cascade')->onDelete('cascade');
+
+            // relation to doors table
             $table->foreign('door_id')->references('id')->on('doors')->onUpdate('cascade')->onDelete('cascade');
         });
     }
@@ -33,6 +41,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('door_scedule');
+        Schema::dropIfExists('door_schedule');
     }
 };

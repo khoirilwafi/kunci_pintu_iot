@@ -10,32 +10,35 @@ class Office extends Model
 {
     use HasFactory;
 
-    public $incrementing = false;
-    protected $keyType = 'string';
+    // model properties
+    public $incrementing  = false;
+    protected $keyType    = 'string';
     protected $primaryKey = 'id';
+    protected $table      = 'offices';
 
+    // uuid as primary key
     protected static function boot()
     {
         parent::boot();
-
         static::creating(function ($model) {
             $model->{$model->getKeyName()} = (string) Uuid::uuid4();
         });
     }
 
-    protected $fillable = ['name', 'user_id', 'socket_id'];
+    // column setting
+    protected $fillable = ['name', 'user_id'];
+    protected $hidden   = [];
+    protected $casts    = [];
 
-    protected $hidden = [];
-
-    protected $casts = [];
-
+    // relation to users table
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    public function scedule()
+    // relation to schedule
+    public function schedule()
     {
-        return $this->hasMany(Scedule::class);
+        return $this->hasMany(Schedule::class);
     }
 }

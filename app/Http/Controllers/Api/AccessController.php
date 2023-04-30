@@ -18,12 +18,10 @@ class AccessController extends Controller
     public function myAccess(Request $request)
     {
         $user = $request->user();
-
         $access = Access::with('door')->where('user_id', $user->id)->get();
 
         if ($access) {
             Log::info('user request acccess using api', ['user' => $user]);
-
             return response()->json([
                 'status' => 'success',
                 'data' => $access
@@ -48,7 +46,6 @@ class AccessController extends Controller
         }
 
         $office = Office::select('id')->where('user_id', $user->id)->first();
-
         Log::info('user request door using api', ['user' => $user]);
 
         return response()->json([
@@ -92,10 +89,7 @@ class AccessController extends Controller
             ->first();
 
         if ($access) {
-
-            // save log
             new CustomLog($access->user_id, $access->door_id, $access->door->office_id, 'mendapatkan kunci akses');
-
             return response()->json([
                 'status' => 'success',
                 'data' => $access->door
@@ -142,10 +136,7 @@ class AccessController extends Controller
             ], 200);
         }
 
-        // broadcast event
         event(new DoorCommandEvent($door->office_id, $user->id, $door->id, $data['locking'], $door->token));
-
-        // save log
         new CustomLog($user->id, $door->id, $door->office_id, 'remote akses');
 
         return response()->json([

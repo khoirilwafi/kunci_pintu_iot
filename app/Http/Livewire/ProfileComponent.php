@@ -5,6 +5,7 @@ namespace App\Http\Livewire;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Avatar;
+use Exception;
 use Livewire\Component;
 use Illuminate\Http\Request;
 use Livewire\WithFileUploads;
@@ -19,21 +20,22 @@ class ProfileComponent extends Component
 
     public $email, $name, $gender, $role, $phone;
     public $password, $password_confirmation;
-    public $avatar, $last_avatar_temp;
+    public $avatar, $avatar_file, $last_avatar_temp;
     public $iteration = 0;
 
     public function render(Request $request)
     {
-        $user = User::with('avatar')->where('id', $request->user()->id)->first();
-        $data_avatar = new Avatar();
+        // get user data
+        $user = User::find($request->user()->id);
 
+        // configure avatar
         if ($user->avatar == null) {
-            $data_avatar->name = '02943e5368adf6cc72f4a2e0a435090b.png';
+            $this->avatar_file = '02943e5368adf6cc72f4a2e0a435090b.png';
         } else {
-            $data_avatar->name = $user->avatar->name;
+            $this->avatar_file = $user->avatar;
         }
 
-        return view('livewire.profile-component', ['user' => $user, 'data_avatar' => $data_avatar]);
+        return view('livewire.profile-component', ['user' => $user]);
     }
 
     public function resetInput()
@@ -67,29 +69,34 @@ class ProfileComponent extends Component
 
     public function storeAvatar(Request $request)
     {
+        // validate input
         $this->validate([
             'avatar' => ['required', 'image', 'mimes:jpg,jpeg,png', 'max:1024'],
         ]);
 
-        $last_avatar = Avatar::where('user_id', $request->user()->id)->first();
+        // get last avatar
+        $user = User::where('id', $request->user()->id)->first();
 
-        if ($last_avatar != null) {
-            Storage::disk('local')->delete($last_avatar->file);
+        // delete last avatar
+        if ($user->avatar != null) {
+            Storage::disk('local')->delete('/images/' . $user->avatar);
         }
 
+        // set file name
         $name = md5(Carbon::now()) . '.' . $this->avatar->getClientOriginalExtension();
-        $file = $this->avatar->storeAs('images', $name);
 
-        $data_avatar = array(
-            'user_id' => $request->user()->id,
-            'name'    => $name,
-            'file'    => $file,
-        );
+        try {
 
-        Avatar::updateOrCreate(['user_id' => $data_avatar['user_id']], $data_avatar);
-
-        $this->closeModal('editAvatar');
-        $this->dispatchBrowserEvent('avatar_change', $name);
+            // store avatar
+            $this->avatar->storeAs('images', $name);
+            $user->avatar = $name;
+            $user->save();
+            $this->closeModal('editAvatar');
+            $this->dispatchBrowserEvent('avatar_change', $name);
+            Log::info('avatar change', ['user' => $user]);
+        } catch (Exception $e) {
+            Log::error('avatar change failed', ['user' => $user, 'error' => $e]);
+        }
     }
 
     public function editProfile(Request $request)
@@ -113,43 +120,57 @@ class ProfileComponent extends Component
 
         $this->validate([
             'name'   => ['required', 'min:4', Rule::unique('users')->ignore($id)],
-            'email'  => ['required', 'email:dns', Rule::unique('users')->ignore($id)],
+            'email'  => ['required', 'email', Rule::unique('users')->ignore($id)],
             'gender' => ['required'],
             'phone'  => ['required', 'numeric', Rule::unique('users')->ignore($id), 'digits_between:11,13'],
         ]);
 
-        $user = User::find($id);
+        // get user
+        $user = User::where('id', $id)->first();
 
+        // set user profile
         $user->email  = $this->email;
         $user->name   = $this->name;
         $user->gender = $this->gender;
         $user->phone  = $this->phone;
 
-        $result = $user->save();
+        try {
+            // update profile
+            $user->save();
 
-        $this->closeModal('editProfile');
-        $this->dispatchBrowserEvent('name_change', $user->name);
-
-        if ($result) {
-            Log::info('update profile', ['user' => $user]);
+            // notification
             session()->flash('update_success', 'Profil Anda');
-        } else {
+            Log::info('update profile', ['user' => $user]);
+        } catch (Exception $e) {
+
+            // notification
             session()->flash('update_failed', 'Profil Anda');
+            Log::error('update profile failed', ['user' => $user, 'error' => $e]);
         }
+
+        $this->dispatchBrowserEvent('name_change', $user->name);
+        $this->closeModal('editProfile');
     }
 
     public function confirm(Request $request)
     {
+        // validate input
         $this->validate([
-            'password' => ['required'],
+            'password' => ['required', 'string', 'min:8'],
         ]);
 
+        // get user
         $user = User::find($request->user()->id);
 
+        // check input password
         if (Hash::check($this->password, $user->password)) {
+
+            // open new password
             $this->closeModal('confirmPassword');
             $this->openModal('changePassword');
         } else {
+
+            // input password not match
             $this->closeModal('confirmPassword');
             session()->flash('password_failed', 'Password');
         }
@@ -157,22 +178,29 @@ class ProfileComponent extends Component
 
     public function storePassword(Request $request)
     {
+        // validate input
         $this->validate([
             'password' => ['required', 'min:8', 'confirmed'],
             'password_confirmation' => ['required'],
         ]);
 
+        // get user
         $user = User::find($request->user()->id);
-        $user->password = Hash::make($this->password);
-        $result = $user->save();
 
-        $this->closeModal('changePassword');
+        try {
+            // update password
+            $user->forceFill(['password' => Hash::make($this->password)]);
+            $user->save();
 
-        if ($result) {
-            Log::info('change password', ['user' => $user]);
+            // notification
             session()->flash('update_success', 'Password');
-        } else {
+            $this->closeModal('changePassword');
+            Log::info('change password', ['user' => $user]);
+        } catch (Exception $e) {
+
+            // notification
             session()->flash('update_failed', 'Password');
+            Log::error('change password failed', ['user' => $user, 'error' => $e]);
         }
     }
 }

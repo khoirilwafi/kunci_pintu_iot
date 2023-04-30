@@ -66,14 +66,12 @@ Route::middleware(['auth', 'verified', 'operator'])->group(function () {
     Route::get('/dashboard/doors', [DashboardController::class, 'doors']);
 
     // get all schedules
-    Route::get('/dashboard/schedules', [DashboardController::class, 'scedules']);
+    Route::get('/dashboard/schedules', [DashboardController::class, 'schedules']);
 
-    // get all histories
-    Route::get('/dashboard/schedules', [DashboardController::class, 'scedules']);
     // get all guest
     Route::get('/dashboard/histories', [DashboardController::class, 'histories']);
 });
 
 // account
 Route::get('/dashboard/my-account', [DashboardController::class, 'my_account'])->middleware(['auth', 'verified']);
-Route::get('/my-account/avatar/{file}', [UserController::class, 'getAvatar'])->middleware(['auth', 'verified']);
+Route::get('/dashboard/my-account/avatar/{file}', [DashboardController::class, 'get_avatar'])->middleware(['auth', 'verified']);

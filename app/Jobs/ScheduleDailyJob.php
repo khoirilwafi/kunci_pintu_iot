@@ -2,12 +2,10 @@
 
 namespace App\Jobs;
 
-use App\Models\Scedule;
+use App\Models\Schedule;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Bus\Queueable;
-use Illuminate\Console\Scheduling\Schedule;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -36,11 +34,11 @@ class ScheduleDailyJob implements ShouldQueue
     {
         // hapus jadwal yang sudah expired
         try {
-            Scedule::where('date_end', '<', Carbon::now()->toDateString())->delete();
+            Schedule::where('date_end', '<', Carbon::now()->toDateString())->delete();
         } catch (Exception $e) {
         }
 
         // reset status jadwal
-        Scedule::query()->update(['status' => 'waiting']);
+        Schedule::query()->update(['status' => 'waiting']);
     }
 }

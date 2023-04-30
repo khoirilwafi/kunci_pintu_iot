@@ -15,41 +15,33 @@ class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable, CanResetPassword;
 
-    public $incrementing = false;
-    protected $keyType = 'string';
+    // model properties
+    public $incrementing  = false;
+    protected $keyType    = 'string';
     protected $primaryKey = 'id';
+    protected $table      = 'users';
 
+    // uuid as primary key
     protected static function boot()
     {
         parent::boot();
-
         static::creating(function ($model) {
             $model->{$model->getKeyName()} = (string) Uuid::uuid4();
         });
     }
 
-    protected $fillable = ['email', 'phone', 'name', 'gender', 'password', 'role', 'added_by'];
+    // column setting
+    protected $fillable = ['added_by', 'email', 'phone', 'name', 'gender', 'role', 'avatar'];
+    protected $hidden   = ['password', 'remember_token'];
+    protected $casts    = ['email_verified_at' => 'datetime'];
 
-    protected $hidden = ['password', 'remember_token'];
-
-    protected $casts = ['email_verified_at' => 'datetime'];
-
+    // relation with office table
     public function office()
     {
         return $this->hasOne(Office::class);
     }
 
-    public function avatar()
-    {
-        return $this->hasOne(Avatar::class);
-    }
-
-
-    /**
-     * Send a password reset notification to the user.
-     *
-     * @param  string  $token
-     */
+    // custom email reset password
     public function sendPasswordResetNotification($token): void
     {
         $url_protocol = (!empty($_SERVER['HTTPS']) && (strtolower($_SERVER['HTTPS']) == 'on' || $_SERVER['HTTPS'] == '1')) ? 'https://' : 'http://';

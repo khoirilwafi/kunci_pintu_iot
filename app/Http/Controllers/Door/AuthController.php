@@ -53,12 +53,11 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        $data = $request->only(['id', 'device_id', 'ble_data']);
+        $data = $request->only(['id', 'device_id']);
 
         $validator = Validator::make($data, [
             'id' => ['required', 'string'],
             'device_id' => ['required', 'string'],
-            'ble_data' => ['string'],
         ]);
 
         if ($validator->fails()) {
@@ -84,12 +83,11 @@ class AuthController extends Controller
             ], 200);
         }
 
-        $key = Random::generate(20);
+        $key = Random::generate(30);
 
         $door->device_id = $data['device_id'];
         $door->device_key = Hash::make($key);
         $door->token = (string) Uuid::uuid4();
-        $door->ble_data = $data['ble_data'];
 
         $status = $door->save();
 
@@ -97,8 +95,10 @@ class AuthController extends Controller
             Log::info('door device register', ['door' => $door]);
             return response()->json([
                 'status' => 'success',
-                'data' => $door,
-                'key' => $key
+                'data' => [
+                    'device_key' => $key,
+                    ''
+                ],
             ], 200);
         }
 

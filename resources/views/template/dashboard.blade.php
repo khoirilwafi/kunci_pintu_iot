@@ -102,7 +102,7 @@
 						<div class="lh-1"><small id="username">{{ $user_name }}</small></div>
 						<div class="lh-1"><small>{{ ucfirst($user_role) }}</small></div>
 					</div>
-					<img src="{{ url("my-account/avatar/". $img_avatar) }}" alt="foto" class="avatar" id="avatar">
+					<img src="{{ url("/dashboard/my-account/avatar/". $img_avatar) }}" alt="foto" class="avatar" id="avatar">
 				</div>
 
 			</div>
@@ -145,7 +145,7 @@
 		});
 
         window.addEventListener('avatar_change', (event) => {
-			$('#avatar').attr('src', "/my-account/avatar/" + event.detail);
+			$('#avatar').attr('src', "/dashboard/my-account/avatar/" + event.detail);
 		});
 
         window.addEventListener('name_change', (event) => {

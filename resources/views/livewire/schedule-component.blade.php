@@ -39,8 +39,8 @@
         @endif
     </div>
 
-    {{-- scedule table --}}
-    @if ($scedule_table_visibility)
+    {{-- schedule table --}}
+    @if ($schedule_table_visibility)
         <div class="card text-white mb-4">
             <div class="card-header d-flex">
                 <div class="text-white">
@@ -64,7 +64,7 @@
                     </div>
                 </div>
                 <table class="table text-white mb-4">
-                    @if (sizeof($scedules) == 0)
+                    @if (sizeof($schedules) == 0)
                         <div class="text-center text-white p-3">
                             --- tidak ada data ---
                         </div>
@@ -81,20 +81,20 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($scedules as $index => $scedule)
+                            @foreach ($schedules as $index => $schedule)
                                 <tr class="align-middle" style="height: 60px">
                                     <td class="text-center">{{ $index + 1 }}</td>
-                                    <td>{{ $scedule->name }}</td>
-                                    <td class="text-center">{{ $scedule->date_begin. ' sd '. $scedule->date_end }}</td>
-                                    <td class="text-center">{{ $scedule->time_begin. ' sd '. $scedule->time_end }}</td>
-                                    <td class="text-center">{{ ($scedule->is_repeating == 1) ? 'Ya' : 'Tidak' }}</td>
-                                    <td class="text-center {{ $scedule->status == 'waiting' ? 'text-info' : 'text-warning' }}">{{ ucfirst($scedule->status) }}</td>
+                                    <td>{{ $schedule->name }}</td>
+                                    <td class="text-center">{{ $schedule->date_begin. ' sd '. $schedule->date_end }}</td>
+                                    <td class="text-center">{{ $schedule->time_begin. ' sd '. $schedule->time_end }}</td>
+                                    <td class="text-center">{{ ($schedule->is_repeating == 1) ? 'Ya' : 'Tidak' }}</td>
+                                    <td class="text-center {{ $schedule->status == 'waiting' ? 'text-info' : 'text-warning' }}">{{ ucfirst($schedule->status) }}</td>
                                     <td class="text-center">
-                                        <button wire:click="getSceduleDetail('{{ $scedule->id }}')" type="button" class="btn btn-sm btn-primary bg-gradient me-1">
+                                        <button wire:click="getSceduleDetail('{{ $schedule->id }}')" type="button" class="btn btn-sm btn-primary bg-gradient me-1">
                                             <i class="bi bi-eye me-1"></i>
                                             Lihat
                                         </button>
-                                        <button wire:click="deleteConfirm('{{ $scedule->id }}')" type="button" class="btn btn-sm btn-danger bg-gradient">
+                                        <button wire:click="deleteConfirm('{{ $schedule->id }}')" type="button" class="btn btn-sm btn-danger bg-gradient">
                                             <i class="bi bi-trash me-1"></i>
                                             Hapus
                                         </button>
@@ -108,8 +108,8 @@
         </div>
     @endif
 
-    {{-- scedule detail --}}
-    @if ($scedule_detail_visibility)
+    {{-- schedule detail --}}
+    @if ($schedule_detail_visibility)
         <button wire:click="showTable" type="button" class="btn btn-sm btn-success bg-gradient mb-4">
             <i class="bi bi-arrow-left-square me-1"></i>
             Kembali
@@ -160,7 +160,7 @@
                             @if($insert_status != 'running')
                                 <button class="btn btn-sm btn-outline-primary ms-1" wire:click="edit"><div class="fs-6 text-white"><i class="bi bi-pencil-square"></i></div></button>
                             @else
-                                <button class="btn btn-sm btn-outline-warning ms-1" wire:click="sceduleStop" wire:loading.attr='disabled'><div class="fs-6 text-white"><i class="bi bi-stop-circle"></i></div></button>
+                                <button class="btn btn-sm btn-outline-warning ms-1" wire:click="scheduleStop" wire:loading.attr='disabled'><div class="fs-6 text-white"><i class="bi bi-stop-circle"></i></div></button>
                             @endif
                         </div>
                     </div>
@@ -259,7 +259,7 @@
                     Tambah Jadwal Baru
                 </div>
                 <div class="modal-body">
-                    <form wire:submit.prevent="storeScedule" id="sceduleForm">
+                    <form wire:submit.prevent="storeScedule" id="scheduleForm">
                         <div class="mb-3">
                             <label class="form-label">Nama</label>
                             <input type="name" class="form-control bg-dark text-white @error('insert_name') is-invalid @enderror" wire:model.defer="insert_name" autocomplete="off" required>
@@ -370,7 +370,7 @@
                             <i class="bi bi-x-circle me-1"></i>
                             Batal
                         </button>
-                        <button type="submit" form="sceduleForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
+                        <button type="submit" form="scheduleForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
                             <div wire:loading wire:target='storeScedule'>
                                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                             </div>
@@ -391,7 +391,7 @@
                     Edit Jadwal
                 </div>
                 <div class="modal-body">
-                    <form wire:submit.prevent="updateScedule" id="sceduleEditForm">
+                    <form wire:submit.prevent="updateScedule" id="scheduleEditForm">
                         <div class="mb-3">
                             <label class="form-label">Nama</label>
                             <input type="name" class="form-control bg-dark text-white @error('edit_name') is-invalid @enderror" wire:model.defer="edit_name" autocomplete="off" required>
@@ -502,7 +502,7 @@
                             <i class="bi bi-x-circle me-1"></i>
                             Batal
                         </button>
-                        <button type="submit" form="sceduleEditForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
+                        <button type="submit" form="scheduleEditForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
                             <div wire:loading wire:target='updateScedule'>
                                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                             </div>
@@ -526,13 +526,13 @@
                     <form wire:submit.prevent="storeDoor" id="doorForm">
                         <div class="mb-3">
                             <label class="form-label">Pintu</label>
-                            <select class="form-select bg-dark text-white @error('') is-invalid @enderror" wire:model.defer="scedule_door_id" autocomplete="off" required>
+                            <select class="form-select bg-dark text-white @error('') is-invalid @enderror" wire:model.defer="schedule_door_id" autocomplete="off" required>
                                 <option hidden class="text-white">-- pilih salah satu --</option>
                                 @foreach ($doors as $door)
                                     <option class="text-white" value="{{ $door->id }}">{{ $door->name }}</option>
                                 @endforeach
                             </select>
-                            @error('scedule_door_id')
+                            @error('schedule_door_id')
                                 <div class="invalid-feedback">
                                     {{ $message }}
                                 </div>

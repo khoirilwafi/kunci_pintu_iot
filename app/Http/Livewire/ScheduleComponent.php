@@ -6,21 +6,21 @@ use Exception;
 use App\Models\Door;
 use App\Models\Office;
 use App\Logs\CustomLog;
-use App\Models\Scedule;
+use App\Models\Schedule;
 use Livewire\Component;
-use App\Models\ScedulePivot;
+use App\Models\SchedulePivot;
 use Livewire\WithPagination;
 use App\Events\DoorCommandEvent;
 use App\Events\DoorScheduleEvent;
 use Illuminate\Support\Facades\Log;
 
-class SceduleComponent extends Component
+class ScheduleComponent extends Component
 {
     // pagination theme
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
 
-    public $office_id, $scedule_id, $delete_name, $delete_id, $scedule_door_id;
+    public $office_id, $schedule_id, $delete_name, $delete_id, $schedule_door_id;
 
     public $insert_name, $insert_date_begin, $insert_date_end, $insert_time_begin, $insert_time_end, $insert_is_repeat, $insert_status;
     public $insert_day_0, $insert_day_1, $insert_day_2, $insert_day_3, $insert_day_4, $insert_day_5, $insert_day_6;
@@ -28,8 +28,8 @@ class SceduleComponent extends Component
     public $edit_name, $edit_date_begin, $edit_date_end, $edit_time_begin, $edit_time_end;
     public $edit_day_0, $edit_day_1, $edit_day_2, $edit_day_3, $edit_day_4, $edit_day_5, $edit_day_6;
 
-    public $scedule_table_visibility = true;
-    public $scedule_detail_visibility = false;
+    public $schedule_table_visibility = true;
+    public $schedule_detail_visibility = false;
 
     public $connection_status = 'Menghubungkan ...';
     public $connection_color = 'yellow';
@@ -45,23 +45,23 @@ class SceduleComponent extends Component
         $office = Office::where('user_id', request()->user()->id)->first();
         $this->office_id = $office->id;
 
-        // get all scedule
-        $data['scedules'] = Scedule::where('office_id', $this->office_id)->where('name', 'like', '%' . $this->search . '%')->get();
+        // get all schedule
+        $data['schedules'] = Schedule::where('office_id', $this->office_id)->where('name', 'like', '%' . $this->search . '%')->get();
 
         // get door available
-        $query = ScedulePivot::select('door_id')->where('scedule_id', $this->scedule_id)->get();
+        $query = SchedulePivot::select('door_id')->where('schedule_id', $this->schedule_id)->get();
         $data['doors'] = Door::where('office_id', $this->office_id)->whereNotIn('id', $query)->get();
 
         // get door linked
-        $data['door_links'] = ScedulePivot::with('door')->where('scedule_id', $this->scedule_id)->get();
+        $data['door_links'] = SchedulePivot::with('door')->where('schedule_id', $this->schedule_id)->get();
 
-        return view('livewire.scedule-component', $data);
+        return view('livewire.schedule-component', $data);
     }
 
     public function doorStatusEvent()
     {
-        if ($this->scedule_detail_visibility == true) {
-            $this->getSceduleDetail($this->scedule_id);
+        if ($this->schedule_detail_visibility == true) {
+            $this->getSceduleDetail($this->schedule_id);
         }
     }
 
@@ -93,21 +93,21 @@ class SceduleComponent extends Component
 
     public function showTable()
     {
-        $this->scedule_table_visibility = true;
-        $this->scedule_detail_visibility = false;
+        $this->schedule_table_visibility = true;
+        $this->schedule_detail_visibility = false;
     }
 
     public function showDetail()
     {
         $this->search = '';
 
-        $this->scedule_table_visibility = false;
-        $this->scedule_detail_visibility = true;
+        $this->schedule_table_visibility = false;
+        $this->schedule_detail_visibility = true;
     }
 
     public function openModal($modal_id)
     {
-        if ($this->scedule_table_visibility == true) {
+        if ($this->schedule_table_visibility == true) {
             $this->resetModal();
         }
 
@@ -116,7 +116,7 @@ class SceduleComponent extends Component
 
     public function closeModal($modal_id)
     {
-        if ($this->scedule_table_visibility == true) {
+        if ($this->schedule_table_visibility == true) {
             $this->resetModal();
         }
 
@@ -133,36 +133,36 @@ class SceduleComponent extends Component
             'insert_time_end'   => ['required', 'date_format:H:i'],
         ]);
 
-        $scedule['office_id']     = $this->office_id;
-        $scedule['name']          = $this->insert_name;
-        $scedule['date_begin']    = $this->insert_date_begin;
-        $scedule['date_end']      = $this->insert_date_end;
-        $scedule['time_begin']    = $this->insert_time_begin;
-        $scedule['time_end']      = $this->insert_time_end;
-        $scedule['is_repeating']  = 0;
-        $scedule['day_repeating'] = '';
+        $schedule['office_id']     = $this->office_id;
+        $schedule['name']          = $this->insert_name;
+        $schedule['date_begin']    = $this->insert_date_begin;
+        $schedule['date_end']      = $this->insert_date_end;
+        $schedule['time_begin']    = $this->insert_time_begin;
+        $schedule['time_end']      = $this->insert_time_end;
+        $schedule['is_repeating']  = 0;
+        $schedule['day_repeating'] = '';
 
         $day = [$this->insert_day_0, $this->insert_day_1, $this->insert_day_2, $this->insert_day_3, $this->insert_day_4, $this->insert_day_5, $this->insert_day_6];
         $day_repeating = '';
 
         for ($i = 0; $i < 7; $i++) {
             if ($day[$i] != null) {
-                $scedule['is_repeating'] = 1;
+                $schedule['is_repeating'] = 1;
                 $day_repeating .= $day[$i] . ',';
             } else {
                 $day_repeating .= ',';
             }
         }
 
-        $scedule['day_repeating'] = $day_repeating == '' ? $day_repeating : substr($day_repeating, 0, -1);
+        $schedule['day_repeating'] = $day_repeating == '' ? $day_repeating : substr($day_repeating, 0, -1);
 
-        $status = Scedule::create($scedule);
-
-        if ($status) {
-            Log::info('add new schedule', ['schedule' => $scedule]);
-            session()->flash('insert_success', $scedule['name']);
-        } else {
-            session()->flash('insert_failed', $scedule['name']);
+        try {
+            Schedule::create($schedule);
+            session()->flash('insert_success', $schedule['name']);
+            Log::info('add new schedule', ['schedule' => $schedule]);
+        } catch (Exception $e) {
+            session()->flash('insert_failed', $schedule['name']);
+            Log::error('add new schedule failed', ['schedule' => $schedule, 'error' => $e]);
         }
 
         $this->closeModal('addScedule');
@@ -170,12 +170,12 @@ class SceduleComponent extends Component
 
     public function deleteConfirm($id)
     {
-        if ($this->scedule_table_visibility == true) {
-            $scedule = Scedule::where('id', $id)->first();
-            $this->delete_name = $scedule->name;
-            $this->delete_id   = $scedule->id;
+        if ($this->schedule_table_visibility == true) {
+            $schedule = Schedule::where('id', $id)->first();
+            $this->delete_name = $schedule->name;
+            $this->delete_id   = $schedule->id;
         } else {
-            $doors = ScedulePivot::with('door')->where('id', $id)->first();
+            $doors = SchedulePivot::with('door')->where('id', $id)->first();
             $this->delete_name = $doors->door->name;
             $this->delete_id   = $doors->door->id;
         }
@@ -186,12 +186,12 @@ class SceduleComponent extends Component
     public function delete()
     {
         try {
-            if ($this->scedule_table_visibility == true) {
-                $schedule = Scedule::where('id', $this->delete_id)->first();
+            if ($this->schedule_table_visibility == true) {
+                $schedule = Schedule::where('id', $this->delete_id)->first();
                 Log::info('delete schedule', ['schedule' => $schedule]);
                 $schedule->delete();
             } else {
-                $door = ScedulePivot::where('scedule_id', $this->scedule_id)->where('door_id', $this->delete_id)->first();
+                $door = SchedulePivot::where('schedule_id', $this->schedule_id)->where('door_id', $this->delete_id)->first();
                 Log::info('delete door in schedule', ['door' => $door]);
                 $door->delete();
             }
@@ -206,20 +206,20 @@ class SceduleComponent extends Component
 
     public function getSceduleDetail($id)
     {
-        $scedule = Scedule::where('id', $id)->first();
+        $schedule = Schedule::where('id', $id)->first();
 
-        $this->scedule_id = $scedule->id;
+        $this->schedule_id = $schedule->id;
 
-        $this->insert_name       = $scedule->name;
-        $this->insert_date_begin = $scedule->date_begin;
-        $this->insert_date_end   = $scedule->date_end;
-        $this->insert_time_begin = $scedule->time_begin;
-        $this->insert_time_end   = $scedule->time_end;
-        $this->insert_is_repeat  = $scedule->is_repeating;
+        $this->insert_name       = $schedule->name;
+        $this->insert_date_begin = $schedule->date_begin;
+        $this->insert_date_end   = $schedule->date_end;
+        $this->insert_time_begin = $schedule->time_begin;
+        $this->insert_time_end   = $schedule->time_end;
+        $this->insert_is_repeat  = $schedule->is_repeating;
 
-        $this->insert_status = $scedule->status;
+        $this->insert_status = $schedule->status;
 
-        $days = explode(',', $scedule->day_repeating);
+        $days = explode(',', $schedule->day_repeating);
         $day_repeating = '';
 
 
@@ -233,15 +233,15 @@ class SceduleComponent extends Component
 
     public function edit()
     {
-        $scedule = Scedule::where('id', $this->scedule_id)->first();
+        $schedule = Schedule::where('id', $this->schedule_id)->first();
 
-        $this->edit_name       = $scedule->name;
-        $this->edit_date_begin = $scedule->date_begin;
-        $this->edit_date_end   = $scedule->date_end;
-        $this->edit_time_begin = substr($scedule->time_begin, 0, -3);
-        $this->edit_time_end   = substr($scedule->time_end, 0, -3);
+        $this->edit_name       = $schedule->name;
+        $this->edit_date_begin = $schedule->date_begin;
+        $this->edit_date_end   = $schedule->date_end;
+        $this->edit_time_begin = substr($schedule->time_begin, 0, -3);
+        $this->edit_time_end   = substr($schedule->time_end, 0, -3);
 
-        $days = explode(',', $scedule->day_repeating);
+        $days = explode(',', $schedule->day_repeating);
 
         $this->edit_day_0 = $days[0];
         $this->edit_day_1 = $days[1];
@@ -264,82 +264,84 @@ class SceduleComponent extends Component
             'edit_time_end'   => ['required', 'date_format:H:i'],
         ]);
 
-        $scedule = Scedule::where('id', $this->scedule_id)->first();
+        $schedule = Schedule::where('id', $this->schedule_id)->first();
 
-        $scedule->name       = $this->edit_name;
-        $scedule->date_begin = $this->edit_date_begin;
-        $scedule->date_end   = $this->edit_date_end;
-        $scedule->time_begin = $this->edit_time_begin;
-        $scedule->time_end   = $this->edit_time_end;
+        $schedule->name       = $this->edit_name;
+        $schedule->date_begin = $this->edit_date_begin;
+        $schedule->date_end   = $this->edit_date_end;
+        $schedule->time_begin = $this->edit_time_begin;
+        $schedule->time_end   = $this->edit_time_end;
 
-        $scedule->is_repeating = 0;
-        $scedule->day_repeating = '';
+        $schedule->is_repeating = 0;
+        $schedule->day_repeating = '';
 
         $day = [$this->edit_day_0, $this->edit_day_1, $this->edit_day_2, $this->edit_day_3, $this->edit_day_4, $this->edit_day_5, $this->edit_day_6];
         $day_repeating = '';
 
         for ($i = 0; $i < 7; $i++) {
             if ($day[$i] != null) {
-                $scedule['is_repeating'] = 1;
+                $schedule['is_repeating'] = 1;
                 $day_repeating .= $day[$i] . ',';
             } else {
                 $day_repeating .= ',';
             }
         }
 
-        $scedule->day_repeating = $day_repeating == '' ? $day_repeating : substr($day_repeating, 0, -1);
-        $status = $scedule->save();
+        $schedule->day_repeating = $day_repeating == '' ? $day_repeating : substr($day_repeating, 0, -1);
 
-        if ($status) {
-            Log::info('update schedule', ['schedule' => $scedule]);
+        try {
+            $schedule->save();
             session()->flash('update_success', $this->edit_name);
-        } else {
+            Log::info('update schedule', ['schedule' => $schedule]);
+        } catch (Exception $e) {
             session()->flash('update_failed', $this->edit_name);
+            Log::error('update schedule failed', ['schedule' => $schedule, 'error' => $e]);
         }
 
-        $this->getSceduleDetail($this->scedule_id);
+        $this->getSceduleDetail($this->schedule_id);
         $this->closeModal('editScedule');
     }
 
     public function storeDoor()
     {
         $this->validate([
-            'scedule_door_id' => ['required', 'string'],
+            'schedule_door_id' => ['required', 'string'],
         ]);
 
-        $pivot['door_id']    = $this->scedule_door_id;
-        $pivot['scedule_id'] = $this->scedule_id;
+        $pivot['door_id']    = $this->schedule_door_id;
+        $pivot['schedule_id'] = $this->schedule_id;
 
         $door = Door::where('id', $pivot['door_id'])->first();
-        $status = ScedulePivot::create($pivot);
 
-        if ($status) {
-            Log::info('add door to schedule', ['door' => $door, 'pivot' => $pivot]);
+        try {
+            SchedulePivot::create($pivot);
             session()->flash('insert_success', $door->name);
-        } else {
+            Log::info('add door to schedule', ['door' => $door, 'pivot' => $pivot]);
+        } catch (Exception $e) {
             session()->flash('insert_failed', $door->name);
+            Log::error('add door to schedule failed', ['door' => $door, 'pivot' => $pivot, 'error' => $e]);
         }
 
         $this->closeModal('addDoor');
     }
 
-    public function sceduleStop()
+    public function scheduleStop()
     {
-        $scedule = Scedule::with('door')->where('id', $this->scedule_id)->first();
+        $schedule = Schedule::with('door')->where('id', $this->schedule_id)->first();
 
-        foreach ($scedule->door as $door) {
+        foreach ($schedule->door as $door) {
 
             // broadcast event
-            event(new DoorScheduleEvent($scedule->office_id, request()->user()->id, $door->id, $scedule->time_end, 'stop', $door->token));
+            event(new DoorScheduleEvent($schedule->office_id, request()->user()->id, $door->id, $schedule->time_end, 'stop', $door->token));
 
             // save log
             new CustomLog(request()->user()->id, $door->id, $this->office_id, 'membatalkan jadwal');
         }
 
-        $scedule->status = 'done';
-        $scedule->save();
+        $schedule->status = 'done';
+        $schedule->save();
 
-        $this->getSceduleDetail($scedule->id);
+        $this->getSceduleDetail($schedule->id);
     }
 
     public function changeLocking($id, $status, $token)
