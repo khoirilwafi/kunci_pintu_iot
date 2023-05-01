@@ -22,16 +22,17 @@ use Illuminate\Support\Facades\Route;
 // login
 Route::post('/login', [AuthController::class, 'authenticate']);
 
-Route::middleware('auth:sanctum')->group(function () {
+// verify otp via email
+Route::post('/verify-email', [AuthController::class, 'verifyEmail'])->middleware('auth:sanctum');
 
-    // logout
-    Route::get('/logout', [AuthController::class, 'logout']);
+// logout
+Route::get('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+
+
+Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
     // update user profile
     Route::post('/update-profile', [UserController::class, 'updateProfile']);
-
-    // verify otp via email
-    Route::post('/verify-email', [AuthController::class, 'verifyEmail']);
 
     // get user avatar
     Route::get('/avatar/{file}', [UserController::class, 'getAvatar']);

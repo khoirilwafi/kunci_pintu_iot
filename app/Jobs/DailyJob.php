@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\Access;
 use App\Models\Schedule;
 use Carbon\Carbon;
 use Exception;
@@ -10,8 +11,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
-class ScheduleDailyJob implements ShouldQueue
+class DailyJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -32,13 +34,20 @@ class ScheduleDailyJob implements ShouldQueue
      */
     public function handle()
     {
-        // hapus jadwal yang sudah expired
-        try {
-            Schedule::where('date_end', '<', Carbon::now()->toDateString())->delete();
-        } catch (Exception $e) {
-        }
+        $date = Carbon::now()->toDateString();
 
-        // reset status jadwal
-        Schedule::query()->update(['status' => 'waiting']);
+        try {
+
+            // hapus jadwal yang sudah expired
+            Schedule::where('date_end', '<', $date)->delete();
+
+            // hapus akses yang sudah expired
+            Access::where('date_end', '<', $date)->delete();
+
+            // reset status jadwal
+            Schedule::query()->update(['status' => 'waiting']);
+        } catch (Exception $e) {
+            Log::error('daily job failed', ['error' => $e]);
+        }
     }
 }

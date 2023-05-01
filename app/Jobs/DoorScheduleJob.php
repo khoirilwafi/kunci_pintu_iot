@@ -63,7 +63,7 @@ class DoorScheduleJob implements ShouldQueue
                 if ($door->device_id != null) {
 
                     // event broadcast
-                    event(new DoorScheduleEvent($door->office_id, $schedules->office->user_id, $door->id, $schedules->time_end, 'run', $door->token));
+                    event(new DoorScheduleEvent($door->office_id, $schedules->office->user_id, $door->id, $schedules->time_end, 'run', $door->key));
 
                     // save log
                     new CustomLog($schedules->office->user_id, $door->id, $door->office_id, 'mengirim jadwal');

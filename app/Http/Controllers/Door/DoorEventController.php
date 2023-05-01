@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Events\DoorAlertEvent;
 use App\Events\DoorStatusEvent;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class DoorEventController extends Controller
@@ -50,11 +51,17 @@ class DoorEventController extends Controller
             event(new DoorStatusEvent($data['office_id']));
 
             // save log
-            new CustomLog($data['user_id'], $data['door_id'], $door->office_id, 'pintu terbuka');
+            if ($data['door_id'] == $data['user_id']) {
+                Log::info('door websocket connect', ['door' => $door]);
+            } else {
+                new CustomLog($data['user_id'], $data['door_id'], $door->office_id, 'pintu terbuka');
+            }
 
             return response()->json([
                 'status' => 'success',
-                'data' => []
+                'data' => [
+                    'key' => $key
+                ]
             ], 200);
         }
 
@@ -90,6 +97,7 @@ class DoorEventController extends Controller
         }
 
         event(new DoorAlertEvent($data['office_id'], $door->name));
+        Log::alert('door alert', ['door' => $door]);
 
         return response()->json([
             'status' => 'success',

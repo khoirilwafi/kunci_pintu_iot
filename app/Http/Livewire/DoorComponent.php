@@ -348,10 +348,10 @@ class DoorComponent extends Component
         }
     }
 
-    public function changeLocking($id, $status, $token)
+    public function changeLocking($id, $status, $key)
     {
         // broadcast event
-        event(new DoorCommandEvent($this->office_id, request()->user()->id, $id, $status, $token));
+        event(new DoorCommandEvent($this->office_id, request()->user()->id, $id, $status, $key));
 
         // save log
         new CustomLog(request()->user()->id, $id, $this->office_id, 'remote akses');

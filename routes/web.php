@@ -20,10 +20,7 @@ use App\Http\Controllers\Web\VerificationController;
 
 
 Route::get('/', function () {
-
-
-
-    return 'done';
+    return view('welcome');
 });
 
 // login

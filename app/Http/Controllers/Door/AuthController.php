@@ -85,7 +85,7 @@ class AuthController extends Controller
 
         $pass = Random::generate(20);
 
-        $door->device_name = $data['device_id'];
+        $door->device_name = $data['device_name'];
 
         $door->forceFill(['device_pass' => Hash::make($pass)]);
 
@@ -96,7 +96,7 @@ class AuthController extends Controller
             return response()->json([
                 'status' => 'success',
                 'data' => [
-                    'door' => $door,
+                    'device_name' => $data['device_name'],
                     'device_pass' => $pass,
                 ],
             ], 200);
@@ -128,7 +128,7 @@ class AuthController extends Controller
         }
 
         $signature = $data['socket_id'] . ':presence-office.' . $data['office_id'] . ':' . $data['channel_data'];
-        $hash = hash_hmac('sha256', $signature, env('PUSHER_APP_SECRET', null));
+        $hash = hash_hmac('sha256', $signature, config('broadcasting.connections.pusher.secret'));
 
         Log::info('door device signature', ['door' => $data]);
 

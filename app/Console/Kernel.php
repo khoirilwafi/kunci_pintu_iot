@@ -4,7 +4,7 @@ namespace App\Console;
 
 use App\Jobs\DoorScheduleJob;
 use App\Jobs\ExportAccessLogJob;
-use App\Jobs\ScheduleDailyJob;
+use App\Jobs\DailyJob;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -22,7 +22,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('auth:clear-resets')->everyThirtyMinutes();
 
         $schedule->job(new DoorScheduleJob)->everyMinute();
-        $schedule->job(new ScheduleDailyJob)->dailyAt('00:01:00');
+        $schedule->job(new DailyJob)->dailyAt('00:01:00');
         $schedule->job(new ExportAccessLogJob)->monthlyOn(1, '00:02:00');
     }
 

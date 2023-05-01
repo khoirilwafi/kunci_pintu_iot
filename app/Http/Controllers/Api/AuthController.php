@@ -18,7 +18,6 @@ class AuthController extends Controller
     protected function generateOTP($id)
     {
         $data = array(
-            'user_id'     => $id,
             'code_otp'    => rand(123456, 999999),
             'valid_until' => Carbon::now()->addMinutes(5),
         );
@@ -33,7 +32,7 @@ class AuthController extends Controller
         $data = $request->only(['email', 'password']);
 
         $validator = Validator::make($data, [
-            'email' => ['required', 'string', "email:dns"],
+            'email' => ['required', 'string', "email"],
             'password' => ['required', 'string']
         ]);
 
@@ -54,14 +53,21 @@ class AuthController extends Controller
             ], 200);
         }
 
+        // generate token
         $token = $user->createToken('api-token')->plainTextToken;
+        Log::info('user login with api', ['user' => $user]);
 
         // cek apakah user sudah verifikasi email
         if ($user->email_verified_at == null) {
 
+            // get otp
+            $last_otp = Otp::where('user_id', $user->id)->first();
+
             // kirim kode otp
-            $otp = $this->generateOTP($user->id);
-            $user->notify(new SendOTPNotification($otp));
+            if ($last_otp == null) {
+                $otp = $this->generateOTP($user->id);
+                $user->notify(new SendOTPNotification($otp));
+            }
 
             // send email notifcation
             return response()->json([
@@ -72,8 +78,6 @@ class AuthController extends Controller
                 'token' => $token
             ], 200);
         }
-
-        Log::info('user login with api', ['user' => $user]);
 
         return response()->json([
             'status' => 'success',
@@ -119,7 +123,7 @@ class AuthController extends Controller
 
             return response()->json([
                 'status' => 'success',
-                'data' => []
+                'data' => User::where('id', $data['id'])->first(),
             ], 200);
         } else if ($otp) {
             return response()->json([

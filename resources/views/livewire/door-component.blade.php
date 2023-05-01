@@ -113,7 +113,7 @@
                                         @if ($door->socket_id == null)
                                             <div style="font-family: monospace">-</div>
                                         @else
-                                            <button wire:click="changeLocking('{{ $door->id }}', '{{ $door->is_lock == 1 ? 'open' : 'lock' }}', '{{ $door->token }}')" wire:loading.attr="disabled" class="btn btn-sm {{ $door->is_lock == 1 ? 'btn-primary' : 'btn-info' }} bg-gradient" style="width: 80px">
+                                            <button wire:click="changeLocking('{{ $door->id }}', '{{ $door->is_lock == 1 ? 'open' : 'lock' }}', '{{ $door->key }}')" wire:loading.attr="disabled" class="btn btn-sm {{ $door->is_lock == 1 ? 'btn-primary' : 'btn-info' }} bg-gradient" style="width: 80px">
                                                 <div wire:loading wire:target="changeLocking">
                                                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                                                 </div>

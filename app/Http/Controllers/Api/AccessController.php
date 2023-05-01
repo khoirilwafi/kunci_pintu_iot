@@ -18,7 +18,9 @@ class AccessController extends Controller
     public function myAccess(Request $request)
     {
         $user = $request->user();
-        $access = Access::with('door')->where('user_id', $user->id)->get();
+        $access = Access::with(['door' => function ($query) {
+            $query->select(['id', 'office_id', 'name']);
+        }])->where('user_id', $user->id)->select(['door_id', 'time_begin', 'time_end', 'date_begin', 'date_end', 'is_running'])->get();
 
         if ($access) {
             Log::info('user request acccess using api', ['user' => $user]);
@@ -50,7 +52,7 @@ class AccessController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'data' => Door::where('office_id', $office->id)->get()
+            'data' => Door::where('office_id', $office->id)->select(['id', 'name', 'key', 'is_lock'])->get()
         ], 200);
     }
 
