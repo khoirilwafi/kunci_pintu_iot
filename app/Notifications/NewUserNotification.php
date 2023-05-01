@@ -46,9 +46,9 @@ class NewUserNotification extends Notification implements ShouldQueue
         return (new MailMessage)
             ->subject("Smart Lock Password")
             ->greeting("Halo,")
-            ->line("Anda menerima email ini karena alamat email anda telah didaftarkan pada Sistem Penguncian Gedung BErbasis IoT")
-            ->line("Silakan login menggunakan password berikut.")
-            ->line(new HtmlString('<h3 style="text-align:center; margin-top:30px; margin-bottom:30px">' . $this->password . '</h3>'))
+            ->line("Anda menerima email ini karena alamat email anda telah didaftarkan pada Sistem Penguncian Gedung Berbasis IoT")
+            ->line("Silahkan login menggunakan password berikut.")
+            ->line(new HtmlString('<h2 style="text-align:center; margin-top:30px; margin-bottom:30px">' . $this->password . '</h2>'))
             ->line("Jangan lupa untuk mengganti password ini setelah anda login.")
             ->salutation("\n\n\nTerimakasih.");
     }

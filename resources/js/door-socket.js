@@ -9,8 +9,9 @@ const echo = new Echo({
     cluster: "mt1",
     wsHost: window.location.hostname,
     wsPort: 6001,
-    forceTLS: false,
-    encrypted: false,
+    wssPort: 6001,
+    forceTLS: true,
+    encrypted: true,
     enabledTransports: ["ws", "wss"],
 });
 
