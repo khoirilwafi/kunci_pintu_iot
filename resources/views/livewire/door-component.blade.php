@@ -203,7 +203,7 @@
                     <div class="flex-grow-1 d-flex">
                         <div class="ms-auto">
                             @if ($device_name != null)
-                                <button class="btn btn-sm btn-outline-info me-1" wire:click=""><div class="fs-6 text-white"><i class="bi bi-printer"></i></div></button>
+                                <button class="btn btn-sm btn-outline-info me-1" wire:click="printPoster"><div class="fs-6 text-white"><i class="bi bi-printer"></i></div></button>
                                 <button class="btn btn-sm btn-outline-warning me-1" wire:click="openModal('unlinkDoor')"><div class="fs-6 text-white"><i class="bi bi-cpu"></i></button>
                             @endif
                             <button class="btn btn-sm btn-outline-primary me-1" wire:click="edit()"><div class="fs-6 text-white"><i class="bi bi-pencil-square"></i></div></button>
@@ -211,6 +211,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="d-flex mb-3">
                     <button class="btn btn-sm btn-primary" wire:click="openModal('addAccess')"><i class="bi bi-plus-circle me-1"></i>Tambah Akses</button>
                     <div class="col-8 col-md-3 ms-auto">
@@ -541,7 +542,7 @@
 	</div>
 
     {{-- alert modal --}}
-    <div wire:ignore.self class="modal fade" id="alertModal" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="alertModalLabel" aria-hidden="true">
+    <div wire:ignore.self class="modal fade" id="alertModal" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="alertModalLabel">
 		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
                 <div class="modal-header">
@@ -569,6 +570,7 @@
 			</div>
 		</div>
 	</div>
+
 </div>
 
 @push('custom_script')

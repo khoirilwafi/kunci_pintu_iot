@@ -88,6 +88,12 @@ input::-webkit-inner-spin-button {
     border-radius: 50%;
 }
 
+.poster-content {
+    background-image: url('../img/auth_bg.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
 .sidebar-hr {
     border-top: 2px solid white;
     margin-top: 8px;

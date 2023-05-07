@@ -12,6 +12,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Validation\Rule;
 use App\Events\DoorCommandEvent;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Log;
 
 class DoorComponent extends Component
@@ -378,5 +379,12 @@ class DoorComponent extends Component
 
         $this->getDoorDetail($this->edit_id);
         $this->closeModal('unlinkDoor');
+    }
+
+    public function printPoster()
+    {
+        $url = '/poster/' . $this->edit_id;
+        $js = "window.open('{$url}', '_blank');";
+        $this->dispatchBrowserEvent('open_tab', ['js' => $js]);
     }
 }

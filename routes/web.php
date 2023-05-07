@@ -7,6 +7,7 @@ use App\Http\Controllers\Web\UserController;
 use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\VerificationController;
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -18,9 +19,8 @@ use App\Http\Controllers\Web\VerificationController;
 |
 */
 
-
 Route::get('/', function () {
-    return view('welcome');
+    return view('landing');
 });
 
 // login
@@ -67,6 +67,9 @@ Route::middleware(['auth', 'verified', 'operator'])->group(function () {
 
     // get all guest
     Route::get('/dashboard/histories', [DashboardController::class, 'histories']);
+
+    // get poster
+    Route::get('poster/{id}', [DashboardController::class, 'print_poster']);
 });
 
 // account

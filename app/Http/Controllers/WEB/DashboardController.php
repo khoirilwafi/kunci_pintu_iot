@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Web;
 
-use App\Http\Controllers\Controller;
 use App\Models\Office;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Models\Door;
 
 class DashboardController extends Controller
 {
@@ -112,5 +113,16 @@ class DashboardController extends Controller
 
         // render view
         return view('dashboard.histories', $this->data);
+    }
+
+    public function print_poster($id)
+    {
+        $door = Door::with('office')->where('id', $id)->first();
+
+        if (!$door) {
+            return 'tidak ditemukan';
+        }
+
+        return view('poster', ['door' => $door]);
     }
 }

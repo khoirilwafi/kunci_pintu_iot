@@ -151,6 +151,11 @@
         window.addEventListener('name_change', (event) => {
 			$('#username').html(event.detail);
 		});
+
+        window.addEventListener('open_tab', (data) => {
+			eval(data.detail.js);
+		});
+
     </script>
 
 </body>
