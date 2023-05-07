@@ -69,7 +69,7 @@ Route::middleware(['auth', 'verified', 'operator'])->group(function () {
     Route::get('/dashboard/histories', [DashboardController::class, 'histories']);
 
     // get poster
-    Route::get('poster/{id}', [DashboardController::class, 'print_poster']);
+    Route::get('poster/{id}', [DashboardController::class, 'printPoster']);
 });
 
 // account

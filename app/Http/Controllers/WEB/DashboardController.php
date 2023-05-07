@@ -115,7 +115,7 @@ class DashboardController extends Controller
         return view('dashboard.histories', $this->data);
     }
 
-    public function print_poster($id)
+    public function printPoster($id)
     {
         $door = Door::with('office')->where('id', $id)->first();
 
