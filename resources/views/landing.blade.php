@@ -18,6 +18,7 @@
             }
 
             #landing_text {
+                margin-top: 80px !important;
                 text-align: center !important;
             }
 
@@ -26,6 +27,18 @@
                 margin-bottom: 1rem !important;
                 margin-left: 0px !important;
                 margin-right: 0px !important;
+            }
+
+            #landing-button-group {
+                margin-bottom: 80px !important;
+            }
+
+            #icon {
+                margin: 0 !important;
+            }
+
+            body {
+                height: auto !important;
             }
         }
     </style>
@@ -41,9 +54,9 @@
                     Sistem keamanan kunci pintu gedung berbasis IoT untuk mengatur akses tiap pintu dengan cepat, aman dan efisien.
                     Menerapkan Level Access Management dan Realtime Monitoring menjadikan keamanan pintu terjamin dan dapat dipantau setiap saat, serta Remote Access dan Quick Access menjadikan penggunaan akses pintu semakin fleksibel dan efisien.
                 </p>
-                <p class="lead mt-5">
-                    <a id="landing_btn" class="btn btn-primary me-2" href="{{ config('app.apk_url') }}" role="button"><i class="bi bi-google-play me-2"></i>Download APK</a>
-                    <a id="landing_btn" class="btn btn-outline-primary" href="{{ url('/login') }}" role="button"><i class="bi bi-person-circle me-2"></i>Login Dashboard</a>
+                <p id="landing-button-group" class="lead mt-5">
+                    <a id="landing_btn" class="btn btn-primary me-2" href="{{ config('app.apk_url') }}" role="button"><i id="icon" class="bi bi-google-play me-2"></i>Download APK</a>
+                    <a id="landing_btn" class="btn btn-outline-primary" href="{{ url('/login') }}" role="button"><i id="icon" class="bi bi-person-circle me-2"></i>Login Dashboard</a>
                 </p>
             </div>
             <div id="apk_mobile" class="col-lg-4 col-11 d-flex">

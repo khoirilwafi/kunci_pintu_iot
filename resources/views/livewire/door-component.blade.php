@@ -202,8 +202,8 @@
                     </table>
                     <div class="flex-grow-1 d-flex">
                         <div class="ms-auto">
+                            <button class="btn btn-sm btn-outline-info me-1" wire:click="printPoster"><div class="fs-6 text-white"><i class="bi bi-printer"></i></div></button>
                             @if ($device_name != null)
-                                <button class="btn btn-sm btn-outline-info me-1" wire:click="printPoster"><div class="fs-6 text-white"><i class="bi bi-printer"></i></div></button>
                                 <button class="btn btn-sm btn-outline-warning me-1" wire:click="openModal('unlinkDoor')"><div class="fs-6 text-white"><i class="bi bi-cpu"></i></button>
                             @endif
                             <button class="btn btn-sm btn-outline-primary me-1" wire:click="edit()"><div class="fs-6 text-white"><i class="bi bi-pencil-square"></i></div></button>

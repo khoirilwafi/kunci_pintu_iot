@@ -23,6 +23,10 @@ Route::get('/', function () {
     return view('landing');
 });
 
+Route::get('/door/{id}', function () {
+    return view('landing');
+});
+
 // login
 Route::get('/login', [AuthController::class, 'index'])->middleware('guest')->name('login');
 Route::post('/login', [AuthController::class, 'authenticate'])->middleware('guest');
