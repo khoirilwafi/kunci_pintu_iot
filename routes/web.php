@@ -1,6 +1,8 @@
 <?php
 
 
+use Carbon\Carbon;
+use App\Models\Schedule;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\UserController;
@@ -21,6 +23,16 @@ use App\Http\Controllers\Web\VerificationController;
 
 Route::get('/', function () {
     return view('landing');
+});
+
+Route::get('time-now', function () {
+
+    $now = Carbon::now();
+
+    $date = $now->toDateString();
+    $time = $now->toTimeString();
+
+    return response()->json(['date' => $date, 'time' => $time]);
 });
 
 Route::get('/door/{id}', function () {

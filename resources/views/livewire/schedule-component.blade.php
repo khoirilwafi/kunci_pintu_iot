@@ -461,35 +461,35 @@
                                 <div class="col-4">
                                     <div class="form-control bg-dark text-white mb-2 d-flex">
                                         Senin
-                                        <input class="form-check-input bg-dark border ms-auto" type="checkbox" value="1" wire:model.defer="edit_day_0">
+                                        <input class="form-check-input bg-dark border ms-auto" type="checkbox" value="senin" wire:model.defer="edit_day_0">
                                     </div>
                                     <div class="form-control bg-dark text-white mb-2 d-flex">
                                         Selasa
-                                        <input class="form-check-input bg-dark border ms-auto" type="checkbox" value="1" wire:model.defer="edit_day_1">
+                                        <input class="form-check-input bg-dark border ms-auto" type="checkbox" value="selasa" wire:model.defer="edit_day_1">
                                     </div>
                                     <div class="form-control bg-dark text-white mb-2 d-flex">
                                         Rabu
-                                        <input class="form-check-input bg-dark border ms-auto" type="checkbox" value="1" wire:model.defer="edit_day_2">
+                                        <input class="form-check-input bg-dark border ms-auto" type="checkbox" value="rabu" wire:model.defer="edit_day_2">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-control bg-dark text-white mb-2 d-flex">
                                         Kamis
-                                        <input class="form-check-input bg-dark border ms-auto" type="checkbox" value="1" wire:model.defer="edit_day_3">
+                                        <input class="form-check-input bg-dark border ms-auto" type="checkbox" value="kamis" wire:model.defer="edit_day_3">
                                     </div>
                                     <div class="form-control bg-dark text-white mb-2 d-flex">
                                         Jumat
-                                        <input class="form-check-input bg-dark border ms-auto" type="checkbox" value="1" wire:model.defer="edit_day_4">
+                                        <input class="form-check-input bg-dark border ms-auto" type="checkbox" value="jumat" wire:model.defer="edit_day_4">
                                     </div>
                                     <div class="form-control bg-dark text-white mb-2 d-flex">
                                         Sabtu
-                                        <input class="form-check-input bg-dark border ms-auto" type="checkbox" value="1" wire:model.defer="edit_day_5">
+                                        <input class="form-check-input bg-dark border ms-auto" type="checkbox" value="sabtu" wire:model.defer="edit_day_5">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-control bg-dark text-white mb-2 d-flex">
                                         Minggu
-                                        <input class="form-check-input bg-dark border ms-auto" type="checkbox" value="1" wire:model.defer="edit_day_6">
+                                        <input class="form-check-input bg-dark border ms-auto" type="checkbox" value="minggu" wire:model.defer="edit_day_6">
                                     </div>
                                 </div>
                             </div>

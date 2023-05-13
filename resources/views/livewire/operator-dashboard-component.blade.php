@@ -55,52 +55,25 @@
     </div>
 
     {{-- door schedule --}}
-    <div class="row">
-        <div class="col-6">
-            <div class="card">
-                <div class="card-header text-center ">
-                    Jadwal Hari Ini (Menuggu)
-                </div>
-                <div class="card-body fs-6">
-                    @if (sizeof($jadwal_hari_ini) == 0)
-                        <div class="text-center">-- belum ada jadwal --</div>
-                    @else
-                        @foreach ($jadwal_hari_ini as $jadwal)
-                            @if ($jadwal->status != 'done')
-                                <div class="bg-dark p-3 rounded d-flex mb-3">
-                                    <div>{{ $jadwal->name }}</div>
-                                    <div class="ms-auto {{ $jadwal->status == 'running' ? 'text-warning' : 'text-white' }}">
-                                        {{ $jadwal->time_begin }}
-                                    </div>
-                                </div>
-                            @endif
-                        @endforeach
-                    @endif
-                </div>
+    <div class="border bg-dark border-secondary rounded p-3">
+        <div class="row">
+            <div class="col-2 text-center">
+                <div class="display-5 fw-bold mt-3">{{ count($jadwal_hari_ini) }}</div>
+                <div class="mt-2 mb-3">Jadwal Hari Ini</div>
             </div>
-        </div>
-        <div class="col-6">
-            <div class="card">
-                <div class="card-header text-center">
-                    Jadwal Hari Ini (Selesai)
-                </div>
-                <div class="card-body fs-6">
-                    {{ $this->count = false }}
-                    @foreach ($jadwal_hari_ini as $jadwal)
-                        @if ($jadwal->status == 'done')
-                            <div class="bg-dark p-3 rounded d-flex mb-3">
-                                <div>{{ $jadwal->name }}</div>
-                                <div class="ms-auto">
-                                    {{ $jadwal->time_begin }}
-                                </div>
-                                {{ $this->count = true}}
-                            </div>
-                        @endif
-                    @endforeach
-                    @if (!$this->count)
-                        <div class="text-center">-- belum ada data --</div>
+            <div class="col-10">
+                @foreach ($jadwal_hari_ini as $jadwal)
+                    @if ($jadwal->status == 'waiting')
+                        <div class="d-flex bg-dark border border-primary rounded p-3 mb-3">
+                    @elseif ($jadwal->status == 'running')
+                        <div class="d-flex bg-dark border border-warning rounded p-3 mb-3 fw-bold">
+                    @else
+                        <div class="d-flex bg-dark border border-secondary rounded p-3 mb-3 text-muted">
                     @endif
-                </div>
+                        <div>{{ $jadwal->name }}</div>
+                        <div class="ms-auto">{{ $jadwal->time_begin. ' sd '. $jadwal->time_end }}</div>
+                    </div>
+                @endforeach
             </div>
         </div>
     </div>

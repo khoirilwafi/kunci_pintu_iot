@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Jobs\ClearTokenJob;
 use App\Jobs\DoorScheduleJob;
 use App\Jobs\ExportAccessLogJob;
 use App\Jobs\DailyJob;
@@ -23,6 +24,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->job(new DoorScheduleJob)->everyMinute();
         $schedule->job(new DailyJob)->dailyAt('00:01:00');
+        $schedule->job(new ClearTokenJob)->weeklyOn(1, '00:03:00');
         $schedule->job(new ExportAccessLogJob)->monthlyOn(1, '00:02:00');
     }
 

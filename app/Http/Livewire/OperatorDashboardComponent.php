@@ -41,7 +41,7 @@ class OperatorDashboardComponent extends Component
                 $date_query->where('date_begin', $date)->orWhere(function ($day_query) use ($date, $day) {
                     $day_query->where('date_begin', '<', $date)->where('is_repeating', 1)->whereRaw("find_in_set(?, day_repeating) > 0", [$day]);
                 });
-            })->get();
+            })->orderBy('time_begin', 'ASC')->get();
 
         return view('livewire.operator-dashboard-component', $data);
     }
