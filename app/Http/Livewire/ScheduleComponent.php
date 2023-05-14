@@ -34,7 +34,7 @@ class ScheduleComponent extends Component
     public $connection_status = 'Menghubungkan ...';
     public $connection_color = 'yellow';
     public $search, $day_repeating;
-    public $door_name;
+    public $door_name, $alert_message;
 
     protected $listeners = ['socketEvent', 'doorStatusEvent', 'doorAlertEvent'];
 
@@ -74,6 +74,7 @@ class ScheduleComponent extends Component
     public function doorAlertEvent($data)
     {
         $this->door_name = $data['name'];
+        $this->alert_message = $data['message'];
         $this->dispatchBrowserEvent('modal_open', 'alertModal');
     }
 
@@ -118,6 +119,8 @@ class ScheduleComponent extends Component
     {
         if ($this->schedule_table_visibility == true) {
             $this->resetModal();
+        } else {
+            $this->reset('schedule_door_id');
         }
 
         $this->dispatchBrowserEvent('modal_close', $modal_id);

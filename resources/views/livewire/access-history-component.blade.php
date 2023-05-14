@@ -11,8 +11,7 @@
         <div class="card-body">
             <div class="mb-4 d-flex">
                 <div class="col-8 col-md-3 ms-auto">
-                    <input type="text" class="form-control form-control-sm bg-dark text-white" id="search"
-                        placeholder="Cari Riwayat ..." wire:model="search" autocomplete="off">
+                    <input type="text" class="form-control form-control-sm bg-dark text-white" id="search" placeholder="Cari Riwayat ..." wire:model="search" autocomplete="off">
                 </div>
             </div>
             <table class="table text-white mb-4">
@@ -48,4 +47,14 @@
             {{ $histories->links() }}
         </div>
     </div>
+
+    {{-- loading modal --}}
+    <div wire:loading.flex class="align-items-center justify-content-center" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100vw; height:100vh; overflow:hidden; background-color:rgba(0, 0, 0, 0.7);">
+        <div class="bg-dark rounded border border-light p-4 d-flex align-items-center">
+            <div class="spinner-border text-primary me-3" role="status">
+            </div>
+            <div class="fs-4">Loading ...</div>
+        </div>
+    </div>
+
 </div>

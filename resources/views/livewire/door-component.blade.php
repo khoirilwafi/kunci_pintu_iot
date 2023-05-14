@@ -59,8 +59,7 @@
                         </button>
                     </div>
                     <div class="col-8 col-md-3 ms-auto">
-                        <input type="text" class="form-control form-control-sm bg-dark text-white" id="search"
-                            placeholder="Cari Pintu ..." wire:model="search" autocomplete="off">
+                        <input type="text" class="form-control form-control-sm bg-dark text-white" id="search" placeholder="Cari Pintu ..." wire:model="search" autocomplete="off">
                     </div>
                 </div>
                 <table class="table text-white mb-4">
@@ -114,10 +113,7 @@
                                             <div style="font-family: monospace">-</div>
                                         @else
                                             <button wire:click="changeLocking('{{ $door->id }}', '{{ $door->is_lock == 1 ? 'open' : 'lock' }}', '{{ $door->key }}')" wire:loading.attr="disabled" class="btn btn-sm {{ $door->is_lock == 1 ? 'btn-primary' : 'btn-info' }} bg-gradient" style="width: 80px">
-                                                <div wire:loading wire:target="changeLocking">
-                                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                                </div>
-                                                <i class="bi {{ $door->is_lock == 1 ? 'bi-unlock' : 'bi-lock' }} me-1" wire:loading.class="d-none" wire:target="changeLocking"></i>
+                                                <i class="bi {{ $door->is_lock == 1 ? 'bi-unlock' : 'bi-lock' }} me-1"></i>
                                                 {{ $door->is_lock == 1 ? 'Buka' : 'Kunci' }}
                                             </button>
                                         @endif
@@ -248,10 +244,7 @@
                                     @endif
                                     <td class="text-center">
                                         <button wire:click="changeAccess('{{ $list->id }}')" wire:loading.attr="disabled" class="btn btn-sm {{ $list->is_running == 1 ? 'btn-warning' : 'btn-info' }} me-1" style="width: 100px;">
-                                            <i class="bi {{ $list->is_running == 1 ? 'bi-pause-circle' : 'bi-play-circle' }} me-1" wire:loading.class="d-none" wire:target="changeAccess('{{ $list->id }}')"></i>
-                                            <div wire:loading wire:target="changeAccess('{{ $list->id }}')">
-                                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                            </div>
+                                            <i class="bi {{ $list->is_running == 1 ? 'bi-pause-circle' : 'bi-play-circle' }} me-1"></i>
                                             {{ $list->is_running == 1 ? 'Blokir' : 'Aktifkan' }}
                                         </button>
                                         <button class="btn btn-sm btn-danger" wire:click="confirmDeleteAccess('{{ $list->id }}')"><i class="bi bi-trash me-1"></i>Hapus</button>
@@ -275,13 +268,13 @@
 		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
                 <div class="modal-header">
-                    Tambah Kunci Pintu Baru
+                    Tambah Pintu Baru
                 </div>
                 <div class="modal-body">
                     <form wire:submit.prevent="storeDoor" id="doorForm">
                         <div class="mb-3">
                             <label class="form-label">Nama</label>
-                            <input type="text" class="form-control bg-dark text-white @error('name') is-invalid @enderror" name="name" wire:model.defer="name" autocomplete="off">
+                            <input type="text" class="form-control bg-dark text-white @error('name') is-invalid @enderror" name="name" wire:model.defer="name" autocomplete="off" required>
                             @error('name')
                                 <div class="invalid-feedback">
                                     {{ $message }}
@@ -297,10 +290,7 @@
                             Batal
                         </button>
                         <button type="submit" form="doorForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
-                            <div wire:loading wire:target='storeDoor'>
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                            </div>
-                            <i class="bi bi-plus-circle me-1" wire:loading.class='d-none' wire:target='storeDoor'></i>
+                            <i class="bi bi-plus-circle me-1"></i>
                             Tambahkan
                         </button>
                     </div>
@@ -400,10 +390,7 @@
                             Batal
                         </button>
                         <button type="submit" form="accessForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
-                            <div wire:loading wire:target='storeAccess'>
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                            </div>
-                            <i class="bi bi-plus-circle me-1" wire:loading.class='d-none' wire:target='storeAccess'></i>
+                            <i class="bi bi-plus-circle me-1"></i>
                             Tambahkan
                         </button>
                     </div>
@@ -423,7 +410,7 @@
                     <form wire:submit.prevent="updateDoor" id="doorEditForm">
                         <div class="mb-3">
                             <label class="form-label">Nama</label>
-                            <input type="name" class="form-control bg-dark text-white @error('name_edited') is-invalid @enderror" name="name_edited" wire:model.defer="name_edited" autocomplete="off">
+                            <input type="name" class="form-control bg-dark text-white @error('name_edited') is-invalid @enderror" name="name_edited" wire:model.defer="name_edited" autocomplete="off" required>
                             @error('name_edited')
                                 <div class="invalid-feedback">
                                     {{ $message }}
@@ -439,10 +426,7 @@
                             Batal
                         </button>
                         <button type="submit" form="doorEditForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
-                            <div wire:loading wire:target='updateDoor'>
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                            </div>
-                            <i class="bi bi-pencil-square me-1" wire:loading.class='d-none' wire:target='updateDoor'></i>
+                            <i class="bi bi-pencil-square me-1"></i>
                             Update
                         </button>
                     </div>
@@ -469,10 +453,7 @@
                             Batal
                         </button>
                         <button wire:click="delete" wire:loading.attr="disabled" wire:target="closeModal('deleteConfirm')" class="btn btn-sm btn-danger ms-3">
-                            <i class="bi bi-trash me-1" wire:loading.class="d-none" wire:target="delete"></i>
-                            <div wire:loading wire:target="delete">
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                            </div>
+                            <i class="bi bi-trash me-1"></i>
                             Hapus
                         </button>
                     </div>
@@ -499,10 +480,7 @@
                             Batal
                         </button>
                         <button wire:click="unlink" wire:loading.attr="disabled" wire:target="closeModal('unlinkDoor')" class="btn btn-sm btn-danger ms-3">
-                            <i class="bi bi-scissors me-1" wire:loading.class="d-none" wire:target="unlink"></i>
-                            <div wire:loading wire:target="unlink">
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                            </div>
+                            <i class="bi bi-scissors me-1"></i>
                             Lepas
                         </button>
                     </div>
@@ -529,10 +507,7 @@
                             Batal
                         </button>
                         <button wire:click="deleteAccess" wire:loading.attr="disabled" wire:target="closeModal('deleteAccessConfirm')" class="btn btn-sm btn-danger ms-3">
-                            <i class="bi bi-trash me-1" wire:loading.class="d-none" wire:target="deleteAccess"></i>
-                            <div wire:loading wire:target="deleteAccess">
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                            </div>
+                            <i class="bi bi-trash me-1"></i>
                             Hapus
                         </button>
                     </div>
@@ -556,7 +531,7 @@
                         <div class="ms-4 me-2 d-flex align-items-center">
                             <div>
                                 <div class="fs-5 mb-1">{{ $door_name }}</div>
-                                <div style="text-align: justify">Terbuka tanpa autentikasi yang sah. Mungkin terjadi penerobosan pada pintu tersebut.</div>
+                                <div style="text-align: justify">{{ $alert_message }}</div>
                             </div>
                         </div>
                     </div>
@@ -570,6 +545,16 @@
 			</div>
 		</div>
 	</div>
+
+    {{-- loading modal --}}
+    <div wire:loading.flex class="align-items-center justify-content-center" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100vw; height:100vh; overflow:hidden; background-color:rgba(0, 0, 0, 0.7);">
+        <div class="bg-dark rounded border border-light p-4 d-flex align-items-center">
+            <div class="spinner-border text-primary me-3" role="status">
+            </div>
+            <div class="fs-4">Loading ...</div>
+        </div>
+    </div>
+
 
 </div>
 

@@ -4,25 +4,26 @@ namespace App\Events;
 
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class DoorAlertEvent implements ShouldBroadcastNow
+class DoorAlertEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    protected $door_name, $office_id;
+    protected $door_name, $office_id, $message;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($office_id, $door_name)
+    public function __construct($office_id, $door_name, $message)
     {
         $this->office_id = $office_id;
         $this->door_name = $door_name;
+        $this->message = $message;
     }
 
     /**
@@ -44,6 +45,7 @@ class DoorAlertEvent implements ShouldBroadcastNow
     {
         return [
             'name' => $this->door_name,
+            'message' => $this->message,
         ];
     }
 }

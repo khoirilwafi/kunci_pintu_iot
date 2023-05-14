@@ -55,28 +55,30 @@
     </div>
 
     {{-- door schedule --}}
-    <div class="border bg-dark border-secondary rounded p-3">
-        <div class="row">
-            <div class="col-2 text-center">
-                <div class="display-5 fw-bold mt-3">{{ count($jadwal_hari_ini) }}</div>
-                <div class="mt-2 mb-3">Jadwal Hari Ini</div>
-            </div>
-            <div class="col-10">
-                @foreach ($jadwal_hari_ini as $jadwal)
-                    @if ($jadwal->status == 'waiting')
-                        <div class="d-flex bg-dark border border-primary rounded p-3 mb-3">
-                    @elseif ($jadwal->status == 'running')
-                        <div class="d-flex bg-dark border border-warning rounded p-3 mb-3 fw-bold">
-                    @else
-                        <div class="d-flex bg-dark border border-secondary rounded p-3 mb-3 text-muted">
-                    @endif
-                        <div>{{ $jadwal->name }}</div>
-                        <div class="ms-auto">{{ $jadwal->time_begin. ' sd '. $jadwal->time_end }}</div>
-                    </div>
-                @endforeach
+    @if (count($jadwal_hari_ini) > 0)
+        <div class="border bg-dark border-secondary rounded p-3">
+            <div class="row">
+                <div class="col-2 text-center">
+                    <div class="display-5 fw-bold mt-3">{{ count($jadwal_hari_ini) }}</div>
+                    <div class="mt-2 mb-3">Jadwal Hari Ini</div>
+                </div>
+                <div class="col-10">
+                    @foreach ($jadwal_hari_ini as $jadwal)
+                        @if ($jadwal->status == 'waiting')
+                            <div class="d-flex bg-dark border border-primary rounded p-3 mb-3">
+                        @elseif ($jadwal->status == 'running')
+                            <div class="d-flex bg-dark border border-warning rounded p-3 mb-3 fw-bold">
+                        @else
+                            <div class="d-flex bg-dark border border-secondary rounded p-3 mb-3 text-muted">
+                        @endif
+                            <div>{{ $jadwal->name }}</div>
+                            <div class="ms-auto">{{ $jadwal->time_begin. ' sd '. $jadwal->time_end }}</div>
+                        </div>
+                    @endforeach
+                </div>
             </div>
         </div>
-    </div>
+    @endif
 
     {{-- alert modal --}}
     <div wire:ignore.self class="modal fade" id="alertModal" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="alertModalLabel" aria-hidden="true">
@@ -93,7 +95,7 @@
                         <div class="ms-4 me-2 d-flex align-items-center">
                             <div>
                                 <div class="fs-5 mb-1">{{ $door_name }}</div>
-                                <div style="text-align: justify">Terbuka tanpa autentikasi yang sah. Mungkin terjadi penerobosan pada pintu tersebut.</div>
+                                <div style="text-align: justify">{{ $alert_message }}</div>
                             </div>
                         </div>
                     </div>
@@ -115,11 +117,15 @@
         window.office = @json($office_id);
         window.connection_status = document.getElementById("connection_status");
 
-        let pintu = @json($pintu);
-        let online = @json($pintu_online);
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                let pintu = @json($pintu);
+                let online = @json($pintu_online);
 
-        if(pintu != online){
-            alert(pintu - online + ' Pintu Sedang Offline. \nKondisi pintu tidak bisa terpantau secara realtime.');
-        }
+                if(pintu != online){
+                    alert(pintu - online + ' Pintu Sedang Offline. \nKondisi pintu tidak bisa terpantau secara realtime.');
+                }
+            }, 1000);
+        });
     </script>
 @endpush

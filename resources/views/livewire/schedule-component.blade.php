@@ -222,10 +222,7 @@
                                             <div style="font-family: monospace">-</div>
                                         @else
                                             <button wire:click="changeLocking('{{ $list->door->id }}', '{{ $list->door->is_lock == 1 ? 'open' : 'lock' }}', '{{ $list->door->token }}')" wire:loading.attr="disabled" class="btn btn-sm {{ $list->door->is_lock == 1 ? 'btn-primary' : 'btn-info' }} bg-gradient" style="width: 80px">
-                                                <div wire:loading wire:target="changeLocking">
-                                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                                </div>
-                                                <i class="bi {{ $list->door->is_lock == 1 ? 'bi-unlock' : 'bi-lock' }} me-1" wire:loading.class="d-none" wire:target="changeLocking"></i>
+                                                <i class="bi {{ $list->door->is_lock == 1 ? 'bi-unlock' : 'bi-lock' }} me-1"></i>
                                                 {{ $list->door->is_lock == 1 ? 'Buka' : 'Kunci' }}
                                             </button>
                                         @endif
@@ -371,10 +368,7 @@
                             Batal
                         </button>
                         <button type="submit" form="scheduleForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
-                            <div wire:loading wire:target='storeScedule'>
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                            </div>
-                            <i class="bi bi-plus-circle me-1" wire:loading.class='d-none' wire:target='storeScedule'></i>
+                            <i class="bi bi-plus-circle me-1"></i>
                             Tambahkan
                         </button>
                     </div>
@@ -503,10 +497,7 @@
                             Batal
                         </button>
                         <button type="submit" form="scheduleEditForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
-                            <div wire:loading wire:target='updateScedule'>
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                            </div>
-                            <i class="bi bi-pencil-square me-1" wire:loading.class='d-none' wire:target='updateScedule'></i>
+                            <i class="bi bi-pencil-square me-1"></i>
                             Update
                         </button>
                     </div>
@@ -547,10 +538,7 @@
                             Batal
                         </button>
                         <button type="submit" form="doorForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
-                            <div wire:loading wire:target='storeDoor'>
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                            </div>
-                            <i class="bi bi-plus-circle me-1" wire:loading.class='d-none' wire:target='storeDoor'></i>
+                            <i class="bi bi-plus-circle me-1"></i>
                             Tambahkan
                         </button>
                     </div>
@@ -577,10 +565,7 @@
                             Batal
                         </button>
                         <button wire:click="delete" wire:loading.attr="disabled" wire:target="closeModal('deleteConfirm')" class="btn btn-sm btn-danger ms-3">
-                            <i class="bi bi-trash me-1" wire:loading.class="d-none" wire:target="delete"></i>
-                            <div wire:loading wire:target="delete">
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                            </div>
+                            <i class="bi bi-trash me-1"></i>
                             Hapus
                         </button>
                     </div>
@@ -604,7 +589,7 @@
                         <div class="ms-4 me-2 d-flex align-items-center">
                             <div>
                                 <div class="fs-5 mb-1">{{ $door_name }}</div>
-                                <div style="text-align: justify">Terbuka tanpa autentikasi yang sah. Mungkin terjadi penerobosan pada pintu tersebut.</div>
+                                <div style="text-align: justify">{{ $alert_message }}</div>
                             </div>
                         </div>
                     </div>
@@ -618,6 +603,16 @@
 			</div>
 		</div>
 	</div>
+
+    {{-- loading modal --}}
+    <div wire:loading.flex class="align-items-center justify-content-center" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100vw; height:100vh; overflow:hidden; background-color:rgba(0, 0, 0, 0.7);">
+        <div class="bg-dark rounded border border-light p-4 d-flex align-items-center">
+            <div class="spinner-border text-primary me-3" role="status">
+            </div>
+            <div class="fs-4">Loading ...</div>
+        </div>
+    </div>
+
 </div>
 
 @push('custom_script')

@@ -73,11 +73,12 @@ class DoorEventController extends Controller
 
     public function alert(Request $request)
     {
-        $data = $request->only(['door_id', 'office_id']);
+        $data = $request->only(['door_id', 'office_id', 'message']);
 
         $validator = Validator::make($data, [
             'office_id' => ['required', 'string'],
-            'door_id' => ['required', 'string']
+            'door_id' => ['required', 'string'],
+            'message' => ['required', 'string']
         ]);
 
         if ($validator->fails()) {
@@ -96,8 +97,8 @@ class DoorEventController extends Controller
             ], 200);
         }
 
-        event(new DoorAlertEvent($data['office_id'], $door->name));
-        Log::alert('door alert', ['door' => $door]);
+        event(new DoorAlertEvent($data['office_id'], $door->name, $data['message']));
+        Log::alert('door alert', ['door' => $door, 'message' => $data['message']]);
 
         return response()->json([
             'status' => 'success',

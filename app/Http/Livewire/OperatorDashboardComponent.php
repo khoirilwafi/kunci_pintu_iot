@@ -10,7 +10,7 @@ use Livewire\Component;
 
 class OperatorDashboardComponent extends Component
 {
-    public $office_id, $door_name, $count;
+    public $office_id, $door_name, $alert_message;
     public $connection_status = 'Menghubungkan ...';
     public $connection_color = 'yellow';
 
@@ -59,6 +59,7 @@ class OperatorDashboardComponent extends Component
     public function doorAlertEvent($data)
     {
         $this->door_name = $data['name'];
+        $this->alert_message = $data['message'];
         $this->dispatchBrowserEvent('modal_open', 'alertModal');
     }
 }

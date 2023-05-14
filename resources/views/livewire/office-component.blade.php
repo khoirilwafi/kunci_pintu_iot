@@ -112,7 +112,7 @@
                     <form wire:submit.prevent="storeOffice" id="officeForm">
                         <div class="mb-3">
                             <label for="name" class="form-label">Nama</label>
-                            <input type="name" class="form-control bg-dark text-white @error('name') is-invalid @enderror" id="name" name="name" wire:model.defer="name" autocomplete="off">
+                            <input type="name" class="form-control bg-dark text-white @error('name') is-invalid @enderror" id="name" name="name" wire:model.defer="name" autocomplete="off" required>
                             @error('name')
                                 <div class="invalid-feedback">
                                     {{ $message }}
@@ -121,7 +121,7 @@
                         </div>
                         <div class="mb-4">
                             <label for="user_id" class="form-label">Operator</label>
-                            <select class="form-select bg-dark text-white @error('user_id') is-invalid @enderror" id="user_id" name="user_id" wire:model.defer="user_id" autocomplete="off">
+                            <select class="form-select bg-dark text-white @error('user_id') is-invalid @enderror" id="user_id" name="user_id" wire:model.defer="user_id" autocomplete="off" required>
                                 <option hidden class="text-white">-- pilih salah satu --</option>
                                 @foreach ($available_operators as $operator)
                                     <option value="{{ $operator->id }}">{{ $operator->name }}</option>
@@ -142,10 +142,7 @@
                             Batal
                         </button>
                         <button type="submit" form="officeForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
-                            <div wire:loading wire:target='storeOffice'>
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                            </div>
-                            <i class="bi bi-plus-circle me-1" wire:loading.class='d-none' wire:target='storeOffice'></i>
+                            <i class="bi bi-plus-circle me-1"></i>
                             Tambahkan
                         </button>
                     </div>
@@ -165,7 +162,7 @@
                     <form wire:submit.prevent="updateOffice" id="officeEditForm">
                         <div class="mb-3">
                             <label for="name" class="form-label">Nama</label>
-                            <input type="name" class="form-control bg-dark text-white @error('name') is-invalid @enderror" id="name" name="name" wire:model.defer="name" autocomplete="off">
+                            <input type="name" class="form-control bg-dark text-white @error('name') is-invalid @enderror" id="name" name="name" wire:model.defer="name" autocomplete="off" required>
                             @error('name')
                                 <div class="invalid-feedback">
                                     {{ $message }}
@@ -174,7 +171,7 @@
                         </div>
                         <div class="mb-4">
                             <label for="user_id" class="form-label">Operator</label>
-                            <select class="form-select bg-dark text-white @error('user_id') is-invalid @enderror" id="user_id" name="user_id" wire:model.defer="user_id" autocomplete="off">
+                            <select class="form-select bg-dark text-white @error('user_id') is-invalid @enderror" id="user_id" name="user_id" wire:model.defer="user_id" autocomplete="off" required>
                                 @if ($user_id != '')
                                     <option hidden selected class="text-white" value="{{ $user_id }}">{{ $operator_name }}</option>
                                 @endif
@@ -198,10 +195,7 @@
                             Batal
                         </button>
                         <button type="submit" form="officeEditForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
-                            <div wire:loading wire:target='updateOffice'>
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                            </div>
-                            <i class="bi bi-pencil-square me-1" wire:loading.class='d-none' wire:target='updateOffice'></i>
+                            <i class="bi bi-pencil-square me-1"></i>
                             Update
                         </button>
                     </div>
@@ -228,10 +222,7 @@
                             Batal
                         </button>
                         <button wire:click="delete" wire:loading.attr="disabled" wire:target="closeModal('deleteConfirm')" class="btn btn-sm btn-danger ms-3">
-                            <i class="bi bi-trash me-1" wire:loading.class="d-none" wire:target="delete"></i>
-                            <div wire:loading wire:target="delete">
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                            </div>
+                            <i class="bi bi-trash me-1"></i>
                             Hapus
                         </button>
                     </div>
@@ -239,5 +230,14 @@
 			</div>
 		</div>
 	</div>
+
+    {{-- loading modal --}}
+    <div wire:loading.flex class="align-items-center justify-content-center" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100vw; height:100vh; overflow:hidden; background-color:rgba(0, 0, 0, 0.7);">
+        <div class="bg-dark rounded border border-light p-4 d-flex align-items-center">
+            <div class="spinner-border text-primary me-3" role="status">
+            </div>
+            <div class="fs-4">Loading ...</div>
+        </div>
+    </div>
 
 </div>

@@ -101,10 +101,6 @@
                                     {{ $message }}
                                 </div>
                             @enderror
-
-                            <div class="text-warning" wire:loading wire:target='avatar'>
-                                <small>Sedang Loading, Tunggu Sebentar ...</small>
-                            </div>
                         </div>
                         <div class="mb-4">
                             <ul>
@@ -121,10 +117,7 @@
                             Batal
                         </button>
                         <button type="submit" form="avatarForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
-                            <div wire:loading wire:target='storeAvatar'>
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                            </div>
-                            <i class="bi bi-upload me-1" wire:loading.class='d-none' wire:target='storeAvatar'></i>
+                            <i class="bi bi-upload me-1"></i>
                             Upload
                         </button>
                     </div>
@@ -144,7 +137,7 @@
                     <form wire:submit.prevent="storeProfile" id="profileForm" class="mb-4">
                         <div class="mb-3">
                             <label class="form-label mb-1">Nama</label>
-                            <input class="form-control bg-dark text-white @error('name') is-invalid @enderror" wire:model.defer="name">
+                            <input class="form-control bg-dark text-white @error('name') is-invalid @enderror" wire:model.defer="name" required>
                             @error('name')
                                 <div class="invalid-feedback">
                                     {{ $message }}
@@ -153,7 +146,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label mb-1 @error('gender') is-invalid @enderror">Jenis Kelamin</label>
-                            <select class="form-select bg-dark text-white @error('gender') is-invalid @enderror" id="gender" name="gender" wire:model.defer="gender">
+                            <select class="form-select bg-dark text-white @error('gender') is-invalid @enderror" id="gender" name="gender" wire:model.defer="gender" required>
                                 <option value="laki-laki" {{ (auth()->user()->gender == 'laki-laki') ? 'selected' : ''}}>Laki-laki</option>
                                 <option value="perempuan" {{ (auth()->user()->gender == 'perempuan') ? 'selected' : ''}}>Perempuan</option>
                             </select>
@@ -165,7 +158,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label mb-1">Email</label>
-                            <input class="form-control bg-dark text-white @error('email') is-invalid @enderror" wire:model.defer="email">
+                            <input class="form-control bg-dark text-white @error('email') is-invalid @enderror" wire:model.defer="email" required>
                             @error('email')
                                 <div class="invalid-feedback">
                                     {{ $message }}
@@ -174,7 +167,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label mb-1">Nomor HP</label>
-                            <input class="form-control bg-dark text-white @error('phone') is-invalid @enderror" wire:model.defer="phone">
+                            <input class="form-control bg-dark text-white @error('phone') is-invalid @enderror" wire:model.defer="phone" required>
                             @error('phone')
                                 <div class="invalid-feedback">
                                     {{ $message }}
@@ -190,10 +183,7 @@
                             Batal
                         </button>
                         <button type="submit" form="profileForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
-                            <div wire:loading wire:target='storeProfile'>
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                            </div>
-                            <i class="bi bi-arrow-down-square-fill me-1" wire:loading.class='d-none' wire:target='storeProfile'></i>
+                            <i class="bi bi-arrow-down-square-fill me-1"></i>
                             Simpan
                         </button>
                     </div>
@@ -233,10 +223,7 @@
                             Batal
                         </button>
                         <button type="submit" form="passwordForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
-                            <div wire:loading wire:target='confirm'>
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                            </div>
-                            <i class="bi bi-send-fill me-1" wire:loading.class='d-none' wire:target='confirm'></i>
+                            <i class="bi bi-send-fill me-1"></i>
                             Kirim
                         </button>
                     </div>
@@ -281,10 +268,7 @@
                             Batal
                         </button>
                         <button type="submit" form="changePasswordForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
-                            <div wire:loading wire:target='storePassword'>
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                            </div>
-                            <i class="bi bi-arrow-down-square-fill me-1" wire:loading.class='d-none' wire:target='storePassword'></i>
+                            <i class="bi bi-arrow-down-square-fill me-1"></i>
                             Simpan
                         </button>
                     </div>
@@ -292,5 +276,14 @@
 			</div>
 		</div>
 	</div>
+
+    {{-- loading modal --}}
+    <div wire:loading.flex class="align-items-center justify-content-center" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100vw; height:100vh; overflow:hidden; background-color:rgba(0, 0, 0, 0.7);">
+        <div class="bg-dark rounded border border-light p-4 d-flex align-items-center">
+            <div class="spinner-border text-primary me-3" role="status">
+            </div>
+            <div class="fs-4">Loading ...</div>
+        </div>
+    </div>
 
 </div>

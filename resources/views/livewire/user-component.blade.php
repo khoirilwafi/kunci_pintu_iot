@@ -113,7 +113,7 @@
             </div>
             <div class="card-body">
                 <div class="p-2 mb-5 rounded border border-secondary d-flex">
-                    <img src="{{ url('my-account/avatar/'. $avatar_name) }}" alt="picture" height="100px" width="100px" class="ms-1">
+                    <img src="{{ url('/dashboard/my-account/avatar', [$avatar_name]) }}" alt="picture" height="100px" width="100px" class="ms-1">
                     <table class="ms-2">
                         <tr>
                             <td class="px-2">Nama</td>
@@ -201,8 +201,7 @@
                     <form wire:submit.prevent="storeUser" id="userForm">
                         <div class="mb-3">
                             <label for="name" class="form-label">Nama</label>
-                            <input type="name" class="form-control bg-dark text-white @error('name') is-invalid @enderror" id="name"
-                                name="name" wire:model.defer="name" autocomplete="off">
+                            <input type="name" class="form-control bg-dark text-white @error('name') is-invalid @enderror" id="name" name="name" wire:model.defer="name" autocomplete="off" required>
                             @error('name')
                                 <div class="invalid-feedback">
                                     {{ $message }}
@@ -211,7 +210,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="gender" class="form-label">Jenis Kelamin</label>
-                            <select class="form-select bg-dark text-white @error('gender') is-invalid @enderror" id="gender" name="gender" wire:model.defer="gender" autocomplete="off">
+                            <select class="form-select bg-dark text-white @error('gender') is-invalid @enderror" id="gender" name="gender" wire:model.defer="gender" autocomplete="off" required>
                                 <option hidden class="text-white">-- pilih salah satu --</option>
                                 <option value="Laki-laki">Laki-laki</option>
                                 <option value="Perempuan">Perempuan</option>
@@ -224,8 +223,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control bg-dark text-white @error('email') is-invalid @enderror"
-                                id="email" name="email" wire:model.defer="email" autocomplete="off">
+                            <input type="email" class="form-control bg-dark text-white @error('email') is-invalid @enderror" id="email" name="email" wire:model.defer="email" autocomplete="off" required>
                             @error('email')
                                 <div class="invalid-feedback">
                                     {{ $message }}
@@ -234,8 +232,7 @@
                         </div>
                         <div class="mb-4">
                             <label for="phone" class="form-label">Nomor HP</label>
-                            <input type="number" class="form-control bg-dark text-white @error('phone') is-invalid @enderror"
-                                id="phone" name="phone" wire:model.defer="phone" autocomplete="off">
+                            <input type="number" class="form-control bg-dark text-white @error('phone') is-invalid @enderror" id="phone" name="phone" wire:model.defer="phone" autocomplete="off" required>
                             @error('phone')
                                 <div class="invalid-feedback">
                                     {{ $message }}
@@ -251,10 +248,7 @@
                             Batal
                         </button>
                         <button type="submit" form="userForm" class="btn btn-sm btn-primary ms-3" wire:loading.attr='disabled'>
-                            <div wire:loading wire:target='storeUser'>
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                            </div>
-                            <i class="bi bi-plus-circle me-1" wire:loading.class='d-none' wire:target='storeUser'></i>
+                            <i class="bi bi-plus-circle me-1"></i>
                             Tambahkan
                         </button>
                     </div>
@@ -281,10 +275,7 @@
                             Batal
                         </button>
                         <button wire:click="delete" wire:loading.attr="disabled" wire:target="closeModal('deleteConfirm')" class="btn btn-sm btn-danger ms-3">
-                            <i class="bi bi-trash me-1" wire:loading.class="d-none" wire:target="delete"></i>
-                            <div wire:loading wire:target="delete">
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                            </div>
+                            <i class="bi bi-trash me-1"></i>
                             Hapus
                         </button>
                     </div>
@@ -292,5 +283,14 @@
 			</div>
 		</div>
 	</div>
+
+    {{-- loading modal --}}
+    <div wire:loading.flex class="align-items-center justify-content-center" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100vw; height:100vh; overflow:hidden; background-color:rgba(0, 0, 0, 0.7);">
+        <div class="bg-dark rounded border border-light p-4 d-flex align-items-center">
+            <div class="spinner-border text-primary me-3" role="status">
+            </div>
+            <div class="fs-4">Loading ...</div>
+        </div>
+    </div>
 
 </div>

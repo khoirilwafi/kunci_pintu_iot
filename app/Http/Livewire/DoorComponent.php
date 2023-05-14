@@ -30,6 +30,7 @@ class DoorComponent extends Component
     public $door_name, $door_url, $door_detail_id;
     public $available_user;
     public $search, $searchAccess;
+    public $alert_message;
 
     public $door_table_visibility  = true;
     public $door_detail_visibility = false;
@@ -39,6 +40,14 @@ class DoorComponent extends Component
     public $connection_color = 'yellow';
 
     protected $listeners = ['socketEvent', 'doorStatusEvent', 'doorAlertEvent'];
+
+    public $loadingButtons = [];
+
+    public function toggleLoading($index)
+    {
+        $this->loadingButtons[$index] = !$this->loadingButtons[$index];
+        sleep(2); // Contoh penundaan untuk simulasi pemrosesan data
+    }
 
     public function render()
     {
@@ -77,6 +86,7 @@ class DoorComponent extends Component
     public function doorAlertEvent($data)
     {
         $this->door_name = $data['name'];
+        $this->alert_message = $data['message'];
         $this->dispatchBrowserEvent('modal_open', 'alertModal');
     }
 
