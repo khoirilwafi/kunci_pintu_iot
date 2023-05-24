@@ -12,7 +12,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Validation\Rule;
 use App\Events\DoorCommandEvent;
-use Barryvdh\DomPDF\Facade\Pdf;
+use App\Events\DoorUnlinkEvent;
 use Illuminate\Support\Facades\Log;
 
 class DoorComponent extends Component
@@ -40,14 +40,6 @@ class DoorComponent extends Component
     public $connection_color = 'yellow';
 
     protected $listeners = ['socketEvent', 'doorStatusEvent', 'doorAlertEvent'];
-
-    public $loadingButtons = [];
-
-    public function toggleLoading($index)
-    {
-        $this->loadingButtons[$index] = !$this->loadingButtons[$index];
-        sleep(2); // Contoh penundaan untuk simulasi pemrosesan data
-    }
 
     public function render()
     {
@@ -176,7 +168,12 @@ class DoorComponent extends Component
     public function storeDoor()
     {
         $this->validate([
-            'name' => ['required', 'string', 'min:4', 'max:50', 'unique:doors,name'],
+            'name' => [
+                'required', 'string', 'min:4', 'max:50',
+                Rule::unique('doors')->where(function ($query) {
+                    return $query->where('office_id', $this->office_id);
+                })
+            ],
         ]);
 
         $door['name'] = $this->name;
@@ -225,9 +222,19 @@ class DoorComponent extends Component
 
     public function updateDoor()
     {
+        // $this->validate([
+        //     'name_edited' => ['required', 'string', 'min:4', 'max:50', Rule::unique('users', 'name')->ignore($this->edit_id)],
+        // ]);
+
         $this->validate([
-            'name_edited' => ['required', 'string', 'min:4', 'max:50', Rule::unique('users', 'name')->ignore($this->edit_id)],
+            'name_edited' => [
+                'required', 'string', 'min:4', 'max:50',
+                Rule::unique('doors', 'name')->where(function ($query) {
+                    return $query->where('office_id', $this->office_id);
+                })->ignore($this->edit_id)
+            ],
         ]);
+
 
         $door = Door::where('id', $this->edit_id)->first();
 
@@ -372,10 +379,15 @@ class DoorComponent extends Component
     {
         $door = Door::where('id', $this->edit_id)->first();
 
-        $door->device_name = null;
-        $door->socket_id = null;
-
         try {
+            // broadcast event
+            event(new DoorUnlinkEvent($door->office_id, $door->id, $door->key));
+
+            $door->device_name = null;
+            $door->socket_id = null;
+            $door->device_pass = null;
+            $door->key = null;
+
             // update
             $door->save();
 

@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\Door;
 
+use Exception;
 use App\Models\Door;
 use App\Logs\CustomLog;
 use Nette\Utils\Random;
 use Illuminate\Http\Request;
 use App\Events\DoorAlertEvent;
 use App\Events\DoorStatusEvent;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
 class DoorEventController extends Controller
@@ -52,9 +53,9 @@ class DoorEventController extends Controller
 
             // save log
             if ($data['door_id'] == $data['user_id']) {
-                Log::info('door websocket connect', ['door' => $door]);
+                Log::info('door self update', ['door' => $door]);
             } else {
-                new CustomLog($data['user_id'], $data['door_id'], $door->office_id, 'pintu terbuka');
+                new CustomLog($data['user_id'], $data['door_id'], $door->office_id, ($data['lock_status'] == 0) ? 'pintu terbuka' : 'pintu terkunci');
             }
 
             return response()->json([

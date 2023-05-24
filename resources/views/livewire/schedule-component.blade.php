@@ -192,10 +192,10 @@
                                     <td class="text-center">{{ $index + 1 }}</td>
                                     <td>{{ $list->door->name }}</td>
                                     <td class="text-center" style="font-family: monospace">
-                                        @if ($list->door->device_id == null)
+                                        @if ($list->door->device_name == null)
                                             <div class="text-warning">Belum Ada</div>
                                         @else
-                                            <div class="text-info">{{ strtoupper($list->door->device_id) }}</div>
+                                            <div class="text-info">{{ strtoupper($list->door->device_name) }}</div>
                                         @endif
                                     </td>
                                     <td class="text-center">
@@ -221,7 +221,7 @@
                                             @if ($list->door->socket_id == null)
                                             <div style="font-family: monospace">-</div>
                                         @else
-                                            <button wire:click="changeLocking('{{ $list->door->id }}', '{{ $list->door->is_lock == 1 ? 'open' : 'lock' }}', '{{ $list->door->token }}')" wire:loading.attr="disabled" class="btn btn-sm {{ $list->door->is_lock == 1 ? 'btn-primary' : 'btn-info' }} bg-gradient" style="width: 80px">
+                                            <button wire:click="changeLocking('{{ $list->door->id }}', '{{ $list->door->is_lock == 1 ? 'open' : 'lock' }}', '{{ $list->door->key }}')" wire:loading.attr="disabled" class="btn btn-sm {{ $list->door->is_lock == 1 ? 'btn-primary' : 'btn-info' }} bg-gradient" style="width: 80px">
                                                 <i class="bi {{ $list->door->is_lock == 1 ? 'bi-unlock' : 'bi-lock' }} me-1"></i>
                                                 {{ $list->door->is_lock == 1 ? 'Buka' : 'Kunci' }}
                                             </button>

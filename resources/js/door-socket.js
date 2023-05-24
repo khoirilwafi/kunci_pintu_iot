@@ -7,10 +7,11 @@ const echo = new Echo({
     broadcaster: "pusher",
     key: "aNmB0bkbrE1PS6K07nrt",
     cluster: "mt1",
-    wsHost: "door.smartdoorlock.my.id",
-    forceTLS: true,
-    encrypted: true,
-    enabledTransports: ["ws", "wss"],
+    wsHost: "localhost",
+    wsPort: 6001,
+    forceTLS: false,
+    encrypted: false,
+    enabledTransports: ["ws"],
 });
 
 echo.connector.pusher.connection.bind('error', () => {

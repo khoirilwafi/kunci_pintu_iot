@@ -44,8 +44,9 @@ class AuthController extends Controller
         return response()->json([
             'status' => 'success',
             'data' => [
-                'door_id' => $door->id,
                 'office_id' => $door->office_id,
+                'door_id' => $door->id,
+                'door_name' => $door->name,
             ],
             'token' => $token
         ], 200);
@@ -84,10 +85,12 @@ class AuthController extends Controller
         }
 
         $pass = Random::generate(20);
+        $device_key = Random::generate(20);
 
         $door->device_name = $data['device_name'];
 
         $door->forceFill(['device_pass' => Hash::make($pass)]);
+        $door->key = $device_key;
 
         try {
             $door->save();
@@ -96,8 +99,11 @@ class AuthController extends Controller
             return response()->json([
                 'status' => 'success',
                 'data' => [
-                    'device_name' => $data['device_name'],
+                    'office_id' => $door->office_id,
+                    'door_id' => $door->id,
+                    'door_name' => $door->name,
                     'device_pass' => $pass,
+                    'key' => $device_key,
                 ],
             ], 200);
         } catch (Exception $e) {

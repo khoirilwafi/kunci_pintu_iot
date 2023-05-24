@@ -335,7 +335,7 @@ class ScheduleComponent extends Component
         foreach ($schedule->door as $door) {
 
             // broadcast event
-            event(new DoorScheduleEvent($schedule->office_id, request()->user()->id, $door->id, $schedule->time_end, 'stop', $door->token));
+            event(new DoorScheduleEvent($schedule->office_id, request()->user()->id, $door->id, $schedule->time_end, 'stop', $door->key));
 
             // save log
             new CustomLog(request()->user()->id, $door->id, $this->office_id, 'membatalkan jadwal');

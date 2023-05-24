@@ -60,13 +60,13 @@ class DoorScheduleJob implements ShouldQueue
             $doors = $schedule->door;
 
             foreach ($doors as $door) {
-                if ($door->device_id != null) {
+                if ($door->device_name != null) {
 
                     // event broadcast
-                    event(new DoorScheduleEvent($door->office_id, $schedules->office->user_id, $door->id, $schedules->time_end, 'run', $door->key));
+                    event(new DoorScheduleEvent($door->office_id, $schedule->office->user_id, $door->id, $schedule->time_end, 'run', $door->key));
 
                     // save log
-                    new CustomLog($schedules->office->user_id, $door->id, $door->office_id, 'mengirim jadwal');
+                    new CustomLog($schedule->office->user_id, $door->id, $door->office_id, 'mengirim jadwal');
                 }
             }
 

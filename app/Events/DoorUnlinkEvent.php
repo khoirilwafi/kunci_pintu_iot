@@ -2,36 +2,28 @@
 
 namespace App\Events;
 
-use Carbon\Carbon;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class DoorScheduleEvent implements ShouldBroadcast
+class DoorUnlinkEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    protected $office_id, $user_id, $door_id, $key, $time_end, $status;
-    protected $time_now;
+    protected $office_id, $door_id, $key;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($office_id, $user_id, $door_id, $time_end, $status, $key)
+    public function __construct($office_id, $door_id, $key)
     {
-        $now = Carbon::now();
-
         $this->office_id = $office_id;
-        $this->user_id   = $user_id;
         $this->door_id   = $door_id;
         $this->key       = $key;
-        $this->status    = $status;
-        $this->time_end  = $time_end;
-        $this->time_now  = $now->toTimeString();
     }
 
     /**
@@ -46,18 +38,14 @@ class DoorScheduleEvent implements ShouldBroadcast
 
     public function broadcastAs()
     {
-        return 'door-schedule';
+        return 'door-unlink';
     }
 
     public function broadcastWith()
     {
         return [
-            'door_id'  => $this->door_id,
-            'user_id'  => $this->user_id,
-            'time_now' => $this->time_now,
-            'time_end' => $this->time_end,
-            'status'   => $this->status,
-            'key'      => $this->key,
+            'door_id' => $this->door_id,
+            'key' => $this->key,
         ];
     }
 }

@@ -139,7 +139,7 @@
                     Detail Pintu - Akses Pengguna
                 </div>
                 <div class="ms-auto d-flex align-items-center">
-                    <div id="connection_status">{{ $connection_status }}</div>
+                    <div id="connection_status" style="color: {{ $connection_color }}">{{ $connection_status }}</div>
                 </div>
             </div>
             <div class="card-body">
@@ -408,7 +408,7 @@
                 </div>
                 <div class="modal-body">
                     <form wire:submit.prevent="updateDoor" id="doorEditForm">
-                        <div class="mb-3">
+                        <div class="mb-2">
                             <label class="form-label">Nama</label>
                             <input type="name" class="form-control bg-dark text-white @error('name_edited') is-invalid @enderror" name="name_edited" wire:model.defer="name_edited" autocomplete="off" required>
                             @error('name_edited')
@@ -417,6 +417,7 @@
                                 </div>
                             @enderror
                         </div>
+                        <div class="mb-3"><small>setelah melakukan perubahan pastikan anda mendaftarkan ulang perangkat penguncian untuk memuat perubahan pada perangkat penguncian.</small></div>
                     </form>
                 </div>
                 <div class="modal-footer">

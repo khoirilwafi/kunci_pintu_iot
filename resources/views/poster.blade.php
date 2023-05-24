@@ -18,12 +18,12 @@
         <div style="height:100%; overflow:hidden;" class="poster-content d-flex flex-column align-items-center rounded">
             <div class="text-center mt-4 p-3 mb-5">
                 <div class="fs-2 fw-bold">Scann di sini</div>
-                <div class="lh-sm mt-2">Pintu ini dilindungi oleh SmartLock&#8482;</div>
+                <div class="lh-sm mt-2">Pintu ini dilindungi dengan SmartLock&#8482;</div>
                 <div class="lh-sm">Pindai QR code dibawah untuk mendapatkan akses ruangan</div>
             </div>
 
             <div class="mb-5 p-3 bg-white rounded">
-                {!! QrCode::size(180)->generate("https://smartdoorlock.my.id/door/". $door->id) !!}
+                {!! QrCode::size(200)->generate("https://smartdoorlock.my.id/door/". $door->id. "/". bin2hex($door->name)) !!}
             </div>
 
             <div class="text-center py-3">
