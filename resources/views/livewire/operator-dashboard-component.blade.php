@@ -1,9 +1,9 @@
 <div>
     {{-- welcome card --}}
-    <div class="card">
+    <div id="welcome-text" class="card mb-2 d-none">
         <div class="card-body">
             <h5 class="fs-3">Selamat Datang</h5>
-            <p class="card-text">Sistem Penguncian Gedung Berbasis IoT merupakan sebuah sistem penguncian terintegrasi yang bertujuan untuk meningkatkan efektifitas kinerja perangkat penguncian serta meningkatkan keamanan dengan menggunakan pengaturan akses pengguna.</p>
+            <p class="card-text"><small>Sistem Penguncian Gedung Berbasis IoT merupakan sebuah sistem penguncian terintegrasi yang bertujuan untuk meningkatkan efektifitas kinerja perangkat penguncian serta meningkatkan keamanan dengan menggunakan pengaturan akses pengguna.</small></p>
             <div class="mt-3 d-flex">
                 Koneksi :
                 <div id="connection_status" class="ms-1" style="color: {{ $connection_color }}">{{ $connection_status }}</div>
@@ -12,8 +12,8 @@
     </div>
 
     {{-- door status --}}
-    <div class="row mt-4 mb-4">
-        <div class="col-4">
+    <div class="row mt-lg-4 mt-2">
+        <div class="col-lg-4 col-md-6 col-12 mb-lg-4 mb-3">
             <div class="card">
                 <div class="card-header">
                     Jumlah Pintu
@@ -26,7 +26,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-4">
+        <div class="col-lg-4 col-md-6 col-12 mb-lg-4 mb-3">
             <div class="card">
                 <div class="card-header">
                     Pintu Online
@@ -39,7 +39,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-4">
+        <div class="col-lg-4 col-md-6 col-12 mb-lg-4 mb-3">
             <div class="card">
                 <div class="card-header">
                     Pintu Terbuka
@@ -56,29 +56,60 @@
 
     {{-- door schedule --}}
     @if (count($jadwal_hari_ini) > 0)
-        <div class="border bg-dark border-secondary rounded p-3">
-            <div class="row">
-                <div class="col-2 text-center">
-                    <div class="display-5 fw-bold mt-3">{{ count($jadwal_hari_ini) }}</div>
-                    <div class="mt-2 mb-3">Jadwal Hari Ini</div>
-                </div>
-                <div class="col-10">
-                    @foreach ($jadwal_hari_ini as $jadwal)
-                        @if ($jadwal->status == 'waiting')
-                            <div class="d-flex bg-dark border border-primary rounded p-3 mb-3">
-                        @elseif ($jadwal->status == 'running')
-                            <div class="d-flex bg-dark border border-warning rounded p-3 mb-3 fw-bold">
-                        @else
-                            <div class="d-flex bg-dark border border-secondary rounded p-3 mb-3 text-muted">
-                        @endif
-                            <div>{{ $jadwal->name }}</div>
-                            <div class="ms-auto">{{ $jadwal->time_begin. ' sd '. $jadwal->time_end }}</div>
+        <div class="card">
+            <div class="card-header">
+                Jdawal Pintu
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 col-12">
+                        <div class="d-flex">
+                            <div class="bg-dark rounded fs-1 py-1 px-3">{{ count($jadwal_hari_ini) }}</div>
+                            <div class="ms-3"><small>Pintu terbuka secara otomatis sesuai jadwal yang telah ditentukan</small></div>
                         </div>
-                    @endforeach
+                    </div>
+                    <div class="col-md-8 col-12 mt-md-0 mt-3">
+                        <table id="lg-table" class="table bordered text-white d-none">
+                            <thead>
+                                <tr class="align-middle bg-secondary">
+                                    <th style="padding-left: 20px">Nama</th>
+                                    <th class="text-center">Waktu</th>
+                                    <th class="text-center">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($jadwal_hari_ini as $index => $jadwal)
+                                    <tr class="align-middle" style="height:50px">
+                                        <td style="padding-left: 20px">{{ $jadwal->name }}</td>
+                                        <td class="text-center">{{ $jadwal->time_begin. ' sd '. $jadwal->time_end }}</td>
+                                        <td class="text-center">{{ ucfirst($jadwal->status) }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                        <table id="sm-table" class="table bordered text-white d-none">
+                            <thead>
+                                <tr class="align-middle bg-secondary">
+                                    <th style="padding-left: 20px">Nama</th>
+                                    <th class="text-center">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($jadwal_hari_ini as $index => $jadwal)
+                                    <tr class="align-middle" style="height:50px">
+                                        <td style="padding-left: 20px">{{ $jadwal->name }}</td>
+                                        <td class="text-center">{{ ucfirst($jadwal->status) }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     @endif
+
+    <div class="mb-5"></div>
 
     {{-- alert modal --}}
     <div wire:ignore.self class="modal fade" id="alertModal" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="alertModalLabel" aria-hidden="true">
@@ -126,6 +157,17 @@
                     alert(pintu - online + ' Pintu Sedang Offline. \nKondisi pintu tidak bisa terpantau secara realtime.');
                 }
             }, 1000);
+        });
+
+        $(document).ready(function () {
+            if (window.innerWidth > window.innerHeight){
+                $('#welcome-text').removeClass('d-none');
+                $('#lg-table').removeClass('d-none');
+            }
+            else
+            {
+                $('#sm-table').removeClass('d-none');
+            }
         });
     </script>
 @endpush

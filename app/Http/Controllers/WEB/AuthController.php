@@ -30,6 +30,10 @@ class AuthController extends Controller
         $user = User::where('email', $credentials['email'])->first();
 
         // check level (only moderator and operator can login)
+        if ($user && $user->role == 'pengguna') {
+            return back()->with('login_failed', 'Login Gagal, Pengguna hanya diijinkan login melalui Aplikasi Mobile');
+        }
+
         if ($user && $user->role != 'pengguna') {
 
             // login attempt
@@ -86,11 +90,11 @@ class AuthController extends Controller
         // check status
         if ($status === Password::RESET_LINK_SENT) {
             Log::info('reset link send', ['email' => $email]);
-            back()->with(['status' => __($status)]);
+            back()->with(['status' => "Link reset password berhasil terkirim"]);
         }
 
         // redirect error
-        return back()->withErrors(['email' => __($status)]);
+        return back()->withErrors(['email' => "Maaf, alamat email tidak ditemukan"]);
     }
 
     public function resetPassword($token)
@@ -124,7 +128,7 @@ class AuthController extends Controller
 
         // redirect
         return $status === Password::PASSWORD_RESET
-            ? redirect()->route('login')->with('status', __($status))
+            ? redirect()->route('login')->with('status', 'Password berhasil diperbarui')
             : back()->withErrors(['email' => [__($status)]]);
     }
 }

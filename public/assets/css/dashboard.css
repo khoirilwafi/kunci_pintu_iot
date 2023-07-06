@@ -15,9 +15,8 @@ input::-webkit-inner-spin-button {
     height: 100vh;
     z-index: 999;
     background: #2d353c;
-    /* transition: all 0.3s; */
+    transition: all 0.1s;
     overflow-y: scroll;
-    /* padding: 20px; */
 }
 
 .sidebar-menu {
@@ -62,7 +61,7 @@ input::-webkit-inner-spin-button {
     height: 100vh;
     background-color: rgba(22, 26, 29, 0.7);
     z-index: 998;
-    /* transition: all 0.3s ease-in-out; */
+    transition: all 0.1s ease-in-out;
     border: 0;
 }
 
@@ -74,6 +73,7 @@ input::-webkit-inner-spin-button {
 .logo {
     width: 100%;
     height: 60px;
+    min-height: 60px;
     background-color: #320064;
 }
 
@@ -101,14 +101,13 @@ input::-webkit-inner-spin-button {
 }
 
 #content {
-    /* width: 100%; */
+    width: 100%;
     min-height: 100vh;
     background-color: #15181b;
-    /* transition: all 0.3s; */
+    transition: all 0.1s;
     position: absolute;
     top: 0;
     right: 0;
-    width: calc(100% - 220px);
 }
 
 #top-bar {

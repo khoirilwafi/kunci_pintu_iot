@@ -3,7 +3,6 @@
 use App\Http\Controllers\Api\AccessController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 
@@ -20,10 +19,13 @@ use Illuminate\Support\Facades\Route;
 
 
 // login
-Route::post('/login', [AuthController::class, 'authenticate']);
+Route::post('/login', [AuthController::class, 'authenticate'])->middleware('guest');
 
 // verify otp via email
 Route::post('/verify-email', [AuthController::class, 'verifyEmail'])->middleware('auth:sanctum');
+
+// reset password
+Route::post('/reset-password', [AuthController::class, 'resetPassword'])->middleware('guest');
 
 // logout
 Route::get('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
@@ -35,7 +37,13 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::post('/update-profile', [UserController::class, 'updateProfile']);
 
     // get user avatar
-    Route::get('/avatar/{file}', [UserController::class, 'getAvatar']);
+    Route::get('/avatar/', [UserController::class, 'getAvatar']);
+
+    // update avatar
+    Route::post('/update-avatar', [UserController::class, 'updateAvatar']);
+
+    // change password
+    Route::post('/change-password', [UserController::class, 'changePassword']);
 
     // get user access
     Route::get('/my-access', [AccessController::class, 'myAccess']);

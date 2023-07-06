@@ -18,6 +18,19 @@ class AccessController extends Controller
     public function myAccess(Request $request)
     {
         $user = $request->user();
+
+        // if ($user->role == 'operator') {
+
+        //     $office = Office::where('user_id', $user->id)->select('id')->first();
+
+        //     return response()->json([
+        //         'status' => 'success',
+        //         'data' => Door::with(['office' => function ($query) {
+        //             $query->select(['id', 'name']);
+        //         }])->where('office_id', $office->id)->select(['id', 'office_id', 'name'])->get(),
+        //     ], 200);
+        // }
+
         $access = Access::with(['door' => function ($query) {
             $query->select(['id', 'office_id', 'name']);
         }])->where('user_id', $user->id)->select(['door_id', 'time_begin', 'time_end', 'date_begin', 'date_end', 'is_running'])->get();
@@ -52,7 +65,7 @@ class AccessController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'data' => Door::where('office_id', $office->id)->select(['id', 'name', 'key', 'is_lock'])->get()
+            'data' => Door::where('office_id', $office->id)->select(['id', 'name', 'key', 'socket_id', 'is_lock'])->get()
         ], 200);
     }
 
@@ -71,7 +84,10 @@ class AccessController extends Controller
         if ($user->role == 'operator' && $user->id == $door->office->user_id) {
             return response()->json([
                 'status' => 'success',
-                'data' => $door
+                'data' => [
+                    'door' => $door->name,
+                    'key' => $door->key,
+                ]
             ], 200);
         }
 
@@ -94,7 +110,10 @@ class AccessController extends Controller
             new CustomLog($access->user_id, $access->door_id, $access->door->office_id, 'mendapatkan kunci akses');
             return response()->json([
                 'status' => 'success',
-                'data' => $access->door
+                'data' => [
+                    'door' =>  $access->door->name,
+                    'key' => $access->door->key,
+                ]
             ], 200);
         }
 

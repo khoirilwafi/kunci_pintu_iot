@@ -12,6 +12,12 @@
 	<link rel="stylesheet" href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
 
+    <style>
+        #sidebar::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+
     @stack('custom_links')
     @livewireStyles()
 
@@ -22,8 +28,8 @@
 	<div class="wrapper">
 
         {{-- sidebar --}}
-		<div id="sidebar" class="d-flex flex-column active">
-			<div class="logo mb-2 d-flex align-items-center justify-content-center text-white">
+		<div id="sidebar" class="d-flex flex-column">
+			<div class="logo mb-2 d-flex align-items-center justify-content-center text-white sticky-top">
 				<a class="d-flex fs-4 nav-link text-white" href="{{ url('dashboard') }}">
 					<div class="fw-bold">Smart</div>Lock&#8482;
 				</a>
@@ -88,7 +94,7 @@
 		<div id="content">
 
             {{-- topbar --}}
-			<div class="d-flex content-header bg-dark text-white align-items-center px-4">
+			<div id="top-bar" class="d-flex content-header text-white align-items-center px-3 px-md-4 sticky-top">
 				<div>
 					@if ($user_role == 'moderator')
 						<div class="bg-secondary rounded px-3 py-1">Moderator</div>
@@ -96,15 +102,16 @@
 						<div class=""><i class="bi bi-building me-2"></i>{{ $user_office }}</div>
 					@endif
 				</div>
-
-				<div class="d-flex h-100 align-items-center ms-auto">
+                <div id="menu" class="d-flex h-100 align-items-center ms-auto">
+                    <button id="btn_menu" class="btn btn-sm btn-outline-light"><i class="bi bi-grid-1x2"></i></button>
+                </div>
+				<div id="profile" class="d-flex h-100 align-items-center ms-auto">
 					<div class="text-end me-2">
 						<div class="lh-1"><small id="username">{{ $user_name }}</small></div>
 						<div class="lh-1"><small>{{ ucfirst($user_role) }}</small></div>
 					</div>
 					<img src="{{ url("/dashboard/my-account/avatar/". $img_avatar) }}" alt="foto" class="avatar" id="avatar">
 				</div>
-
 			</div>
 
             {{-- main content --}}
@@ -115,7 +122,7 @@
                 </div>
 
                 {{-- content --}}
-                <div class="p-3 p-md-4">
+                <div class="p-2 p-md-4">
                     @yield('content')
                 </div>
             </div>
@@ -123,8 +130,7 @@
 
 
         {{-- sidebar overlay --}}
-		<div id="overlay">
-        </div>
+		<div id="overlay"></div>
 
 	</div>
 
@@ -155,6 +161,41 @@
         window.addEventListener('open_tab', (data) => {
 			eval(data.detail.js);
 		});
+
+        $(document).ready(function () {
+
+            // jika di tampilan potrait / mobile
+            if (window.innerWidth > window.innerHeight) {
+                $('#sidebar').addClass('active');
+                $('#top-bar').addClass('bg-dark');
+                $('#content').css('width', 'calc(100% - 220px)');
+                $('#menu').remove();
+            }
+            else
+            {
+                $('#top-bar').css('background-color', '#320064');
+                $('#profile').remove();
+            }
+
+            // jika orientasi berubah
+            $(window).on("orientationchange", function (event) {
+                window.location.reload();
+            });
+
+            // jika tombol menu ditekan
+            $('#btn_menu').on('click', function () {
+                $('#sidebar').addClass('active');
+                $('#overlay').addClass('active');
+                $('#top-bar').removeClass('sticky-top');
+            });
+
+            // overlay
+            $('#overlay').on('click', function () {
+                $('#sidebar').removeClass('active');
+                $('#overlay').removeClass('active');
+            });
+
+        });
 
     </script>
 

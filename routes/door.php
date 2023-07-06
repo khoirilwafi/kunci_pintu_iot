@@ -1,8 +1,9 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Door\AuthController;
 use App\Http\Controllers\Door\DoorEventController;
-use Illuminate\Support\Facades\Route;
 
 
 /*
@@ -15,6 +16,10 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "door" middleware group. Enjoy building your Doors!
 |
 */
+
+Route::post('/workspace', function (Request $request) {
+    return response()->json($request->all());
+});
 
 Route::post('/login', [AuthController::class, 'authenticate'])->middleware('guest');
 Route::post('/register', [AuthController::class, 'register'])->middleware('guest');

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
 use App\Notifications\SendOTPNotification;
 
@@ -81,7 +82,15 @@ class AuthController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'data' => $user,
+            'data' => [
+                "id"     => $user->id,
+                "email"  => $user->email,
+                "name"   => $user->name,
+                "phone"  => $user->phone,
+                "gender" => $user->gender,
+                "role"   => $user->role,
+                "avatar" => $user->avatar,
+            ],
             'token' => $token
         ], 200);
     }
@@ -117,15 +126,16 @@ class AuthController extends Controller
 
         if ($otp && $now->lessThanOrEqualTo($otp->valid_until)) {
             User::where('id', $data['id'])->update(['email_verified_at' => $now]);
-            Otp::with('user_id', $data['id'])->delete();
+            Otp::where('user_id', $data['id'])->delete();
 
             Log::info('user verify email using api', ['user' => $request->user()]);
 
             return response()->json([
                 'status' => 'success',
-                'data' => User::where('id', $data['id'])->first(),
+                'data' => User::where('id', $data['id'])->select(['id', 'email', 'name', 'phone', 'gender', 'role', 'avatar'])->first(),
             ], 200);
         } else if ($otp) {
+            Otp::where('user_id', $data['id'])->delete();
             return response()->json([
                 'status' => 'otp_expired',
                 'data' => []
@@ -135,6 +145,44 @@ class AuthController extends Controller
         return response()->json([
             'status' => 'otp_not_match',
             'data' => []
+        ], 200);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $data = request()->only('email');
+
+        $validator = Validator::make($data, [
+            'email' => ['required', 'email:dns'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'missing_parameter',
+                'data' => $validator->messages()
+            ], 200);
+        }
+
+        $status = Password::sendResetLink($data);
+
+        // check status
+        if ($status === Password::RESET_LINK_SENT) {
+            Log::info('reset link send', ['email' => $data['email']]);
+            return response()->json([
+                'status' => 'success',
+                'data' => [
+                    'email' => $data['email']
+                ]
+            ], 200);
+        }
+
+        // return error
+        return response()->json([
+            'status' => 'failed',
+            'data' => [
+                'message' => 'email not found',
+                'email' => $data['email'],
+            ]
         ], 200);
     }
 }

@@ -7,7 +7,7 @@
 				<div class="d-flex fs-2 justify-content-center">
 					<div class="fw-bold">Smart</div>Lock&#8482;
 				</div>
-				<div class="mb-4 text-center">Sistem Keamanan Kunci Gedung Berbasis IoT</div>
+				<div class="mb-4 text-center"><small>Keamanan Kunci Gedung Berbasis IoT</small></div>
 				<div class="card w-100 shadow-sm">
 					<div class="card-body">
 						@if (session()->has('login_failed'))

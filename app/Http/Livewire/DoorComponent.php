@@ -138,6 +138,7 @@ class DoorComponent extends Component
 
         $this->resetModal();
         $this->resetAccessInput();
+        $this->dispatchBrowserEvent('screen_change');
         $this->dispatchBrowserEvent('modal_open', $modal_id);
     }
 
@@ -145,6 +146,7 @@ class DoorComponent extends Component
     {
         $this->resetModal();
         $this->resetAccessInput();
+        $this->dispatchBrowserEvent('screen_change');
         $this->dispatchBrowserEvent('modal_close', $modal_id);
     }
 
@@ -155,6 +157,7 @@ class DoorComponent extends Component
 
         $this->door_table_visibility  = true;
         $this->door_detail_visibility = false;
+        $this->dispatchBrowserEvent('screen_change');
     }
 
     public function show_detail()
@@ -163,6 +166,7 @@ class DoorComponent extends Component
 
         $this->door_table_visibility  = false;
         $this->door_detail_visibility = true;
+        $this->dispatchBrowserEvent('screen_change');
     }
 
     public function storeDoor()

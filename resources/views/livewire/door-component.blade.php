@@ -41,7 +41,7 @@
 
     {{-- door table --}}
     @if ($door_table_visibility)
-        <div class="card text-white mb-4">
+        <div class="card text-white mb-4 mt-md-1 mt-2">
             <div class="card-header d-flex">
                 <div class="text-white">
                     Daftar Pintu
@@ -62,12 +62,11 @@
                         <input type="text" class="form-control form-control-sm bg-dark text-white" id="search" placeholder="Cari Pintu ..." wire:model="search" autocomplete="off">
                     </div>
                 </div>
-                <table class="table text-white mb-4">
-                    @if (sizeof($doors) == 0)
-                        <div class="text-center text-white p-3">
-                            --- tidak ada data ---
-                        </div>
-                    @else
+
+                @if (sizeof($doors) == 0)
+                    <div class="text-center text-white p-md-3 p-2 rounded border border-secondary">--- tidak ada data ---</div>
+                @else
+                    <table id="door-table" class="table text-white mb-4 d-none">
                         <thead>
                             <tr class="align-middle bg-secondary">
                                 <th class="text-center" style="width: 50px">No</th>
@@ -121,29 +120,66 @@
                                 </tr>
                             @endforeach
                         </tbody>
-                    @endif
-                </table>
+                    </table>
+                    <div id="door-card" class="d-none">
+                        @foreach ($doors as $door)
+                            <div class="mb-2 w-100 p-2 rounded border border-secondary d-flex align-items-center" wire:click="getDoorDetail('{{ $door->id }}')">
+                                <div class="ms-1">
+                                    <div class="fw-bold">{{ $door->name }}</div>
+                                    <div style="font-family: monospace">
+                                        @if ($door->device_name === null)
+                                            <small class="text-warning">Belum Ada</small>
+                                        @else
+                                            <small class="text-info">{{ strtoupper($door->device_name) }}</small>
+                                        @endif
+                                    </div>
+                                    <div style="font-family: monospace">
+                                        @if ($door->socket_id != null && $door->is_lock == 1)
+                                            <div class="text-info"><small>Online - Terkunci</small></div>
+                                        @elseif ($door->socket_id != null && $door->is_lock == 0)
+                                            <div class="text-warning"><small>Online - terbuka</small></div>
+                                        @else
+                                            <div class="text-danger"><small>Offline</small></div>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="ms-auto">
+                                    @if ($door->socket_id != null)
+                                        <button wire:click="changeLocking('{{ $door->id }}', '{{ $door->is_lock == 1 ? 'open' : 'lock' }}', '{{ $door->key }}')" wire:loading.attr="disabled" class="btn btn-sm {{ $door->is_lock == 1 ? 'btn-primary' : 'btn-info' }} bg-gradient" style="width: 60px; height: 60px">
+                                            <div class="row text-center">
+                                                <div class="col"><i class="bi {{ $door->is_lock == 1 ? 'bi-unlock' : 'bi-lock' }}"></i></div>
+                                            </div>
+                                            <div class="row text-center">
+                                                <div class="col">{{ $door->is_lock == 1 ? 'Buka' : 'Kunci' }}</div>
+                                            </div>
+                                        </button>
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
             </div>
         </div>
     @endif
 
     {{-- door detail --}}
     @if ($door_detail_visibility)
-        <button wire:click="show_table" type="button" class="btn btn-sm btn-success bg-gradient mb-4">
+        <button wire:click="show_table" type="button" class="btn btn-sm btn-success bg-gradient mt-2 mt-md-1 mb-3">
             <i class="bi bi-arrow-left-square me-1"></i>
             Kembali
         </button>
         <div class="card">
             <div class="card-header d-flex">
                 <div class="text-white">
-                    Detail Pintu - Akses Pengguna
+                    Detail Pintu
                 </div>
                 <div class="ms-auto d-flex align-items-center">
                     <div id="connection_status" style="color: {{ $connection_color }}">{{ $connection_status }}</div>
                 </div>
             </div>
             <div class="card-body">
-                <div class="p-2 mb-5 rounded border border-secondary d-flex">
+                <div id="door-detail-table" class="p-2 mb-5 rounded border border-secondary d-none">
                     <div class="p-2 bg-white rounded">
                         {!! QrCode::size(130)->generate($door_url) !!}
                     </div>
@@ -208,55 +244,124 @@
                     </div>
                 </div>
 
+                <div id="door-detail-card" class="p-2 mb-5 rounded border border-secondary d-none">
+                    <div class="p-2 bg-white rounded">
+                        {!! QrCode::size(80)->generate($door_url) !!}
+                    </div>
+                    <div class="ms-2 w-100 d-flex flex-column">
+                        <div class="ms-auto">{{ $name }}</div>
+                        <div style="font-family: monospace" class="ms-auto">
+                            @if ($device_name === null)
+                                <small class="text-warning">Belum Ada</small>
+                            @else
+                                <small class="text-info">{{ strtoupper($device_name) }}</small>
+                            @endif
+                        </div>
+                        <div class="ms-auto">
+                            @if ($socket_id != null && $is_lock == 1)
+                                <div class="text-info"><small>Online - Terkunci</small></div>
+                            @elseif ($socket_id != null && $is_lock == 0)
+                                <div class="text-warning"><small>Online - terbuka</small></div>
+                            @else
+                                <div class="text-danger"><small>Offline</small></div>
+                            @endif
+                        </div>
+                        <div class="mt-3 flex-grow-1 d-flex">
+                            <div class="ms-auto">
+                                <button class="btn btn-sm btn-outline-info me-1" wire:click="printPoster"><div class="fs-6 text-white"><i class="bi bi-printer"></i></div></button>
+                                @if ($device_name != null)
+                                    <button class="btn btn-sm btn-outline-warning me-1" wire:click="openModal('unlinkDoor')"><div class="fs-6 text-white"><i class="bi bi-cpu"></i></button>
+                                @endif
+                                <button class="btn btn-sm btn-outline-primary me-1" wire:click="edit()"><div class="fs-6 text-white"><i class="bi bi-pencil-square"></i></div></button>
+                                <button class="btn btn-sm btn-outline-danger" wire:click="openModal('deleteConfirm')"><div class="fs-6 text-white"><i class="bi bi-trash"></i></div></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="d-flex mb-3">
-                    <button class="btn btn-sm btn-primary" wire:click="openModal('addAccess')"><i class="bi bi-plus-circle me-1"></i>Tambah Akses</button>
+                    <button class="btn btn-sm btn-primary" wire:click="openModal('addAccess')"><i class="bi bi-plus-circle me-1"></i>Akses</button>
                     <div class="col-8 col-md-3 ms-auto">
                         <input type="text" class="form-control form-control-sm bg-dark text-white" id="search" placeholder="Cari Akses ..." wire:model="searchAccess" autocomplete="off">
                     </div>
                 </div>
-                @if (sizeof($access) != 0)
-                    <table class="table text-white">
-                        <thead>
-                            <tr class="align-middle bg-secondary">
-                                <th class="text-center" style="width: 60px">No</th>
-                                <th>Nama</th>
-                                <th class="text-center" style="width: 220px">Durasi Harian</th>
-                                <th class="text-center" style="width: 220px">Batas Tanggal</th>
-                                <th class="text-center" style="width: 100px">Status</th>
-                                <th class="text-center" style="width: 200px">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($access as $index => $list)
-                                <tr class="align-middle" style="height: 60px">
-                                    <td class="text-center">{{ $access->firstItem() + $index }}</td>
-                                    <td>{{ $list->user->name }}</td>
-                                    <td class="text-center">{{ $list->time_begin. ' sd '. $list->time_end }}</td>
+                @if (sizeof($access) == 0)
+                    <div class="text-center text-white p-md-3 p-2 rounded border border-secondary">--- tidak ada data ---</div>
+                @else
+                    <div id="access-table" class="d-none">
+                        <table class="table text-white">
+                            <thead>
+                                <tr class="align-middle bg-secondary">
+                                    <th class="text-center" style="width: 60px">No</th>
+                                    <th>Nama</th>
+                                    <th class="text-center" style="width: 220px">Durasi Harian</th>
+                                    <th class="text-center" style="width: 220px">Batas Tanggal</th>
+                                    <th class="text-center" style="width: 100px">Status</th>
+                                    <th class="text-center" style="width: 200px">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($access as $index => $list)
+                                    <tr class="align-middle" style="height: 60px">
+                                        <td class="text-center">{{ $access->firstItem() + $index }}</td>
+                                        <td>{{ $list->user->name }}</td>
+                                        <td class="text-center">{{ $list->time_begin. ' sd '. $list->time_end }}</td>
+                                        @if ($list->is_temporary == 1)
+                                            <td class="text-center">{{ $list->date_begin. ' sd '. $list->date_end }}</td>
+                                        @else
+                                            <td class="text-center text-info">Tidak Terbatas</td>
+                                        @endif
+                                        @if ($list->is_running == 1)
+                                            <td class="text-center text-info">Aktif</td>
+                                        @else
+                                            <td class="text-center text-warning">Pending</td>
+                                        @endif
+                                        <td class="text-center">
+                                            <button wire:click="changeAccess('{{ $list->id }}')" wire:loading.attr="disabled" class="btn btn-sm {{ $list->is_running == 1 ? 'btn-warning' : 'btn-info' }} me-1" style="width: 100px;">
+                                                <i class="bi {{ $list->is_running == 1 ? 'bi-pause-circle' : 'bi-play-circle' }} me-1"></i>
+                                                {{ $list->is_running == 1 ? 'Blokir' : 'Aktifkan' }}
+                                            </button>
+                                            <button class="btn btn-sm btn-danger" wire:click="confirmDeleteAccess('{{ $list->id }}')"><i class="bi bi-trash me-1"></i>Hapus</button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                        {{ $access->links(); }}
+                    </div>
+                    <div id="access-card" class="d-none">
+                        @foreach ($access as $list)
+                            <div class="mb-2 w-100 p-2 rounded border border-secondary d-flex align-items-center">
+                                <div class="ms-1">
+                                    <div class="fw-bold mb-2">{{ $list->user->name }}</div>
+                                    <div>{{ $list->time_begin. ' sd '. $list->time_end }}</div>
                                     @if ($list->is_temporary == 1)
-                                        <td class="text-center">{{ $list->date_begin. ' sd '. $list->date_end }}</td>
+                                        <div>{{ $list->date_begin. ' sd '. $list->date_end }}</div>
                                     @else
-                                        <td class="text-center text-info">Tidak Terbatas</td>
+                                        <div class="text-info">Tidak Terbatas</div>
                                     @endif
                                     @if ($list->is_running == 1)
-                                        <td class="text-center text-info">Aktif</td>
+                                        <div class="text-info">Aktif</div>
                                     @else
-                                        <td class="text-center text-warning">Pending</td>
+                                        <div class="text-warning">Pending</div>
                                     @endif
-                                    <td class="text-center">
-                                        <button wire:click="changeAccess('{{ $list->id }}')" wire:loading.attr="disabled" class="btn btn-sm {{ $list->is_running == 1 ? 'btn-warning' : 'btn-info' }} me-1" style="width: 100px;">
-                                            <i class="bi {{ $list->is_running == 1 ? 'bi-pause-circle' : 'bi-play-circle' }} me-1"></i>
-                                            {{ $list->is_running == 1 ? 'Blokir' : 'Aktifkan' }}
+                                </div>
+                                <div class="ms-auto">
+                                    <div class="mb-2">
+                                        <button wire:click="changeAccess('{{ $list->id }}')" wire:loading.attr="disabled" class="btn btn-sm {{ $list->is_running == 1 ? 'btn-warning' : 'btn-info' }}" style="width: 80px;">
+                                            <div class="text-center"><i class="bi {{ $list->is_running == 1 ? 'bi-pause-circle' : 'bi-play-circle' }} me-1"></i></div>
+                                            <div class="text-center">{{ $list->is_running == 1 ? 'Blokir' : 'Aktifkan' }}</div>
                                         </button>
-                                        <button class="btn btn-sm btn-danger" wire:click="confirmDeleteAccess('{{ $list->id }}')"><i class="bi bi-trash me-1"></i>Hapus</button>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                    {{ $access->links(); }}
-                @else
-                    <div class="p-2 rounded border border-secondary">
-                        <div class="text-center mb-3 mt-3">-- tidak ada data --</div>
+                                    </div>
+                                    <div>
+                                        <button class="btn btn-sm btn-danger" wire:click="confirmDeleteAccess('{{ $list->id }}')" style="width:80px">
+                                            <div class="text-center"><i class="bi bi-trash"></i></div>
+                                            <div class="text-center">Hapus</div>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
                 @endif
             </div>
@@ -564,5 +669,28 @@
     <script>
         window.office = @json($office_id);
         window.connection_status = document.getElementById("connection_status");
+
+        document.addEventListener('screen_change', function () {
+            if (window.innerWidth > window.innerHeight){
+                $('#door-detail-table').removeClass('d-none').addClass('d-flex');
+                $('#door-detail-card').removeClass('d-flex').addClass('d-none');
+                $('#door-table').removeClass('d-none');
+                $('#access-table').removeClass('d-none');
+            } else {
+                $('#door-detail-table').removeClass('d-flex').addClass('d-none');
+                $('#door-detail-card').removeClass('d-none').addClass('d-flex');
+                $('#door-card').removeClass('d-none');
+                $('#access-card').removeClass('d-none');
+            }
+        });
+
+        $(document).ready(function () {
+            if (window.innerWidth > window.innerHeight){
+                $('#door-table').removeClass('d-none');
+
+            } else {
+                $('#door-card').removeClass('d-none');
+            }
+        });
     </script>
 @endpush
